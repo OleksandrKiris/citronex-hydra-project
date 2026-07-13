@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#c90016">
   <title>CITRONEX hydra S.R.Z.B.</title>
   <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
   <style>
     :root {
@@ -939,7 +940,7 @@
           <button class="intro-action" type="button" id="continueIntro" data-i18n="continueIntro">Rozumiem</button>
         </div>
       </div>
-      <audio id="introAudio" preload="auto"></audio>
+      <audio id="introAudio" preload="none"></audio>
     </div>
   </div>
 
@@ -1335,6 +1336,12 @@
     setLang(initial);
     if (params.get("intro") === "1" || localStorage.getItem(introSeenKey) !== "1") {
       openIntro();
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      });
     }
   </script>
 </body>
