@@ -323,6 +323,12 @@
       box-shadow: 0 10px 22px rgba(217, 4, 22, .2);
     }
 
+    .intro-action:disabled {
+      opacity: .72;
+      cursor: progress;
+      box-shadow: none;
+    }
+
     .audio-status[hidden] {
       display: none;
     }
@@ -337,6 +343,33 @@
       font-size: 13px;
       line-height: 1.35;
       font-weight: 850;
+    }
+
+    .reopen-intro {
+      display: inline-flex;
+      width: 100%;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      margin: 14px 0 0;
+      padding: 10px 12px;
+      border: 1px solid rgba(217, 4, 22, .18);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--red-dark);
+      font: inherit;
+      font-size: 14px;
+      line-height: 1.1;
+      font-weight: 950;
+      text-align: center;
+      box-shadow: 0 8px 18px rgba(20, 24, 33, .07);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .reopen-intro:focus-visible {
+      outline: 3px solid rgba(217, 4, 22, .28);
+      outline-offset: 3px;
     }
 
     .hero {
@@ -753,6 +786,8 @@
       </section>
     </main>
 
+    <button class="reopen-intro" type="button" id="reopenIntro" data-i18n="reopenIntro">Pokaż intro ponownie</button>
+
     <footer>CITRONEX HYDRA PROJECT · OLEKSANDR KIRIS</footer>
   </div>
 
@@ -805,8 +840,10 @@
         introSpeech: "To jest Citronex Hydra Project. Tutaj wybierasz przyjazd do pracy albo swoją lokalizację pracy. Po kliknięciu otworzy się właściwe szkolenie: mapy, instrukcje, kontakty i ważne informacje.",
         introScriptLabel: "Tekst, który usłyszysz:",
         playIntro: "Odsłuchaj",
+        playingIntro: "Odtwarzam...",
         continueIntro: "Rozumiem",
         audioError: "Nie udało się odtworzyć nagrania. Sprawdź dźwięk w telefonie albo przeczytaj tekst.",
+        reopenIntro: "Pokaż intro ponownie",
         closeLabel: "Zamknij",
         startTitle: "Najpierw wybierz, czego potrzebujesz",
         startBadge: "PIERWSZY RAZ? KLIKNIJ TUTAJ",
@@ -826,8 +863,10 @@
         introSpeech: "Это Citronex Hydra Project. Здесь выберите приезд на работу или свою рабочую локацию. После выбора откроется нужное обучение: карты, инструкции, контакты и важная информация.",
         introScriptLabel: "Текст, который вы услышите:",
         playIntro: "Прослушать",
+        playingIntro: "Воспроизвожу...",
         continueIntro: "Понятно",
         audioError: "Не удалось воспроизвести запись. Проверьте звук в телефоне или прочитайте текст.",
+        reopenIntro: "Показать intro ещё раз",
         closeLabel: "Закрыть",
         startTitle: "Сначала выберите, что вам нужно",
         startBadge: "ПЕРВЫЙ РАЗ? НАЖМИТЕ ЗДЕСЬ",
@@ -847,8 +886,10 @@
         introSpeech: "Це Citronex Hydra Project. Тут оберіть приїзд на роботу або свою робочу локацію. Після вибору відкриється потрібне навчання: карти, інструкції, контакти та важлива інформація.",
         introScriptLabel: "Текст, який ви почуєте:",
         playIntro: "Прослухати",
+        playingIntro: "Відтворюю...",
         continueIntro: "Зрозуміло",
         audioError: "Не вдалося відтворити запис. Перевірте звук у телефоні або прочитайте текст.",
+        reopenIntro: "Показати intro ще раз",
         closeLabel: "Закрити",
         startTitle: "Спочатку оберіть, що вам потрібно",
         startBadge: "ПЕРШИЙ РАЗ? НАТИСНІТЬ ТУТ",
@@ -868,8 +909,10 @@
         introSpeech: "This is Citronex Hydra Project. Here you choose arrival to work or your work location. After choosing, the correct training will open: maps, instructions, contacts, and important information.",
         introScriptLabel: "Text you will hear:",
         playIntro: "Listen",
+        playingIntro: "Playing...",
         continueIntro: "I understand",
         audioError: "The recording could not be played. Check sound on the phone or read the text.",
+        reopenIntro: "Show intro again",
         closeLabel: "Close",
         startTitle: "First choose what you need",
         startBadge: "FIRST TIME? TAP HERE",
@@ -889,8 +932,10 @@
         introSpeech: "Bu Citronex Hydra Project-dir. Burada işə gəlişi və ya iş yerinizi seçirsiniz. Seçimdən sonra sizə uyğun təlim açılacaq: xəritələr, təlimatlar, kontaktlar və vacib məlumatlar.",
         introScriptLabel: "Eşidəcəyiniz mətn:",
         playIntro: "Dinlə",
+        playingIntro: "Oynadılır...",
         continueIntro: "Başa düşdüm",
         audioError: "Səs yazısını oxutmaq mümkün olmadı. Telefonda səsi yoxlayın və ya mətni oxuyun.",
+        reopenIntro: "İntronu yenidən göstər",
         closeLabel: "Bağla",
         startTitle: "Əvvəl sizə lazım olanı seçin",
         startBadge: "İLK DƏFƏDİR? BURANI BASIN",
@@ -910,8 +955,10 @@
         introSpeech: "Este es Citronex Hydra Project. Aquí eliges la llegada al trabajo o tu ubicación de trabajo. Después se abrirá la formación correcta: mapas, instrucciones, contactos e información importante.",
         introScriptLabel: "Texto que escucharás:",
         playIntro: "Escuchar",
+        playingIntro: "Reproduciendo...",
         continueIntro: "Entiendo",
         audioError: "No se pudo reproducir la grabación. Revisa el sonido del teléfono o lee el texto.",
+        reopenIntro: "Mostrar intro otra vez",
         closeLabel: "Cerrar",
         startTitle: "Primero elige lo que necesitas",
         startBadge: "¿PRIMERA VEZ? PULSA AQUÍ",
@@ -931,8 +978,10 @@
         introSpeech: "Ito ang Citronex Hydra Project. Dito pipiliin mo ang pagdating sa trabaho o ang iyong lokasyon sa trabaho. Pagkatapos, bubukas ang tamang training: mga mapa, instruksyon, kontak at mahalagang impormasyon.",
         introScriptLabel: "Tekstong maririnig mo:",
         playIntro: "Pakinggan",
+        playingIntro: "Tumutugtog...",
         continueIntro: "Naiintindihan ko",
         audioError: "Hindi ma-play ang recording. Suriin ang tunog ng telepono o basahin ang teksto.",
+        reopenIntro: "Ipakita muli ang intro",
         closeLabel: "Isara",
         startTitle: "Piliin muna kung ano ang kailangan mo",
         startBadge: "UNANG BESES? PINDUTIN DITO",
@@ -952,8 +1001,10 @@
         introSpeech: "Ini adalah Citronex Hydra Project. Di sini Anda memilih kedatangan ke tempat kerja atau lokasi kerja Anda. Setelah itu akan terbuka pelatihan yang benar: peta, instruksi, kontak, dan informasi penting.",
         introScriptLabel: "Teks yang akan Anda dengar:",
         playIntro: "Dengarkan",
+        playingIntro: "Memutar...",
         continueIntro: "Saya mengerti",
         audioError: "Rekaman tidak dapat diputar. Periksa suara di ponsel atau baca teks.",
+        reopenIntro: "Tampilkan intro lagi",
         closeLabel: "Tutup",
         startTitle: "Pilih dulu yang Anda butuhkan",
         startBadge: "PERTAMA KALI? KETUK DI SINI",
@@ -973,8 +1024,10 @@
         introSpeech: "यो Citronex Hydra Project हो। यहाँ तपाईं काममा आउने जानकारी वा आफ्नो काम गर्ने स्थान छान्नुहुन्छ। त्यसपछि सही तालिम खुल्छ: नक्सा, निर्देशन, सम्पर्क र महत्वपूर्ण जानकारी।",
         introScriptLabel: "तपाईंले सुन्ने पाठ:",
         playIntro: "सुन्नुहोस्",
+        playingIntro: "बज्दैछ...",
         continueIntro: "बुझेँ",
         audioError: "रेकर्डिङ बजाउन सकिएन। फोनको आवाज जाँच्नुहोस् वा पाठ पढ्नुहोस्।",
+        reopenIntro: "Intro फेरि देखाउनुहोस्",
         closeLabel: "बन्द गर्नुहोस्",
         startTitle: "पहिले तपाईंलाई चाहिएको कुरा छान्नुहोस्",
         startBadge: "पहिलो पटक हो? यहाँ थिच्नुहोस्",
@@ -996,6 +1049,7 @@
     const audioStatus = document.querySelector("#audioStatus");
     const playIntroButton = document.querySelector("#playIntro");
     const continueIntroButton = document.querySelector("#continueIntro");
+    const reopenIntroButton = document.querySelector("#reopenIntro");
     const supported = Object.keys(translations);
     const params = new URLSearchParams(location.search);
     const initial = supported.includes(params.get("lang")) ? params.get("lang") : localStorage.getItem("hydraLang") || "ru";
@@ -1023,6 +1077,13 @@
       audioStatus.hidden = false;
     }
 
+    function setPlayingState(isPlaying) {
+      const current = supported.includes(select.value) ? select.value : "ru";
+      playIntroButton.textContent = translations[current][isPlaying ? "playingIntro" : "playIntro"] || translations.pl.playIntro;
+      playIntroButton.disabled = isPlaying;
+      playIntroButton.setAttribute("aria-busy", isPlaying ? "true" : "false");
+    }
+
     function setAudioSource(lang) {
       const current = supported.includes(lang) ? lang : "ru";
       const src = introAudioSrc[current];
@@ -1045,6 +1106,7 @@
         const key = node.getAttribute("data-i18n");
         node.textContent = translations[current][key] || translations.pl[key] || node.textContent;
       });
+      setPlayingState(!introAudio.paused && !introAudio.ended);
 
       document.querySelectorAll("[data-i18n-label]").forEach((node) => {
         const key = node.getAttribute("data-i18n-label");
@@ -1065,6 +1127,7 @@
     function stopIntroAudio() {
       introAudio.pause();
       introAudio.currentTime = 0;
+      setPlayingState(false);
     }
 
     function closeIntro() {
@@ -1095,12 +1158,20 @@
       hideAudioStatus();
       introAudio.currentTime = 0;
       const playResult = introAudio.play();
+      setPlayingState(true);
       if (playResult && typeof playResult.catch === "function") {
-        playResult.catch(() => showAudioStatus(current));
+        playResult.catch(() => {
+          setPlayingState(false);
+          showAudioStatus(current);
+        });
       }
     }
 
     select.addEventListener("change", () => setLang(select.value));
+    reopenIntroButton.addEventListener("click", () => {
+      localStorage.removeItem(introSeenKey);
+      openIntro();
+    });
     playIntroButton.addEventListener("click", () => {
       localStorage.setItem(introSeenKey, "1");
       revealIntroText();
@@ -1108,6 +1179,9 @@
     });
     continueIntroButton.addEventListener("click", closeIntro);
     introAudio.addEventListener("error", () => showAudioStatus(select.value));
+    introAudio.addEventListener("ended", () => setPlayingState(false));
+    introAudio.addEventListener("pause", () => setPlayingState(false));
+    introAudio.addEventListener("play", () => setPlayingState(true));
 
     document.querySelectorAll("[data-lang-choice]").forEach((button) => {
       button.addEventListener("click", () => {
