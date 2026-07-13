@@ -119,6 +119,136 @@
       border: 0;
     }
 
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    .intro-modal[hidden] {
+      display: none;
+    }
+
+    .intro-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: calc(14px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom));
+      background: rgba(23, 24, 28, .58);
+      backdrop-filter: blur(12px);
+    }
+
+    .intro-panel {
+      width: min(100%, 520px);
+      max-height: calc(100svh - 28px);
+      overflow: auto;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.5);
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, #fff 0%, #fff7f7 60%, #fff9ea 100%);
+      box-shadow: 0 22px 60px rgba(0,0,0,.24);
+    }
+
+    .intro-head {
+      display: grid;
+      grid-template-columns: 56px 1fr 42px;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+
+    .intro-mark {
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border: 1px solid rgba(217, 4, 22, .12);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(217, 4, 22, .12);
+    }
+
+    .intro-mark img {
+      width: 50px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .intro-title {
+      margin: 1px 0 5px;
+      color: var(--ink);
+      font-size: clamp(20px, 6vw, 28px);
+      line-height: 1.05;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .intro-lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 750;
+    }
+
+    .intro-close {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .language-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .language-choice {
+      display: flex;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 15px;
+      line-height: 1.1;
+      font-weight: 900;
+      text-align: center;
+      box-shadow: 0 8px 18px rgba(20, 24, 33, .08);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .language-choice.primary {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+      box-shadow: 0 10px 22px rgba(217, 4, 22, .2);
+    }
+
+    .intro-hint {
+      margin: 12px 2px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 750;
+    }
+
     .hero {
       display: grid;
       grid-template-columns: 82px 1fr;
@@ -322,6 +452,8 @@
     }
 
     .btn:focus-visible,
+    .intro-close:focus-visible,
+    .language-choice:focus-visible,
     .lang-select:focus-visible {
       outline: 3px solid rgba(217, 4, 22, .28);
       outline-offset: 3px;
@@ -547,11 +679,45 @@
     <footer>CITRONEX HYDRA PROJECT · OLEKSANDR KIRIS</footer>
   </div>
 
+  <div class="intro-modal" id="introModal" role="dialog" aria-modal="true" aria-labelledby="introTitle" hidden>
+    <div class="intro-panel">
+      <div class="intro-head">
+        <div class="intro-mark" aria-hidden="true">
+          <img src="assets/brand/citronex-hydra-logo-web.png" width="50" height="48" alt="">
+        </div>
+        <div>
+          <h2 class="intro-title" id="introTitle" data-i18n="introTitle">Wybierz język</h2>
+          <p class="intro-lead" data-i18n="introLead">Po wyborze telefon powie, co jest w tej aplikacji.</p>
+        </div>
+        <button class="intro-close" type="button" id="introClose" aria-label="Zamknij" data-i18n-label="closeLabel">×</button>
+      </div>
+
+      <div class="language-grid" aria-label="Wybierz język" data-i18n-label="introTitle">
+        <button class="language-choice primary" type="button" data-lang-choice="pl">Polski</button>
+        <button class="language-choice" type="button" data-lang-choice="ru">Русский</button>
+        <button class="language-choice" type="button" data-lang-choice="ua">Українська</button>
+        <button class="language-choice" type="button" data-lang-choice="en">English</button>
+        <button class="language-choice" type="button" data-lang-choice="az">Azərbaycanca</button>
+        <button class="language-choice" type="button" data-lang-choice="es">Español</button>
+        <button class="language-choice" type="button" data-lang-choice="fil">Filipino</button>
+        <button class="language-choice" type="button" data-lang-choice="id">Indonesia</button>
+        <button class="language-choice" type="button" data-lang-choice="ne">नेपाली</button>
+      </div>
+
+      <p class="intro-hint" data-i18n="introHint">Najpierw wybierz język. Potem otwórz przyjazd albo swoją lokalizację.</p>
+    </div>
+  </div>
+
   <script>
     const translations = {
       pl: {
         languageLabel: "Język",
         lead: "Jeden stały link startowy. Wybierz przyjazd albo lokalizację pracy.",
+        introTitle: "Wybierz język",
+        introLead: "Po wyborze telefon powie, co jest w tej aplikacji.",
+        introHint: "Najpierw wybierz język. Potem otwórz przyjazd albo swoją lokalizację.",
+        introSpeech: "To jest Citronex Hydra Project. To jeden stały ekran startowy. Tutaj możesz otworzyć przyjazd do pracy albo wybrać lokalizację: Siechnice, Ryczywół, Zgorzelec lub Bogatynia. Po wybraniu lokalizacji dostaniesz szkolenie, mapy, instrukcje, kontakty i ważne informacje.",
+        closeLabel: "Zamknij",
         startTitle: "Najpierw wybierz, czego potrzebujesz",
         startBadge: "PIERWSZY RAZ? KLIKNIJ TUTAJ",
         arrivalTitle: "PRZYJAZD DO PRACY",
@@ -565,6 +731,11 @@
       ru: {
         languageLabel: "Язык",
         lead: "Одна постоянная стартовая ссылка. Выберите приезд или место работы.",
+        introTitle: "Выберите язык",
+        introLead: "После выбора телефон скажет, что есть в этом приложении.",
+        introHint: "Сначала выберите язык. Потом откройте приезд или свою локацию.",
+        introSpeech: "Это Citronex Hydra Project. Это один постоянный стартовый экран. Здесь можно открыть приезд на работу или выбрать локацию: Siechnice, Ryczywół, Zgorzelec или Bogatynia. После выбора локации вы получите обучение, карты, инструкции, контакты и важную информацию.",
+        closeLabel: "Закрыть",
         startTitle: "Сначала выберите, что вам нужно",
         startBadge: "ПЕРВЫЙ РАЗ? НАЖМИТЕ ЗДЕСЬ",
         arrivalTitle: "ПРИЕЗД НА РАБОТУ",
@@ -578,6 +749,11 @@
       ua: {
         languageLabel: "Мова",
         lead: "Одне постійне стартове посилання. Оберіть приїзд або місце роботи.",
+        introTitle: "Оберіть мову",
+        introLead: "Після вибору телефон скаже, що є в цій аплікації.",
+        introHint: "Спочатку оберіть мову. Потім відкрийте приїзд або свою локацію.",
+        introSpeech: "Це Citronex Hydra Project. Це один постійний стартовий екран. Тут можна відкрити приїзд на роботу або обрати локацію: Siechnice, Ryczywół, Zgorzelec або Bogatynia. Після вибору локації ви отримаєте навчання, карти, інструкції, контакти та важливу інформацію.",
+        closeLabel: "Закрити",
         startTitle: "Спочатку оберіть, що вам потрібно",
         startBadge: "ПЕРШИЙ РАЗ? НАТИСНІТЬ ТУТ",
         arrivalTitle: "ПРИЇЗД НА РОБОТУ",
@@ -591,6 +767,11 @@
       en: {
         languageLabel: "Language",
         lead: "One permanent start link. Choose arrival or work location.",
+        introTitle: "Choose language",
+        introLead: "After you choose, the phone will explain what is in this app.",
+        introHint: "First choose a language. Then open arrival or your location.",
+        introSpeech: "This is Citronex Hydra Project. It is one permanent start screen. Here you can open arrival to work or choose a location: Siechnice, Ryczywół, Zgorzelec or Bogatynia. After choosing a location, you will get training, maps, instructions, contacts and important information.",
+        closeLabel: "Close",
         startTitle: "First choose what you need",
         startBadge: "FIRST TIME? TAP HERE",
         arrivalTitle: "ARRIVAL TO WORK",
@@ -604,6 +785,11 @@
       az: {
         languageLabel: "Dil",
         lead: "Bir daimi başlanğıc linki. Gəlişi və ya iş yerini seçin.",
+        introTitle: "Dil seçin",
+        introLead: "Seçdikdən sonra telefon bu tətbiqdə nə olduğunu izah edəcək.",
+        introHint: "Əvvəl dili seçin. Sonra gəlişi və ya öz məkanınızı açın.",
+        introSpeech: "Bu Citronex Hydra Project-dir. Bu bir daimi başlanğıc ekranıdır. Burada işə gəlişi aça və ya məkanı seçə bilərsiniz: Siechnice, Ryczywół, Zgorzelec və ya Bogatynia. Məkanı seçdikdən sonra təlim, xəritələr, təlimatlar, kontaktlar və vacib məlumat alacaqsınız.",
+        closeLabel: "Bağla",
         startTitle: "Əvvəl sizə lazım olanı seçin",
         startBadge: "İLK DƏFƏDİR? BURANI BASIN",
         arrivalTitle: "İŞƏ GƏLİŞ",
@@ -617,6 +803,11 @@
       es: {
         languageLabel: "Idioma",
         lead: "Un enlace inicial permanente. Elige llegada o lugar de trabajo.",
+        introTitle: "Elige idioma",
+        introLead: "Después de elegir, el teléfono explicará qué hay en esta aplicación.",
+        introHint: "Primero elige el idioma. Luego abre la llegada o tu ubicación.",
+        introSpeech: "Este es Citronex Hydra Project. Es una pantalla inicial permanente. Aquí puedes abrir la llegada al trabajo o elegir una ubicación: Siechnice, Ryczywół, Zgorzelec o Bogatynia. Después de elegir la ubicación, recibirás formación, mapas, instrucciones, contactos e información importante.",
+        closeLabel: "Cerrar",
         startTitle: "Primero elige lo que necesitas",
         startBadge: "¿PRIMERA VEZ? PULSA AQUÍ",
         arrivalTitle: "LLEGADA AL TRABAJO",
@@ -630,6 +821,11 @@
       fil: {
         languageLabel: "Wika",
         lead: "Isang permanenteng start link. Piliin ang pagdating o lokasyon ng trabaho.",
+        introTitle: "Pumili ng wika",
+        introLead: "Pagkatapos pumili, sasabihin ng telepono kung ano ang nasa app na ito.",
+        introHint: "Piliin muna ang wika. Pagkatapos buksan ang pagdating o ang iyong lokasyon.",
+        introSpeech: "Ito ang Citronex Hydra Project. Isa itong permanenteng start screen. Dito maaari mong buksan ang pagdating sa trabaho o pumili ng lokasyon: Siechnice, Ryczywół, Zgorzelec o Bogatynia. Pagkatapos pumili ng lokasyon, makikita mo ang training, mga mapa, instruksyon, kontak at mahalagang impormasyon.",
+        closeLabel: "Isara",
         startTitle: "Piliin muna kung ano ang kailangan mo",
         startBadge: "UNANG BESES? PINDUTIN DITO",
         arrivalTitle: "PAGDATING SA TRABAHO",
@@ -643,6 +839,11 @@
       id: {
         languageLabel: "Bahasa",
         lead: "Satu tautan awal tetap. Pilih kedatangan atau lokasi kerja.",
+        introTitle: "Pilih bahasa",
+        introLead: "Setelah memilih, ponsel akan menjelaskan isi aplikasi ini.",
+        introHint: "Pertama pilih bahasa. Lalu buka kedatangan atau lokasi Anda.",
+        introSpeech: "Ini adalah Citronex Hydra Project. Ini adalah satu layar awal tetap. Di sini Anda dapat membuka kedatangan ke tempat kerja atau memilih lokasi: Siechnice, Ryczywół, Zgorzelec atau Bogatynia. Setelah memilih lokasi, Anda akan mendapatkan pelatihan, peta, instruksi, kontak dan informasi penting.",
+        closeLabel: "Tutup",
         startTitle: "Pilih dulu yang Anda butuhkan",
         startBadge: "PERTAMA KALI? KETUK DI SINI",
         arrivalTitle: "DATANG KE TEMPAT KERJA",
@@ -656,6 +857,11 @@
       ne: {
         languageLabel: "भाषा",
         lead: "एउटा स्थायी सुरुवाती लिंक। आगमन वा काम गर्ने स्थान छान्नुहोस्।",
+        introTitle: "भाषा छान्नुहोस्",
+        introLead: "छानेपछि फोनले यो एपमा के छ भनेर बताउँछ।",
+        introHint: "पहिले भाषा छान्नुहोस्। त्यसपछि आगमन वा आफ्नो स्थान खोल्नुहोस्।",
+        introSpeech: "यो Citronex Hydra Project हो। यो एउटा स्थायी सुरु गर्ने स्क्रिन हो। यहाँ तपाईं काममा आउने जानकारी खोल्न सक्नुहुन्छ वा स्थान छान्न सक्नुहुन्छ: Siechnice, Ryczywół, Zgorzelec वा Bogatynia। स्थान छानेपछि तपाईंले तालिम, नक्सा, निर्देशन, सम्पर्क र महत्वपूर्ण जानकारी पाउनुहुनेछ।",
+        closeLabel: "बन्द गर्नुहोस्",
         startTitle: "पहिले तपाईंलाई चाहिएको कुरा छान्नुहोस्",
         startBadge: "पहिलो पटक हो? यहाँ थिच्नुहोस्",
         arrivalTitle: "काममा आउने जानकारी",
@@ -669,9 +875,22 @@
     };
 
     const select = document.querySelector("#langSelect");
+    const introModal = document.querySelector("#introModal");
+    const introClose = document.querySelector("#introClose");
     const supported = Object.keys(translations);
     const params = new URLSearchParams(location.search);
     const initial = supported.includes(params.get("lang")) ? params.get("lang") : localStorage.getItem("hydraLang") || "ru";
+    const speechLang = {
+      pl: "pl-PL",
+      ru: "ru-RU",
+      ua: "uk-UA",
+      en: "en-US",
+      az: "az-AZ",
+      es: "es-ES",
+      fil: "fil-PH",
+      id: "id-ID",
+      ne: "ne-NP"
+    };
 
     function setLang(lang) {
       const current = supported.includes(lang) ? lang : "ru";
@@ -684,6 +903,15 @@
         node.textContent = translations[current][key] || translations.pl[key] || node.textContent;
       });
 
+      document.querySelectorAll("[data-i18n-label]").forEach((node) => {
+        const key = node.getAttribute("data-i18n-label");
+        node.setAttribute("aria-label", translations[current][key] || translations.pl[key] || node.getAttribute("aria-label"));
+      });
+
+      document.querySelectorAll("[data-lang-choice]").forEach((button) => {
+        button.classList.toggle("primary", button.getAttribute("data-lang-choice") === current);
+      });
+
       document.querySelectorAll(".project-link").forEach((link) => {
         const target = new URL(link.dataset.base, location.href);
         target.searchParams.set("lang", current);
@@ -691,8 +919,64 @@
       });
     }
 
-    select.addEventListener("change", () => setLang(select.value));
+    function closeIntro() {
+      introModal.hidden = true;
+      document.body.classList.remove("modal-open");
+    }
+
+    function openIntro() {
+      introModal.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function speakIntro(lang) {
+      const current = supported.includes(lang) ? lang : "ru";
+      const text = translations[current].introSpeech;
+      if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined" || !text) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = speechLang[current] || current;
+      utterance.rate = .94;
+      utterance.pitch = 1;
+
+      const pickVoice = () => {
+        const voices = window.speechSynthesis.getVoices();
+        const wanted = (speechLang[current] || current).toLowerCase();
+        const short = wanted.split("-")[0];
+        return voices.find((voice) => voice.lang.toLowerCase() === wanted)
+          || voices.find((voice) => voice.lang.toLowerCase().startsWith(short));
+      };
+
+      const voice = pickVoice();
+      if (voice) utterance.voice = voice;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+
+    select.addEventListener("change", () => {
+      setLang(select.value);
+      speakIntro(select.value);
+    });
+
+    document.querySelectorAll("[data-lang-choice]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const lang = button.getAttribute("data-lang-choice");
+        setLang(lang);
+        closeIntro();
+        speakIntro(lang);
+      });
+    });
+
+    introClose.addEventListener("click", closeIntro);
+    introModal.addEventListener("click", (event) => {
+      if (event.target === introModal) closeIntro();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !introModal.hidden) closeIntro();
+    });
+
     setLang(initial);
+    openIntro();
   </script>
 </body>
 </html>
