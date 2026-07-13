@@ -1,6 +1,6 @@
-# CITRONEX HYDRA PROJECT
+# CITRONEX hydra S.R.Z.B.
 
-Staly portal startowy do projektow szkoleniowych.
+Staly portal startowy do szkolen i lokalizacji.
 
 Autor: OLEKSANDR KIRIS
 
@@ -13,4 +13,4 @@ Autor: OLEKSANDR KIRIS
 
 ## Cel
 
-Jeden niezmienny link dla ludzi. Hydra nie kopiuje tresci szkolen, tylko prowadzi do wlasciwego projektu.
+Jeden niezmienny link dla ludzi. Hydra nie kopiuje tresci szkolen, tylko prowadzi do wlasciwej lokalizacji.
