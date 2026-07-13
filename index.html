@@ -424,37 +424,12 @@
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: 82px 1fr;
-      gap: 14px;
-      align-items: center;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.98), rgba(255,245,246,.96) 58%, rgba(255,249,237,.96)),
-        var(--panel);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .logo-wrap {
-      display: grid;
-      place-items: center;
-      width: 82px;
-      min-height: 82px;
-      border: 1px solid rgba(217, 4, 22, .12);
-      border-radius: 8px;
-      background: #fff;
-      box-shadow: 0 10px 24px rgba(217, 4, 22, .11);
-    }
-
-    .logo {
       display: block;
-      width: 74px;
-      max-height: 72px;
-      height: auto;
-      object-fit: contain;
+      margin: 0 0 8px;
+      padding: 4px 2px 6px;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
     }
 
     .hero-copy {
@@ -675,18 +650,7 @@
       }
 
       .hero {
-        grid-template-columns: 104px 1fr;
-        padding: 18px 22px;
-      }
-
-      .logo {
-        width: 92px;
-        max-height: 90px;
-      }
-
-      .logo-wrap {
-        width: 104px;
-        min-height: 104px;
+        padding: 6px 2px 8px;
       }
 
       .cards {
@@ -744,19 +708,7 @@
       }
 
       .hero {
-        grid-template-columns: 64px 1fr;
-        gap: 10px;
-        padding: 11px;
-      }
-
-      .logo-wrap {
-        width: 64px;
-        min-height: 64px;
-      }
-
-      .logo {
-        width: 56px;
-        max-height: 54px;
+        padding: 3px 2px 5px;
       }
 
       .card {
@@ -837,9 +789,6 @@
 
     <main>
       <section class="hero">
-        <div class="logo-wrap">
-          <img class="logo" src="assets/brand/citronex-hydra-logo-web.png" width="500" height="481" alt="CITRONEX OLEKSANDR KIRIS">
-        </div>
         <div class="hero-copy">
           <h1 data-i18n="heroTitle">Wybierz lokalizację</h1>
           <p class="owner">OLEKSANDR KIRIS</p>
