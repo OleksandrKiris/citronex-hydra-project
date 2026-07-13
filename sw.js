@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "citronex-hydra-srzb-";
-const CACHE_NAME = CACHE_PREFIX + "20260713-pwa1";
+const CACHE_NAME = CACHE_PREFIX + "20260713-unifiedstyle3";
 
 const CORE_ASSETS = [
   "./",
