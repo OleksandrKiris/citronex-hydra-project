@@ -249,6 +249,26 @@
       font-weight: 750;
     }
 
+    .intro-result[hidden] {
+      display: none;
+    }
+
+    .intro-result {
+      margin-top: 12px;
+      animation: introReveal .18s ease-out;
+    }
+
+    @keyframes introReveal {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .intro-script-label {
       margin: 14px 2px 7px;
       color: var(--ink);
@@ -761,13 +781,15 @@
         <button class="language-choice" type="button" data-lang-choice="ne">नेपाली</button>
       </div>
 
-      <p class="intro-hint" data-i18n="introHint">Najpierw wybierz język. Potem otwórz przyjazd albo swoją lokalizację.</p>
-      <p class="intro-script-label" data-i18n="introScriptLabel">Tekst, który usłyszysz:</p>
-      <div class="intro-script" id="introScript" data-i18n="introSpeech">To jest Citronex Hydra Project. Tutaj wybierasz przyjazd do pracy albo swoją lokalizację pracy. Po kliknięciu otworzy się właściwe szkolenie: mapy, instrukcje, kontakty i ważne informacje.</div>
-      <p class="audio-status" id="audioStatus" hidden></p>
-      <div class="intro-actions">
-        <button class="intro-action primary" type="button" id="playIntro" data-i18n="playIntro">Odsłuchaj</button>
-        <button class="intro-action" type="button" id="continueIntro" data-i18n="continueIntro">Rozumiem</button>
+      <div class="intro-result" id="introResult" aria-live="polite" hidden>
+        <p class="intro-hint" data-i18n="introHint">Najpierw wybierz język. Potem otwórz przyjazd albo swoją lokalizację.</p>
+        <p class="intro-script-label" data-i18n="introScriptLabel">Tekst, który usłyszysz:</p>
+        <div class="intro-script" id="introScript" data-i18n="introSpeech">To jest Citronex Hydra Project. Tutaj wybierasz przyjazd do pracy albo swoją lokalizację pracy. Po kliknięciu otworzy się właściwe szkolenie: mapy, instrukcje, kontakty i ważne informacje.</div>
+        <p class="audio-status" id="audioStatus" hidden></p>
+        <div class="intro-actions">
+          <button class="intro-action primary" type="button" id="playIntro" data-i18n="playIntro">Odsłuchaj</button>
+          <button class="intro-action" type="button" id="continueIntro" data-i18n="continueIntro">Rozumiem</button>
+        </div>
       </div>
       <audio id="introAudio" preload="auto"></audio>
     </div>
@@ -969,6 +991,7 @@
     const select = document.querySelector("#langSelect");
     const introModal = document.querySelector("#introModal");
     const introClose = document.querySelector("#introClose");
+    const introResult = document.querySelector("#introResult");
     const introAudio = document.querySelector("#introAudio");
     const audioStatus = document.querySelector("#audioStatus");
     const playIntroButton = document.querySelector("#playIntro");
@@ -1052,8 +1075,18 @@
     }
 
     function openIntro() {
+      introResult.hidden = true;
+      hideAudioStatus();
+      stopIntroAudio();
       introModal.hidden = false;
       document.body.classList.add("modal-open");
+    }
+
+    function revealIntroText() {
+      introResult.hidden = false;
+      window.requestAnimationFrame(() => {
+        introResult.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      });
     }
 
     function playIntroAudio(lang = select.value) {
@@ -1070,6 +1103,7 @@
     select.addEventListener("change", () => setLang(select.value));
     playIntroButton.addEventListener("click", () => {
       localStorage.setItem(introSeenKey, "1");
+      revealIntroText();
       playIntroAudio(select.value);
     });
     continueIntroButton.addEventListener("click", closeIntro);
@@ -1079,6 +1113,7 @@
       button.addEventListener("click", () => {
         const lang = button.getAttribute("data-lang-choice");
         setLang(lang);
+        revealIntroText();
         localStorage.setItem(introSeenKey, "1");
         playIntroAudio(lang);
       });
