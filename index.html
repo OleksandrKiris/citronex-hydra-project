@@ -249,11 +249,65 @@
       font-weight: 750;
     }
 
-    .voice-status[hidden] {
+    .intro-script-label {
+      margin: 14px 2px 7px;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .intro-script {
+      padding: 12px;
+      border: 1px solid rgba(15, 101, 216, .14);
+      border-radius: 8px;
+      background: #f8fbff;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 760;
+    }
+
+    .intro-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .intro-action {
+      display: inline-flex;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 15px;
+      line-height: 1.1;
+      font-weight: 950;
+      text-align: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      box-shadow: 0 8px 18px rgba(20, 24, 33, .08);
+    }
+
+    .intro-action.primary {
+      border-color: var(--red);
+      background: var(--red);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(217, 4, 22, .2);
+    }
+
+    .audio-status[hidden] {
       display: none;
     }
 
-    .voice-status {
+    .audio-status {
       margin: 10px 2px 0;
       padding: 10px 11px;
       border: 1px solid rgba(217, 4, 22, .18);
@@ -460,6 +514,7 @@
 
     .btn:focus-visible,
     .intro-close:focus-visible,
+    .intro-action:focus-visible,
     .language-choice:focus-visible,
     .lang-select:focus-visible {
       outline: 3px solid rgba(217, 4, 22, .28);
@@ -571,6 +626,10 @@
 
       .btn {
         min-height: 54px;
+      }
+
+      .intro-actions {
+        grid-template-columns: 1fr;
       }
 
     }
@@ -703,7 +762,14 @@
       </div>
 
       <p class="intro-hint" data-i18n="introHint">Najpierw wybierz język. Potem otwórz przyjazd albo swoją lokalizację.</p>
-      <p class="voice-status" id="voiceStatus" hidden></p>
+      <p class="intro-script-label" data-i18n="introScriptLabel">Tekst, który usłyszysz:</p>
+      <div class="intro-script" id="introScript" data-i18n="introSpeech">To jest Citronex Hydra Project. Tutaj wybierasz przyjazd do pracy albo swoją lokalizację pracy. Po kliknięciu otworzy się właściwe szkolenie: mapy, instrukcje, kontakty i ważne informacje.</div>
+      <p class="audio-status" id="audioStatus" hidden></p>
+      <div class="intro-actions">
+        <button class="intro-action primary" type="button" id="playIntro" data-i18n="playIntro">Odsłuchaj</button>
+        <button class="intro-action" type="button" id="continueIntro" data-i18n="continueIntro">Rozumiem</button>
+      </div>
+      <audio id="introAudio" preload="auto"></audio>
     </div>
   </div>
 
@@ -713,10 +779,12 @@
         languageLabel: "Język",
         introTitle: "Wybierz język",
         introLead: "Po wyborze telefon powie, co jest w tej aplikacji.",
-        introHint: "Najpierw wybierz język. Potem otwórz przyjazd albo swoją lokalizację.",
-        introSpeech: "To jest Citronex Hydra Project. To jeden stały ekran startowy. Tutaj możesz otworzyć przyjazd do pracy albo wybrać lokalizację: Siechnice, Ryczywół, Zgorzelec lub Bogatynia. Po wybraniu lokalizacji dostaniesz szkolenie, mapy, instrukcje, kontakty i ważne informacje.",
-        voiceUnavailable: "Ten telefon nie ma dobrego głosu dla wybranego języka. Nie będę czytać złym głosem. Przeczytaj tekst na ekranie.",
-        voiceNotSupported: "Ta przeglądarka nie obsługuje odczytu głosem. Przeczytaj tekst na ekranie.",
+        introHint: "Wybierz język, odsłuchaj krótki opis i kliknij Rozumiem.",
+        introSpeech: "To jest Citronex Hydra Project. Tutaj wybierasz przyjazd do pracy albo swoją lokalizację pracy. Po kliknięciu otworzy się właściwe szkolenie: mapy, instrukcje, kontakty i ważne informacje.",
+        introScriptLabel: "Tekst, który usłyszysz:",
+        playIntro: "Odsłuchaj",
+        continueIntro: "Rozumiem",
+        audioError: "Nie udało się odtworzyć nagrania. Sprawdź dźwięk w telefonie albo przeczytaj tekst.",
         closeLabel: "Zamknij",
         startTitle: "Najpierw wybierz, czego potrzebujesz",
         startBadge: "PIERWSZY RAZ? KLIKNIJ TUTAJ",
@@ -732,10 +800,12 @@
         languageLabel: "Язык",
         introTitle: "Выберите язык",
         introLead: "После выбора телефон скажет, что есть в этом приложении.",
-        introHint: "Сначала выберите язык. Потом откройте приезд или свою локацию.",
-        introSpeech: "Это Citronex Hydra Project. Это один постоянный стартовый экран. Здесь можно открыть приезд на работу или выбрать локацию: Siechnice, Ryczywół, Zgorzelec или Bogatynia. После выбора локации вы получите обучение, карты, инструкции, контакты и важную информацию.",
-        voiceUnavailable: "На этом телефоне нет правильного голоса для выбранного языка. Я не буду читать неправильным голосом. Прочитайте текст на экране.",
-        voiceNotSupported: "Этот браузер не поддерживает чтение голосом. Прочитайте текст на экране.",
+        introHint: "Выберите язык, прослушайте короткое описание и нажмите Понятно.",
+        introSpeech: "Это Citronex Hydra Project. Здесь выберите приезд на работу или свою рабочую локацию. После выбора откроется нужное обучение: карты, инструкции, контакты и важная информация.",
+        introScriptLabel: "Текст, который вы услышите:",
+        playIntro: "Прослушать",
+        continueIntro: "Понятно",
+        audioError: "Не удалось воспроизвести запись. Проверьте звук в телефоне или прочитайте текст.",
         closeLabel: "Закрыть",
         startTitle: "Сначала выберите, что вам нужно",
         startBadge: "ПЕРВЫЙ РАЗ? НАЖМИТЕ ЗДЕСЬ",
@@ -751,10 +821,12 @@
         languageLabel: "Мова",
         introTitle: "Оберіть мову",
         introLead: "Після вибору телефон скаже, що є в цій аплікації.",
-        introHint: "Спочатку оберіть мову. Потім відкрийте приїзд або свою локацію.",
-        introSpeech: "Це Citronex Hydra Project. Це один постійний стартовий екран. Тут можна відкрити приїзд на роботу або обрати локацію: Siechnice, Ryczywół, Zgorzelec або Bogatynia. Після вибору локації ви отримаєте навчання, карти, інструкції, контакти та важливу інформацію.",
-        voiceUnavailable: "На цьому телефоні немає правильного голосу для обраної мови. Я не буду читати неправильним голосом. Прочитайте текст на екрані.",
-        voiceNotSupported: "Цей браузер не підтримує читання голосом. Прочитайте текст на екрані.",
+        introHint: "Оберіть мову, прослухайте короткий опис і натисніть Зрозуміло.",
+        introSpeech: "Це Citronex Hydra Project. Тут оберіть приїзд на роботу або свою робочу локацію. Після вибору відкриється потрібне навчання: карти, інструкції, контакти та важлива інформація.",
+        introScriptLabel: "Текст, який ви почуєте:",
+        playIntro: "Прослухати",
+        continueIntro: "Зрозуміло",
+        audioError: "Не вдалося відтворити запис. Перевірте звук у телефоні або прочитайте текст.",
         closeLabel: "Закрити",
         startTitle: "Спочатку оберіть, що вам потрібно",
         startBadge: "ПЕРШИЙ РАЗ? НАТИСНІТЬ ТУТ",
@@ -770,10 +842,12 @@
         languageLabel: "Language",
         introTitle: "Choose language",
         introLead: "After you choose, the phone will explain what is in this app.",
-        introHint: "First choose a language. Then open arrival or your location.",
-        introSpeech: "This is Citronex Hydra Project. It is one permanent start screen. Here you can open arrival to work or choose a location: Siechnice, Ryczywół, Zgorzelec or Bogatynia. After choosing a location, you will get training, maps, instructions, contacts and important information.",
-        voiceUnavailable: "This phone does not have a correct voice for the selected language. I will not read it with a wrong voice. Please read the text on the screen.",
-        voiceNotSupported: "This browser does not support voice reading. Please read the text on the screen.",
+        introHint: "Choose a language, listen to the short description, then tap I understand.",
+        introSpeech: "This is Citronex Hydra Project. Here you choose arrival to work or your work location. After choosing, the correct training will open: maps, instructions, contacts, and important information.",
+        introScriptLabel: "Text you will hear:",
+        playIntro: "Listen",
+        continueIntro: "I understand",
+        audioError: "The recording could not be played. Check sound on the phone or read the text.",
         closeLabel: "Close",
         startTitle: "First choose what you need",
         startBadge: "FIRST TIME? TAP HERE",
@@ -789,10 +863,12 @@
         languageLabel: "Dil",
         introTitle: "Dil seçin",
         introLead: "Seçdikdən sonra telefon bu tətbiqdə nə olduğunu izah edəcək.",
-        introHint: "Əvvəl dili seçin. Sonra gəlişi və ya öz məkanınızı açın.",
-        introSpeech: "Bu Citronex Hydra Project-dir. Bu bir daimi başlanğıc ekranıdır. Burada işə gəlişi aça və ya məkanı seçə bilərsiniz: Siechnice, Ryczywół, Zgorzelec və ya Bogatynia. Məkanı seçdikdən sonra təlim, xəritələr, təlimatlar, kontaktlar və vacib məlumat alacaqsınız.",
-        voiceUnavailable: "Bu telefonda seçilən dil üçün düzgün səs yoxdur. Yanlış səslə oxumayacağam. Mətni ekranda oxuyun.",
-        voiceNotSupported: "Bu brauzer səslə oxumağı dəstəkləmir. Mətni ekranda oxuyun.",
+        introHint: "Dili seçin, qısa izahı dinləyin və Başa düşdüm düyməsini basın.",
+        introSpeech: "Bu Citronex Hydra Project-dir. Burada işə gəlişi və ya iş yerinizi seçirsiniz. Seçimdən sonra sizə uyğun təlim açılacaq: xəritələr, təlimatlar, kontaktlar və vacib məlumatlar.",
+        introScriptLabel: "Eşidəcəyiniz mətn:",
+        playIntro: "Dinlə",
+        continueIntro: "Başa düşdüm",
+        audioError: "Səs yazısını oxutmaq mümkün olmadı. Telefonda səsi yoxlayın və ya mətni oxuyun.",
         closeLabel: "Bağla",
         startTitle: "Əvvəl sizə lazım olanı seçin",
         startBadge: "İLK DƏFƏDİR? BURANI BASIN",
@@ -808,10 +884,12 @@
         languageLabel: "Idioma",
         introTitle: "Elige idioma",
         introLead: "Después de elegir, el teléfono explicará qué hay en esta aplicación.",
-        introHint: "Primero elige el idioma. Luego abre la llegada o tu ubicación.",
-        introSpeech: "Este es Citronex Hydra Project. Es una pantalla inicial permanente. Aquí puedes abrir la llegada al trabajo o elegir una ubicación: Siechnice, Ryczywół, Zgorzelec o Bogatynia. Después de elegir la ubicación, recibirás formación, mapas, instrucciones, contactos e información importante.",
-        voiceUnavailable: "Este teléfono no tiene una voz correcta para el idioma elegido. No leeré con una voz incorrecta. Lee el texto en la pantalla.",
-        voiceNotSupported: "Este navegador no admite lectura por voz. Lee el texto en la pantalla.",
+        introHint: "Elige idioma, escucha la explicación corta y pulsa Entiendo.",
+        introSpeech: "Este es Citronex Hydra Project. Aquí eliges la llegada al trabajo o tu ubicación de trabajo. Después se abrirá la formación correcta: mapas, instrucciones, contactos e información importante.",
+        introScriptLabel: "Texto que escucharás:",
+        playIntro: "Escuchar",
+        continueIntro: "Entiendo",
+        audioError: "No se pudo reproducir la grabación. Revisa el sonido del teléfono o lee el texto.",
         closeLabel: "Cerrar",
         startTitle: "Primero elige lo que necesitas",
         startBadge: "¿PRIMERA VEZ? PULSA AQUÍ",
@@ -827,10 +905,12 @@
         languageLabel: "Wika",
         introTitle: "Pumili ng wika",
         introLead: "Pagkatapos pumili, sasabihin ng telepono kung ano ang nasa app na ito.",
-        introHint: "Piliin muna ang wika. Pagkatapos buksan ang pagdating o ang iyong lokasyon.",
-        introSpeech: "Ito ang Citronex Hydra Project. Isa itong permanenteng start screen. Dito maaari mong buksan ang pagdating sa trabaho o pumili ng lokasyon: Siechnice, Ryczywół, Zgorzelec o Bogatynia. Pagkatapos pumili ng lokasyon, makikita mo ang training, mga mapa, instruksyon, kontak at mahalagang impormasyon.",
-        voiceUnavailable: "Walang tamang boses ang teleponong ito para sa napiling wika. Hindi ko ito babasahin gamit ang maling boses. Basahin ang teksto sa screen.",
-        voiceNotSupported: "Hindi suportado ng browser na ito ang voice reading. Basahin ang teksto sa screen.",
+        introHint: "Piliin ang wika, pakinggan ang maikling paliwanag, pagkatapos pindutin ang Naiintindihan ko.",
+        introSpeech: "Ito ang Citronex Hydra Project. Dito pipiliin mo ang pagdating sa trabaho o ang iyong lokasyon sa trabaho. Pagkatapos, bubukas ang tamang training: mga mapa, instruksyon, kontak at mahalagang impormasyon.",
+        introScriptLabel: "Tekstong maririnig mo:",
+        playIntro: "Pakinggan",
+        continueIntro: "Naiintindihan ko",
+        audioError: "Hindi ma-play ang recording. Suriin ang tunog ng telepono o basahin ang teksto.",
         closeLabel: "Isara",
         startTitle: "Piliin muna kung ano ang kailangan mo",
         startBadge: "UNANG BESES? PINDUTIN DITO",
@@ -846,10 +926,12 @@
         languageLabel: "Bahasa",
         introTitle: "Pilih bahasa",
         introLead: "Setelah memilih, ponsel akan menjelaskan isi aplikasi ini.",
-        introHint: "Pertama pilih bahasa. Lalu buka kedatangan atau lokasi Anda.",
-        introSpeech: "Ini adalah Citronex Hydra Project. Ini adalah satu layar awal tetap. Di sini Anda dapat membuka kedatangan ke tempat kerja atau memilih lokasi: Siechnice, Ryczywół, Zgorzelec atau Bogatynia. Setelah memilih lokasi, Anda akan mendapatkan pelatihan, peta, instruksi, kontak dan informasi penting.",
-        voiceUnavailable: "Ponsel ini tidak memiliki suara yang benar untuk bahasa yang dipilih. Saya tidak akan membacanya dengan suara yang salah. Silakan baca teks di layar.",
-        voiceNotSupported: "Browser ini tidak mendukung pembacaan suara. Silakan baca teks di layar.",
+        introHint: "Pilih bahasa, dengarkan penjelasan singkat, lalu ketuk Saya mengerti.",
+        introSpeech: "Ini adalah Citronex Hydra Project. Di sini Anda memilih kedatangan ke tempat kerja atau lokasi kerja Anda. Setelah itu akan terbuka pelatihan yang benar: peta, instruksi, kontak, dan informasi penting.",
+        introScriptLabel: "Teks yang akan Anda dengar:",
+        playIntro: "Dengarkan",
+        continueIntro: "Saya mengerti",
+        audioError: "Rekaman tidak dapat diputar. Periksa suara di ponsel atau baca teks.",
         closeLabel: "Tutup",
         startTitle: "Pilih dulu yang Anda butuhkan",
         startBadge: "PERTAMA KALI? KETUK DI SINI",
@@ -865,10 +947,12 @@
         languageLabel: "भाषा",
         introTitle: "भाषा छान्नुहोस्",
         introLead: "छानेपछि फोनले यो एपमा के छ भनेर बताउँछ।",
-        introHint: "पहिले भाषा छान्नुहोस्। त्यसपछि आगमन वा आफ्नो स्थान खोल्नुहोस्।",
-        introSpeech: "यो Citronex Hydra Project हो। यो एउटा स्थायी सुरु गर्ने स्क्रिन हो। यहाँ तपाईं काममा आउने जानकारी खोल्न सक्नुहुन्छ वा स्थान छान्न सक्नुहुन्छ: Siechnice, Ryczywół, Zgorzelec वा Bogatynia। स्थान छानेपछि तपाईंले तालिम, नक्सा, निर्देशन, सम्पर्क र महत्वपूर्ण जानकारी पाउनुहुनेछ।",
-        voiceUnavailable: "यो फोनमा छानेको भाषाका लागि सही आवाज छैन। म गलत आवाजमा पढ्ने छैन। कृपया स्क्रिनमा भएको पाठ पढ्नुहोस्।",
-        voiceNotSupported: "यो ब्राउजरले आवाजमा पढ्ने सुविधा समर्थन गर्दैन। कृपया स्क्रिनमा भएको पाठ पढ्नुहोस्।",
+        introHint: "भाषा छान्नुहोस्, छोटो विवरण सुन्नुहोस् र बुझेँ थिच्नुहोस्।",
+        introSpeech: "यो Citronex Hydra Project हो। यहाँ तपाईं काममा आउने जानकारी वा आफ्नो काम गर्ने स्थान छान्नुहुन्छ। त्यसपछि सही तालिम खुल्छ: नक्सा, निर्देशन, सम्पर्क र महत्वपूर्ण जानकारी।",
+        introScriptLabel: "तपाईंले सुन्ने पाठ:",
+        playIntro: "सुन्नुहोस्",
+        continueIntro: "बुझेँ",
+        audioError: "रेकर्डिङ बजाउन सकिएन। फोनको आवाज जाँच्नुहोस् वा पाठ पढ्नुहोस्।",
         closeLabel: "बन्द गर्नुहोस्",
         startTitle: "पहिले तपाईंलाई चाहिएको कुरा छान्नुहोस्",
         startBadge: "पहिलो पटक हो? यहाँ थिच्नुहोस्",
@@ -885,28 +969,54 @@
     const select = document.querySelector("#langSelect");
     const introModal = document.querySelector("#introModal");
     const introClose = document.querySelector("#introClose");
-    const voiceStatus = document.querySelector("#voiceStatus");
+    const introAudio = document.querySelector("#introAudio");
+    const audioStatus = document.querySelector("#audioStatus");
+    const playIntroButton = document.querySelector("#playIntro");
+    const continueIntroButton = document.querySelector("#continueIntro");
     const supported = Object.keys(translations);
     const params = new URLSearchParams(location.search);
     const initial = supported.includes(params.get("lang")) ? params.get("lang") : localStorage.getItem("hydraLang") || "ru";
-    let voiceRetryTimer;
-    const speechVoiceCodes = {
-      pl: ["pl-PL", "pl"],
-      ru: ["ru-RU", "ru"],
-      ua: ["uk-UA", "uk"],
-      en: ["en-US", "en-GB", "en"],
-      az: ["az-AZ", "az"],
-      es: ["es-ES", "es-MX", "es"],
-      fil: ["fil-PH", "fil", "tl-PH", "tl"],
-      id: ["id-ID", "id"],
-      ne: ["ne-NP", "ne"]
+    const introSeenKey = "hydraIntroAudioSeenV1";
+    const introAudioSrc = {
+      pl: "assets/audio/intro-pl.mp3",
+      ru: "assets/audio/intro-ru.mp3",
+      ua: "assets/audio/intro-ua.mp3",
+      en: "assets/audio/intro-en.mp3",
+      az: "assets/audio/intro-az.mp3",
+      es: "assets/audio/intro-es.mp3",
+      fil: "assets/audio/intro-fil.mp3",
+      id: "assets/audio/intro-id.mp3",
+      ne: "assets/audio/intro-ne.mp3"
     };
+
+    function hideAudioStatus() {
+      audioStatus.hidden = true;
+      audioStatus.textContent = "";
+    }
+
+    function showAudioStatus(lang) {
+      const current = supported.includes(lang) ? lang : "ru";
+      audioStatus.textContent = translations[current].audioError || translations.pl.audioError;
+      audioStatus.hidden = false;
+    }
+
+    function setAudioSource(lang) {
+      const current = supported.includes(lang) ? lang : "ru";
+      const src = introAudioSrc[current];
+      if (introAudio.getAttribute("src") !== src) {
+        introAudio.pause();
+        introAudio.src = src;
+        introAudio.load();
+      }
+    }
 
     function setLang(lang) {
       const current = supported.includes(lang) ? lang : "ru";
       document.documentElement.lang = current === "ua" ? "uk" : current;
       select.value = current;
       localStorage.setItem("hydraLang", current);
+      hideAudioStatus();
+      setAudioSource(current);
 
       document.querySelectorAll("[data-i18n]").forEach((node) => {
         const key = node.getAttribute("data-i18n");
@@ -929,9 +1039,16 @@
       });
     }
 
+    function stopIntroAudio() {
+      introAudio.pause();
+      introAudio.currentTime = 0;
+    }
+
     function closeIntro() {
+      stopIntroAudio();
       introModal.hidden = true;
       document.body.classList.remove("modal-open");
+      localStorage.setItem(introSeenKey, "1");
     }
 
     function openIntro() {
@@ -939,85 +1056,27 @@
       document.body.classList.add("modal-open");
     }
 
-    function showVoiceStatus(lang, key) {
+    function playIntroAudio(lang = select.value) {
       const current = supported.includes(lang) ? lang : "ru";
-      voiceStatus.textContent = translations[current][key] || translations.pl[key] || "";
-      voiceStatus.hidden = !voiceStatus.textContent;
-    }
-
-    function hideVoiceStatus() {
-      voiceStatus.hidden = true;
-      voiceStatus.textContent = "";
-    }
-
-    function findVoiceForLang(lang) {
-      const voices = window.speechSynthesis.getVoices();
-      const codes = speechVoiceCodes[lang] || [];
-      return voices.find((voice) => {
-        const voiceLang = voice.lang.toLowerCase();
-        return codes.some((code) => {
-          const wanted = code.toLowerCase();
-          return voiceLang === wanted || (!wanted.includes("-") && voiceLang.startsWith(`${wanted}-`));
-        });
-      }) || null;
-    }
-
-    function speakIntro(lang, closeAfterStart = false) {
-      const current = supported.includes(lang) ? lang : "ru";
-      const text = translations[current].introSpeech;
-      if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined" || !text) {
-        showVoiceStatus(current, "voiceNotSupported");
-        return;
+      setAudioSource(current);
+      hideAudioStatus();
+      introAudio.currentTime = 0;
+      const playResult = introAudio.play();
+      if (playResult && typeof playResult.catch === "function") {
+        playResult.catch(() => showAudioStatus(current));
       }
-
-      window.speechSynthesis.cancel();
-      clearTimeout(voiceRetryTimer);
-
-      const startSpeech = () => {
-        const voice = findVoiceForLang(current);
-        if (!voice) {
-          showVoiceStatus(current, "voiceUnavailable");
-          return false;
-        }
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = voice.lang;
-        utterance.voice = voice;
-        utterance.rate = .94;
-        utterance.pitch = 1;
-        utterance.onstart = hideVoiceStatus;
-        utterance.onerror = () => showVoiceStatus(current, "voiceUnavailable");
-
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-        if (closeAfterStart) closeIntro();
-        return true;
-      };
-
-      if (window.speechSynthesis.getVoices().length && startSpeech()) return;
-
-      const onVoicesChanged = () => {
-        window.speechSynthesis.removeEventListener("voiceschanged", onVoicesChanged);
-        startSpeech();
-      };
-
-      window.speechSynthesis.addEventListener("voiceschanged", onVoicesChanged);
-      voiceRetryTimer = window.setTimeout(() => {
-        window.speechSynthesis.removeEventListener("voiceschanged", onVoicesChanged);
-        startSpeech();
-      }, 900);
     }
 
-    select.addEventListener("change", () => {
-      setLang(select.value);
-      speakIntro(select.value);
-    });
+    select.addEventListener("change", () => setLang(select.value));
+    playIntroButton.addEventListener("click", () => playIntroAudio(select.value));
+    continueIntroButton.addEventListener("click", closeIntro);
+    introAudio.addEventListener("error", () => showAudioStatus(select.value));
 
     document.querySelectorAll("[data-lang-choice]").forEach((button) => {
       button.addEventListener("click", () => {
         const lang = button.getAttribute("data-lang-choice");
         setLang(lang);
-        speakIntro(lang, true);
+        playIntroAudio(lang);
       });
     });
 
@@ -1030,7 +1089,9 @@
     });
 
     setLang(initial);
-    openIntro();
+    if (params.get("intro") === "1" || localStorage.getItem(introSeenKey) !== "1") {
+      openIntro();
+    }
   </script>
 </body>
 </html>
