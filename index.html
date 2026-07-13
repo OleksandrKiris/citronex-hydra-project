@@ -1429,6 +1429,9 @@
       document.querySelectorAll(".training-link").forEach((link) => {
         const target = new URL(link.dataset.base, location.href);
         target.searchParams.set("lang", current);
+        if (target.pathname.includes("citronex-") && !target.pathname.includes("citronex-hydra-project")) {
+          target.searchParams.set("from", "hydra");
+        }
         link.href = target.toString();
       });
     }
