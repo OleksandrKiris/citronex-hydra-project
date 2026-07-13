@@ -1068,7 +1068,10 @@
     }
 
     select.addEventListener("change", () => setLang(select.value));
-    playIntroButton.addEventListener("click", () => playIntroAudio(select.value));
+    playIntroButton.addEventListener("click", () => {
+      localStorage.setItem(introSeenKey, "1");
+      playIntroAudio(select.value);
+    });
     continueIntroButton.addEventListener("click", closeIntro);
     introAudio.addEventListener("error", () => showAudioStatus(select.value));
 
@@ -1076,6 +1079,7 @@
       button.addEventListener("click", () => {
         const lang = button.getAttribute("data-lang-choice");
         setLang(lang);
+        localStorage.setItem(introSeenKey, "1");
         playIntroAudio(lang);
       });
     });
