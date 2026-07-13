@@ -257,6 +257,23 @@
       min-width: 0;
     }
 
+    .start-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      margin: 0 0 7px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--red);
+      color: #fff;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      box-shadow: 0 8px 18px rgba(217, 4, 22, .2);
+    }
+
     .card h2 {
       margin: 0;
       color: var(--ink);
@@ -481,8 +498,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z"/><path d="M12 10.5h.01"/></svg>
           </div>
           <div class="card-body">
+            <div class="start-badge" data-i18n="startBadge">ZACZNIJ TUTAJ</div>
             <h2 data-i18n="arrivalTitle">PRZYJAZD DO PRACY</h2>
-            <p data-i18n="arrivalText">Dojazd, pierwsze kroki i najważniejsze informacje przed rozpoczęciem pracy.</p>
+            <p data-i18n="arrivalText">Nie wiesz gdzie jechać? Zacznij tutaj.</p>
             <a class="btn project-link" data-base="https://oleksandrkiris.github.io/przyjazd-do-pracy/?v=share-check-2&lang=ru" href="https://oleksandrkiris.github.io/przyjazd-do-pracy/?v=share-check-2&lang=ru" data-i18n="openArrival">Otwórz przyjazd</a>
           </div>
         </article>
@@ -493,7 +511,7 @@
           </div>
           <div class="card-body">
             <h2>Siechnice</h2>
-            <p data-i18n="siechniceText">Szkolenie i informacje dla lokalizacji Siechnice.</p>
+            <p data-i18n="siechniceText">Wybierz, jeśli pracujesz w Siechnicach.</p>
             <a class="btn project-link" data-base="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" href="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" data-i18n="openProject">Otwórz projekt</a>
           </div>
         </article>
@@ -504,7 +522,7 @@
           </div>
           <div class="card-body">
             <h2>Ryczywół</h2>
-            <p data-i18n="ryczywolText">Szkolenie i informacje dla Ryczywołu k. Kozienic.</p>
+            <p data-i18n="ryczywolText">Wybierz, jeśli pracujesz w Ryczywole.</p>
             <a class="btn project-link" data-base="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" href="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" data-i18n="openProject">Otwórz projekt</a>
           </div>
         </article>
@@ -515,7 +533,7 @@
           </div>
           <div class="card-body">
             <h2>Zgorzelec / Bogatynia</h2>
-            <p data-i18n="zgorzelecText">Szkolenie i informacje dla projektu Zgorzelec / Bogatynia.</p>
+            <p data-i18n="zgorzelecText">Wybierz, jeśli pracujesz w Zgorzelcu albo Bogatyni.</p>
             <a class="btn project-link" data-base="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" href="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" data-i18n="openProject">Otwórz projekt</a>
           </div>
         </article>
@@ -533,117 +551,126 @@
         languageLabel: "Język",
         lead: "Jeden stały link startowy. Wybierz przyjazd albo lokalizację pracy.",
         startTitle: "Najpierw wybierz, czego potrzebujesz",
+        startBadge: "ZACZNIJ TUTAJ",
         arrivalTitle: "PRZYJAZD DO PRACY",
-        arrivalText: "Dojazd, pierwsze kroki i najważniejsze informacje przed rozpoczęciem pracy.",
+        arrivalText: "Nie wiesz gdzie jechać? Zacznij tutaj.",
         openArrival: "Otwórz przyjazd",
         openProject: "Otwórz projekt",
-        siechniceText: "Szkolenie i informacje dla lokalizacji Siechnice.",
-        ryczywolText: "Szkolenie i informacje dla Ryczywołu k. Kozienic.",
-        zgorzelecText: "Szkolenie i informacje dla projektu Zgorzelec / Bogatynia.",
+        siechniceText: "Wybierz, jeśli pracujesz w Siechnicach.",
+        ryczywolText: "Wybierz, jeśli pracujesz w Ryczywole.",
+        zgorzelecText: "Wybierz, jeśli pracujesz w Zgorzelcu albo Bogatyni.",
         note: "Jeśli nie wiesz, od czego zacząć, najpierw otwórz „Przyjazd do pracy”. Ten projekt jest tylko bramą do właściwych szkoleń."
       },
       ru: {
         languageLabel: "Язык",
         lead: "Одна постоянная стартовая ссылка. Выберите приезд или место работы.",
         startTitle: "Сначала выберите, что вам нужно",
+        startBadge: "НАЧНИТЕ ЗДЕСЬ",
         arrivalTitle: "ПРИЕЗД НА РАБОТУ",
-        arrivalText: "Дорога, первые шаги и самая важная информация перед началом работы.",
+        arrivalText: "Не знаете, куда ехать? Начните здесь.",
         openArrival: "Открыть приезд",
         openProject: "Открыть проект",
-        siechniceText: "Обучение и информация для локации Siechnice.",
-        ryczywolText: "Обучение и информация для Ryczywół около Kozienice.",
-        zgorzelecText: "Обучение и информация для проекта Zgorzelec / Bogatynia.",
+        siechniceText: "Выберите, если работаете в Siechnice.",
+        ryczywolText: "Выберите, если работаете в Ryczywół.",
+        zgorzelecText: "Выберите, если работаете в Zgorzelec или Bogatynia.",
         note: "Если не знаете, с чего начать, сначала откройте «Приезд на работу». Этот проект только ведет к нужным обучениям."
       },
       ua: {
         languageLabel: "Мова",
         lead: "Одне постійне стартове посилання. Оберіть приїзд або місце роботи.",
         startTitle: "Спочатку оберіть, що вам потрібно",
+        startBadge: "ПОЧНІТЬ ТУТ",
         arrivalTitle: "ПРИЇЗД НА РОБОТУ",
-        arrivalText: "Дорога, перші кроки та найважливіша інформація перед початком роботи.",
+        arrivalText: "Не знаєте, куди їхати? Почніть тут.",
         openArrival: "Відкрити приїзд",
         openProject: "Відкрити проект",
-        siechniceText: "Навчання та інформація для локації Siechnice.",
-        ryczywolText: "Навчання та інформація для Ryczywół біля Kozienice.",
-        zgorzelecText: "Навчання та інформація для проекту Zgorzelec / Bogatynia.",
+        siechniceText: "Оберіть, якщо працюєте в Siechnice.",
+        ryczywolText: "Оберіть, якщо працюєте в Ryczywół.",
+        zgorzelecText: "Оберіть, якщо працюєте в Zgorzelec або Bogatynia.",
         note: "Якщо не знаєте, з чого почати, спочатку відкрийте «Приїзд на роботу». Цей проект є тільки входом до потрібних навчань."
       },
       en: {
         languageLabel: "Language",
         lead: "One permanent start link. Choose arrival or work location.",
         startTitle: "First choose what you need",
+        startBadge: "START HERE",
         arrivalTitle: "ARRIVAL TO WORK",
-        arrivalText: "Route, first steps and the most important information before work starts.",
+        arrivalText: "Not sure where to go? Start here.",
         openArrival: "Open arrival",
         openProject: "Open project",
-        siechniceText: "Training and information for the Siechnice location.",
-        ryczywolText: "Training and information for Ryczywół near Kozienice.",
-        zgorzelecText: "Training and information for the Zgorzelec / Bogatynia project.",
+        siechniceText: "Choose this if you work in Siechnice.",
+        ryczywolText: "Choose this if you work in Ryczywół.",
+        zgorzelecText: "Choose this if you work in Zgorzelec or Bogatynia.",
         note: "If you do not know where to start, open “Arrival to work” first. This project is only a gateway to the correct trainings."
       },
       az: {
         languageLabel: "Dil",
         lead: "Bir daimi başlanğıc linki. Gəlişi və ya iş yerini seçin.",
         startTitle: "Əvvəl sizə lazım olanı seçin",
+        startBadge: "BURADAN BAŞLA",
         arrivalTitle: "İŞƏ GƏLİŞ",
-        arrivalText: "Yol, ilk addımlar və işə başlamazdan əvvəl əsas məlumatlar.",
+        arrivalText: "Hara getməyi bilmirsiniz? Buradan başlayın.",
         openArrival: "Gəlişi aç",
         openProject: "Layihəni aç",
-        siechniceText: "Siechnice yeri üçün təlim və məlumat.",
-        ryczywolText: "Kozienice yaxınlığında Ryczywół üçün təlim və məlumat.",
-        zgorzelecText: "Zgorzelec / Bogatynia layihəsi üçün təlim və məlumat.",
+        siechniceText: "Siechnice-də işləyirsinizsə bunu seçin.",
+        ryczywolText: "Ryczywół-da işləyirsinizsə bunu seçin.",
+        zgorzelecText: "Zgorzelec və ya Bogatynia-da işləyirsinizsə bunu seçin.",
         note: "Haradan başlamağı bilmirsinizsə, əvvəl “İşə gəliş” bölməsini açın. Bu layihə yalnız düzgün təlimlərə girişdir."
       },
       es: {
         languageLabel: "Idioma",
         lead: "Un enlace inicial permanente. Elige llegada o lugar de trabajo.",
         startTitle: "Primero elige lo que necesitas",
+        startBadge: "EMPIEZA AQUÍ",
         arrivalTitle: "LLEGADA AL TRABAJO",
-        arrivalText: "Ruta, primeros pasos e información más importante antes de empezar.",
+        arrivalText: "¿No sabes adónde ir? Empieza aquí.",
         openArrival: "Abrir llegada",
         openProject: "Abrir proyecto",
-        siechniceText: "Formación e información para la ubicación Siechnice.",
-        ryczywolText: "Formación e información para Ryczywół cerca de Kozienice.",
-        zgorzelecText: "Formación e información para el proyecto Zgorzelec / Bogatynia.",
+        siechniceText: "Elige esto si trabajas en Siechnice.",
+        ryczywolText: "Elige esto si trabajas en Ryczywół.",
+        zgorzelecText: "Elige esto si trabajas en Zgorzelec o Bogatynia.",
         note: "Si no sabes por dónde empezar, abre primero “Llegada al trabajo”. Este proyecto solo es una puerta a las formaciones correctas."
       },
       fil: {
         languageLabel: "Wika",
         lead: "Isang permanenteng start link. Piliin ang pagdating o lokasyon ng trabaho.",
         startTitle: "Piliin muna kung ano ang kailangan mo",
+        startBadge: "DITO MAGSIMULA",
         arrivalTitle: "PAGDATING SA TRABAHO",
-        arrivalText: "Ruta, unang hakbang at pinakamahalagang impormasyon bago magsimula.",
+        arrivalText: "Hindi alam saan pupunta? Dito magsimula.",
         openArrival: "Buksan ang pagdating",
         openProject: "Buksan ang proyekto",
-        siechniceText: "Training at impormasyon para sa lokasyon ng Siechnice.",
-        ryczywolText: "Training at impormasyon para sa Ryczywół malapit sa Kozienice.",
-        zgorzelecText: "Training at impormasyon para sa proyektong Zgorzelec / Bogatynia.",
+        siechniceText: "Piliin ito kung nagtatrabaho ka sa Siechnice.",
+        ryczywolText: "Piliin ito kung nagtatrabaho ka sa Ryczywół.",
+        zgorzelecText: "Piliin ito kung nagtatrabaho ka sa Zgorzelec o Bogatynia.",
         note: "Kung hindi mo alam kung saan magsisimula, buksan muna ang “Pagdating sa trabaho”. Ang proyektong ito ay gateway lang sa tamang training."
       },
       id: {
         languageLabel: "Bahasa",
         lead: "Satu tautan awal tetap. Pilih kedatangan atau lokasi kerja.",
         startTitle: "Pilih dulu yang Anda butuhkan",
+        startBadge: "MULAI DI SINI",
         arrivalTitle: "DATANG KE TEMPAT KERJA",
-        arrivalText: "Rute, langkah pertama dan informasi terpenting sebelum mulai kerja.",
+        arrivalText: "Tidak tahu harus pergi ke mana? Mulai di sini.",
         openArrival: "Buka kedatangan",
         openProject: "Buka proyek",
-        siechniceText: "Pelatihan dan informasi untuk lokasi Siechnice.",
-        ryczywolText: "Pelatihan dan informasi untuk Ryczywół dekat Kozienice.",
-        zgorzelecText: "Pelatihan dan informasi untuk proyek Zgorzelec / Bogatynia.",
+        siechniceText: "Pilih ini jika Anda bekerja di Siechnice.",
+        ryczywolText: "Pilih ini jika Anda bekerja di Ryczywół.",
+        zgorzelecText: "Pilih ini jika Anda bekerja di Zgorzelec atau Bogatynia.",
         note: "Jika tidak tahu mulai dari mana, buka dulu “Datang ke tempat kerja”. Proyek ini hanya gerbang ke pelatihan yang benar."
       },
       ne: {
         languageLabel: "भाषा",
         lead: "एउटा स्थायी सुरुवाती लिंक। आगमन वा काम गर्ने स्थान छान्नुहोस्।",
         startTitle: "पहिले तपाईंलाई चाहिएको कुरा छान्नुहोस्",
+        startBadge: "यहाँबाट सुरु गर्नुहोस्",
         arrivalTitle: "काममा आउने जानकारी",
-        arrivalText: "बाटो, पहिलो चरण र काम सुरु गर्नु अघि सबैभन्दा जरूरी जानकारी।",
+        arrivalText: "कहाँ जाने थाहा छैन? यहाँबाट सुरु गर्नुहोस्।",
         openArrival: "आगमन खोल्नुहोस्",
         openProject: "प्रोजेक्ट खोल्नुहोस्",
-        siechniceText: "Siechnice स्थानका लागि तालिम र जानकारी।",
-        ryczywolText: "Kozienice नजिक Ryczywół का लागि तालिम र जानकारी।",
-        zgorzelecText: "Zgorzelec / Bogatynia प्रोजेक्टका लागि तालिम र जानकारी।",
+        siechniceText: "Siechnice मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
+        ryczywolText: "Ryczywół मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
+        zgorzelecText: "Zgorzelec वा Bogatynia मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
         note: "कहाँबाट सुरु गर्ने थाहा छैन भने पहिले “काममा आउने जानकारी” खोल्नुहोस्। यो प्रोजेक्ट सही तालिममा जाने प्रवेश मात्र हो।"
       }
     };
