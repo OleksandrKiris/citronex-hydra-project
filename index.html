@@ -61,50 +61,101 @@
 
     .topbar {
       position: sticky;
-      top: 0;
+      top: calc(6px + env(safe-area-inset-top));
       z-index: 5;
-      display: flex;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
       align-items: center;
-      justify-content: space-between;
-      min-height: 58px;
-      padding: 6px 0 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.86));
-      backdrop-filter: blur(14px);
+      min-height: 62px;
+      margin: 0 0 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(231, 233, 238, .92);
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.98), rgba(255,246,247,.94) 56%, rgba(255,250,235,.94));
+      backdrop-filter: blur(18px);
+      box-shadow: 0 12px 30px rgba(20, 24, 33, .09);
     }
 
     .brand-mini {
-      display: flex;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
       min-width: 0;
-      gap: 9px;
+      gap: 10px;
       align-items: center;
-      font-weight: 900;
-      letter-spacing: .04em;
+      color: var(--ink);
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(217, 4, 22, .12);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(217, 4, 22, .12);
+      overflow: hidden;
+    }
+
+    .brand-logo img {
+      width: 36px;
+      height: 34px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .brand-text {
+      min-width: 0;
+      display: grid;
+      gap: 1px;
+      line-height: 1.04;
+    }
+
+    .brand-text strong {
       color: var(--red);
-      font-size: clamp(11px, 3.4vw, 13px);
+      font-size: clamp(13px, 3.7vw, 16px);
+      font-weight: 950;
+      letter-spacing: .01em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text small {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .12em;
       text-transform: uppercase;
     }
 
-    .brand-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--red);
-      box-shadow: 14px 0 0 var(--gold);
-      flex: 0 0 auto;
+    .lang-control {
+      min-width: 0;
+      display: block;
     }
 
     .lang-select {
       min-height: 44px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
+      width: 142px;
+      max-width: 42vw;
+      border: 1px solid rgba(217, 4, 22, .16);
+      border-radius: 14px;
       background: #fff;
       color: var(--ink);
       font: inherit;
-      font-weight: 800;
-      font-size: 15px;
-      padding: 0 36px 0 12px;
-      box-shadow: 0 8px 18px rgba(20, 24, 33, .08);
+      font-weight: 900;
+      font-size: 14px;
+      padding: 0 34px 0 12px;
+      box-shadow: 0 8px 18px rgba(20, 24, 33, .07);
+      outline: none;
+    }
+
+    .lang-select:focus {
+      border-color: rgba(217, 4, 22, .52);
+      box-shadow: 0 0 0 4px rgba(217, 4, 22, .10), 0 8px 18px rgba(20, 24, 33, .07);
     }
 
     .sr-only {
@@ -654,15 +705,42 @@
 
       .topbar {
         gap: 8px;
+        min-height: 58px;
+        padding: 7px 8px;
+        border-radius: 16px;
       }
 
       .brand-mini {
-        font-size: 11px;
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      .brand-logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 13px;
+      }
+
+      .brand-logo img {
+        width: 32px;
+        height: 31px;
+      }
+
+      .brand-text strong {
+        font-size: 12.5px;
+      }
+
+      .brand-text small {
+        font-size: 9.5px;
+        letter-spacing: .09em;
       }
 
       .lang-select {
-        max-width: 128px;
+        width: 118px;
+        max-width: 40vw;
         padding-left: 8px;
+        padding-right: 26px;
+        font-size: 13px;
       }
 
       .hero {
@@ -708,11 +786,15 @@
     }
 
     @media (max-width: 320px) {
-      .brand-mini span:last-child {
-        max-width: 86px;
+      .brand-text strong {
+        max-width: 94px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+
+      .brand-text small {
+        letter-spacing: .06em;
       }
 
       .card {
@@ -728,8 +810,16 @@
 <body>
   <div class="shell">
     <header class="topbar" aria-label="CITRONEX hydra S.R.Z.B.">
-      <div class="brand-mini"><span class="brand-dot" aria-hidden="true"></span><span>hydra S.R.Z.B.</span></div>
-      <label>
+      <div class="brand-mini">
+        <span class="brand-logo" aria-hidden="true">
+          <img src="assets/brand/citronex-hydra-logo-web.png" width="50" height="48" alt="">
+        </span>
+        <span class="brand-text">
+          <strong>CITRONEX hydra</strong>
+          <small>S.R.Z.B.</small>
+        </span>
+      </div>
+      <label class="lang-control">
         <span class="sr-only" data-i18n="languageLabel">Język</span>
         <select class="lang-select" id="langSelect" aria-label="Język">
           <option value="pl">Polski</option>
