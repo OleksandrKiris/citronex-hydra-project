@@ -22,8 +22,8 @@
       --blue-soft: #eef5ff;
       --green: #16864a;
       --green-soft: #eefbf4;
-      --shadow: 0 18px 45px rgba(20, 24, 33, .12);
-      --radius: 12px;
+      --shadow: 0 16px 38px rgba(20, 24, 33, .12);
+      --radius: 8px;
     }
 
     * {
@@ -54,7 +54,7 @@
     }
 
     .shell {
-      width: min(100%, 760px);
+      width: min(100%, 820px);
       margin: 0 auto;
       padding: calc(10px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));
     }
@@ -121,13 +121,14 @@
 
     .hero {
       display: grid;
-      gap: 8px;
+      grid-template-columns: 82px 1fr;
+      gap: 14px;
       align-items: center;
-      padding: 13px 13px 14px;
+      padding: 14px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background:
-        linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,255,255,.9)),
+        linear-gradient(135deg, rgba(255,255,255,.98), rgba(255,245,246,.96) 58%, rgba(255,249,237,.96)),
         var(--panel);
       box-shadow: var(--shadow);
       overflow: hidden;
@@ -136,26 +137,31 @@
     .logo-wrap {
       display: grid;
       place-items: center;
-      padding: 0;
-      min-height: 108px;
+      width: 82px;
+      min-height: 82px;
+      border: 1px solid rgba(217, 4, 22, .12);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(217, 4, 22, .11);
     }
 
     .logo {
       display: block;
-      width: min(42vw, 156px);
-      max-height: 150px;
+      width: 74px;
+      max-height: 72px;
       height: auto;
       object-fit: contain;
     }
 
     .hero-copy {
-      text-align: center;
+      text-align: left;
+      min-width: 0;
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(22px, 6.8vw, 38px);
-      line-height: 1;
+      font-size: clamp(20px, 6vw, 34px);
+      line-height: .98;
       color: var(--red);
       letter-spacing: 0;
       text-transform: uppercase;
@@ -173,11 +179,85 @@
 
     .lead {
       margin: 9px auto 0;
-      max-width: 34rem;
+      max-width: 36rem;
       color: var(--muted);
       font-size: 14px;
       line-height: 1.34;
       font-weight: 700;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      min-height: 30px;
+      align-items: center;
+      margin: 11px 0 0;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.82);
+      color: var(--red-dark);
+      font-size: 12px;
+      line-height: 1.1;
+      font-weight: 900;
+      box-shadow: inset 0 0 0 1px rgba(217, 4, 22, .13);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 12px 0 16px;
+    }
+
+    .flow-step {
+      min-height: 64px;
+      padding: 10px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.9);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(20, 24, 33, .06);
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .quick-locations {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 0 0 14px;
+    }
+
+    .quick-chip {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 920;
+      text-align: center;
+      box-shadow: 0 8px 18px rgba(20, 24, 33, .07);
+      touch-action: manipulation;
+    }
+
+    .quick-chip.priority-chip {
+      border-color: rgba(217, 4, 22, .22);
+      background: var(--red);
+      color: #fff;
     }
 
     .section-title {
@@ -198,18 +278,18 @@
       grid-template-columns: 46px 1fr;
       gap: 12px;
       align-items: start;
-      min-height: 106px;
+      min-height: 108px;
       padding: 13px;
       border: 1px solid var(--line);
       border-left: 5px solid var(--blue);
       border-radius: var(--radius);
       background: var(--panel);
-      box-shadow: 0 10px 28px rgba(20, 24, 33, .09);
+      box-shadow: 0 10px 24px rgba(20, 24, 33, .08);
       transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
     }
 
     .card.priority {
-      min-height: 122px;
+      min-height: 126px;
       border-left-color: var(--red);
       background: linear-gradient(135deg, #fff 0%, #fff 55%, var(--red-soft) 100%);
     }
@@ -267,7 +347,7 @@
       border-radius: 999px;
       background: var(--red);
       color: #fff;
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1;
       font-weight: 950;
       letter-spacing: .08em;
@@ -278,7 +358,7 @@
     .card h2 {
       margin: 0;
       color: var(--ink);
-      font-size: clamp(19px, 5.3vw, 25px);
+      font-size: clamp(18px, 5vw, 24px);
       line-height: 1.08;
       letter-spacing: 0;
       overflow-wrap: anywhere;
@@ -316,9 +396,15 @@
     }
 
     .btn:focus-visible,
+    .quick-chip:focus-visible,
     .lang-select:focus-visible {
       outline: 3px solid rgba(217, 4, 22, .28);
       outline-offset: 3px;
+    }
+
+    .quick-chip:active {
+      transform: translateY(1px);
+      box-shadow: 0 5px 12px rgba(20, 24, 33, .08);
     }
 
     .priority .btn {
@@ -345,6 +431,33 @@
       font-weight: 750;
     }
 
+    .safe-link {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin: 14px 0 0;
+      padding: 12px;
+      border: 1px solid rgba(22, 134, 74, .2);
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: #145733;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .safe-link span:first-child {
+      display: grid;
+      place-items: center;
+      flex: 0 0 28px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--green);
+      color: #fff;
+      font-weight: 950;
+    }
+
     footer {
       margin: 22px 0 4px;
       padding: 16px 0 0;
@@ -363,13 +476,8 @@
       }
 
       .hero {
-        grid-template-columns: 154px 1fr;
-        text-align: left;
-        padding: 20px 24px;
-      }
-
-      .hero-copy {
-        text-align: left;
+        grid-template-columns: 104px 1fr;
+        padding: 18px 22px;
       }
 
       .lead {
@@ -377,8 +485,13 @@
       }
 
       .logo {
-        width: 154px;
-        max-height: 148px;
+        width: 92px;
+        max-height: 90px;
+      }
+
+      .logo-wrap {
+        width: 104px;
+        min-height: 104px;
       }
 
       .cards {
@@ -409,16 +522,23 @@
       }
 
       .hero {
-        padding: 12px 11px;
+        grid-template-columns: 64px 1fr;
+        gap: 10px;
+        padding: 11px;
       }
 
       .logo-wrap {
-        min-height: 84px;
+        width: 64px;
+        min-height: 64px;
       }
 
       .logo {
-        width: min(36vw, 118px);
-        max-height: 112px;
+        width: 56px;
+        max-height: 54px;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
       }
 
       .lead {
@@ -443,6 +563,16 @@
 
       .btn {
         min-height: 54px;
+      }
+
+      .quick-locations {
+        gap: 7px;
+      }
+
+      .quick-chip {
+        min-height: 46px;
+        padding-inline: 8px;
+        font-size: 12px;
       }
     }
 
@@ -493,10 +623,24 @@
           <h1>CITRONEX HYDRA PROJECT</h1>
           <p class="owner">OLEKSANDR KIRIS</p>
           <p class="lead" data-i18n="lead">Jeden stały link startowy. Wybierz przyjazd albo lokalizację pracy.</p>
+          <p class="status-pill" data-i18n="statusText">Działa w przeglądarce telefonu</p>
         </div>
       </section>
 
+      <section class="flow" aria-label="Jak korzystać z Hydry">
+        <div class="flow-step"><strong data-i18n="flowOneTitle">1. Przyjazd</strong><span data-i18n="flowOneText">Pierwszy raz? Zacznij od trasy.</span></div>
+        <div class="flow-step"><strong data-i18n="flowTwoTitle">2. Lokalizacja</strong><span data-i18n="flowTwoText">Wybierz miejsce pracy.</span></div>
+        <div class="flow-step"><strong data-i18n="flowThreeTitle">3. Szkolenie</strong><span data-i18n="flowThreeText">Otwórz instrukcje dla siebie.</span></div>
+      </section>
+
       <h2 class="section-title" data-i18n="startTitle">Najpierw wybierz, czego potrzebujesz</h2>
+
+      <section class="quick-locations" aria-label="Szybki wybór">
+        <a class="quick-chip priority-chip project-link" data-base="https://oleksandrkiris.github.io/przyjazd-do-pracy/?v=share-check-2&lang=ru" href="https://oleksandrkiris.github.io/przyjazd-do-pracy/?v=share-check-2&lang=ru" data-i18n="quickArrival">Pierwszy raz</a>
+        <a class="quick-chip project-link" data-base="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" href="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/">Siechnice</a>
+        <a class="quick-chip project-link" data-base="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" href="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/">Ryczywół</a>
+        <a class="quick-chip project-link" data-base="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" href="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/">Zgorzelec / Bogatynia</a>
+      </section>
 
       <section class="cards" aria-label="Linki do projektów">
         <article class="card priority">
@@ -504,7 +648,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z"/><path d="M12 10.5h.01"/></svg>
           </div>
           <div class="card-body">
-            <div class="start-badge" data-i18n="startBadge">ZACZNIJ TUTAJ</div>
+            <div class="start-badge" data-i18n="startBadge">PIERWSZY RAZ? KLIKNIJ TUTAJ</div>
             <h2 data-i18n="arrivalTitle">PRZYJAZD DO PRACY</h2>
             <p data-i18n="arrivalText">Nie wiesz gdzie jechać? Zacznij tutaj.</p>
             <a class="btn project-link" data-base="https://oleksandrkiris.github.io/przyjazd-do-pracy/?v=share-check-2&lang=ru" href="https://oleksandrkiris.github.io/przyjazd-do-pracy/?v=share-check-2&lang=ru" data-i18n="openArrival">Otwórz przyjazd</a>
@@ -546,6 +690,7 @@
       </section>
 
       <p class="note" data-i18n="note">Jeśli nie wiesz, od czego zacząć, najpierw otwórz „Przyjazd do pracy”. Ten projekt jest tylko bramą do właściwych szkoleń.</p>
+      <p class="safe-link"><span>OK</span><span data-i18n="stableText">Hydra jest stałym linkiem. Projekty lokalizacji można zmieniać osobno, a ten adres zostaje dla pracownika taki sam.</span></p>
     </main>
 
     <footer>CITRONEX HYDRA PROJECT · OLEKSANDR KIRIS</footer>
@@ -556,8 +701,16 @@
       pl: {
         languageLabel: "Język",
         lead: "Jeden stały link startowy. Wybierz przyjazd albo lokalizację pracy.",
+        statusText: "Działa w przeglądarce telefonu",
+        flowOneTitle: "1. Przyjazd",
+        flowOneText: "Pierwszy raz? Zacznij od trasy.",
+        flowTwoTitle: "2. Lokalizacja",
+        flowTwoText: "Wybierz miejsce pracy.",
+        flowThreeTitle: "3. Szkolenie",
+        flowThreeText: "Otwórz instrukcje dla siebie.",
         startTitle: "Najpierw wybierz, czego potrzebujesz",
-        startBadge: "ZACZNIJ TUTAJ",
+        quickArrival: "Pierwszy raz",
+        startBadge: "PIERWSZY RAZ? KLIKNIJ TUTAJ",
         arrivalTitle: "PRZYJAZD DO PRACY",
         arrivalText: "Nie wiesz gdzie jechać? Zacznij tutaj.",
         openArrival: "Otwórz przyjazd",
@@ -565,13 +718,22 @@
         siechniceText: "Wybierz, jeśli pracujesz w Siechnicach.",
         ryczywolText: "Wybierz, jeśli pracujesz w Ryczywole.",
         zgorzelecText: "Wybierz, jeśli pracujesz w Zgorzelcu albo Bogatyni.",
-        note: "Jeśli nie wiesz, od czego zacząć, najpierw otwórz „Przyjazd do pracy”. Ten projekt jest tylko bramą do właściwych szkoleń."
+        note: "Jeśli nie wiesz, od czego zacząć, najpierw otwórz „Przyjazd do pracy”. Ten projekt jest tylko bramą do właściwych szkoleń.",
+        stableText: "Hydra jest stałym linkiem. Projekty lokalizacji można zmieniać osobno, a ten adres zostaje dla pracownika taki sam."
       },
       ru: {
         languageLabel: "Язык",
         lead: "Одна постоянная стартовая ссылка. Выберите приезд или место работы.",
+        statusText: "Работает в браузере телефона",
+        flowOneTitle: "1. Приезд",
+        flowOneText: "Первый раз? Начните с маршрута.",
+        flowTwoTitle: "2. Локация",
+        flowTwoText: "Выберите место работы.",
+        flowThreeTitle: "3. Обучение",
+        flowThreeText: "Откройте инструкции для себя.",
         startTitle: "Сначала выберите, что вам нужно",
-        startBadge: "НАЧНИТЕ ЗДЕСЬ",
+        quickArrival: "Первый раз",
+        startBadge: "ПЕРВЫЙ РАЗ? НАЖМИТЕ ЗДЕСЬ",
         arrivalTitle: "ПРИЕЗД НА РАБОТУ",
         arrivalText: "Не знаете, куда ехать? Начните здесь.",
         openArrival: "Открыть приезд",
@@ -579,13 +741,22 @@
         siechniceText: "Выберите, если работаете в Siechnice.",
         ryczywolText: "Выберите, если работаете в Ryczywół.",
         zgorzelecText: "Выберите, если работаете в Zgorzelec или Bogatynia.",
-        note: "Если не знаете, с чего начать, сначала откройте «Приезд на работу». Этот проект только ведет к нужным обучениям."
+        note: "Если не знаете, с чего начать, сначала откройте «Приезд на работу». Этот проект только ведет к нужным обучениям.",
+        stableText: "Hydra — это постоянная ссылка. Проекты локаций можно менять отдельно, а этот адрес остается одинаковым для работника."
       },
       ua: {
         languageLabel: "Мова",
         lead: "Одне постійне стартове посилання. Оберіть приїзд або місце роботи.",
+        statusText: "Працює в браузері телефону",
+        flowOneTitle: "1. Приїзд",
+        flowOneText: "Перший раз? Почніть з маршруту.",
+        flowTwoTitle: "2. Локація",
+        flowTwoText: "Оберіть місце роботи.",
+        flowThreeTitle: "3. Навчання",
+        flowThreeText: "Відкрийте інструкції для себе.",
         startTitle: "Спочатку оберіть, що вам потрібно",
-        startBadge: "ПОЧНІТЬ ТУТ",
+        quickArrival: "Перший раз",
+        startBadge: "ПЕРШИЙ РАЗ? НАТИСНІТЬ ТУТ",
         arrivalTitle: "ПРИЇЗД НА РОБОТУ",
         arrivalText: "Не знаєте, куди їхати? Почніть тут.",
         openArrival: "Відкрити приїзд",
@@ -593,13 +764,22 @@
         siechniceText: "Оберіть, якщо працюєте в Siechnice.",
         ryczywolText: "Оберіть, якщо працюєте в Ryczywół.",
         zgorzelecText: "Оберіть, якщо працюєте в Zgorzelec або Bogatynia.",
-        note: "Якщо не знаєте, з чого почати, спочатку відкрийте «Приїзд на роботу». Цей проект є тільки входом до потрібних навчань."
+        note: "Якщо не знаєте, з чого почати, спочатку відкрийте «Приїзд на роботу». Цей проект є тільки входом до потрібних навчань.",
+        stableText: "Hydra — це постійне посилання. Проекти локацій можна змінювати окремо, а ця адреса залишається однаковою для працівника."
       },
       en: {
         languageLabel: "Language",
         lead: "One permanent start link. Choose arrival or work location.",
+        statusText: "Works in a phone browser",
+        flowOneTitle: "1. Arrival",
+        flowOneText: "First time? Start with the route.",
+        flowTwoTitle: "2. Location",
+        flowTwoText: "Choose your work location.",
+        flowThreeTitle: "3. Training",
+        flowThreeText: "Open the instructions for you.",
         startTitle: "First choose what you need",
-        startBadge: "START HERE",
+        quickArrival: "First time",
+        startBadge: "FIRST TIME? TAP HERE",
         arrivalTitle: "ARRIVAL TO WORK",
         arrivalText: "Not sure where to go? Start here.",
         openArrival: "Open arrival",
@@ -607,13 +787,22 @@
         siechniceText: "Choose this if you work in Siechnice.",
         ryczywolText: "Choose this if you work in Ryczywół.",
         zgorzelecText: "Choose this if you work in Zgorzelec or Bogatynia.",
-        note: "If you do not know where to start, open “Arrival to work” first. This project is only a gateway to the correct trainings."
+        note: "If you do not know where to start, open “Arrival to work” first. This project is only a gateway to the correct trainings.",
+        stableText: "Hydra is the permanent link. Location projects can be updated separately, while this address stays the same for the worker."
       },
       az: {
         languageLabel: "Dil",
         lead: "Bir daimi başlanğıc linki. Gəlişi və ya iş yerini seçin.",
+        statusText: "Telefon brauzerində işləyir",
+        flowOneTitle: "1. Gəliş",
+        flowOneText: "İlk dəfədir? Marşrutdan başlayın.",
+        flowTwoTitle: "2. Məkan",
+        flowTwoText: "İş yerinizi seçin.",
+        flowThreeTitle: "3. Təlim",
+        flowThreeText: "Özünüz üçün təlimatı açın.",
         startTitle: "Əvvəl sizə lazım olanı seçin",
-        startBadge: "BURADAN BAŞLA",
+        quickArrival: "İlk dəfə",
+        startBadge: "İLK DƏFƏDİR? BURANI BASIN",
         arrivalTitle: "İŞƏ GƏLİŞ",
         arrivalText: "Hara getməyi bilmirsiniz? Buradan başlayın.",
         openArrival: "Gəlişi aç",
@@ -621,13 +810,22 @@
         siechniceText: "Siechnice-də işləyirsinizsə bunu seçin.",
         ryczywolText: "Ryczywół-da işləyirsinizsə bunu seçin.",
         zgorzelecText: "Zgorzelec və ya Bogatynia-da işləyirsinizsə bunu seçin.",
-        note: "Haradan başlamağı bilmirsinizsə, əvvəl “İşə gəliş” bölməsini açın. Bu layihə yalnız düzgün təlimlərə girişdir."
+        note: "Haradan başlamağı bilmirsinizsə, əvvəl “İşə gəliş” bölməsini açın. Bu layihə yalnız düzgün təlimlərə girişdir.",
+        stableText: "Hydra daimi linkdir. Məkan layihələri ayrıca dəyişdirilə bilər, bu ünvan isə işçi üçün eyni qalır."
       },
       es: {
         languageLabel: "Idioma",
         lead: "Un enlace inicial permanente. Elige llegada o lugar de trabajo.",
+        statusText: "Funciona en el navegador del teléfono",
+        flowOneTitle: "1. Llegada",
+        flowOneText: "¿Primera vez? Empieza por la ruta.",
+        flowTwoTitle: "2. Lugar",
+        flowTwoText: "Elige tu lugar de trabajo.",
+        flowThreeTitle: "3. Formación",
+        flowThreeText: "Abre las instrucciones para ti.",
         startTitle: "Primero elige lo que necesitas",
-        startBadge: "EMPIEZA AQUÍ",
+        quickArrival: "Primera vez",
+        startBadge: "¿PRIMERA VEZ? PULSA AQUÍ",
         arrivalTitle: "LLEGADA AL TRABAJO",
         arrivalText: "¿No sabes adónde ir? Empieza aquí.",
         openArrival: "Abrir llegada",
@@ -635,13 +833,22 @@
         siechniceText: "Elige esto si trabajas en Siechnice.",
         ryczywolText: "Elige esto si trabajas en Ryczywół.",
         zgorzelecText: "Elige esto si trabajas en Zgorzelec o Bogatynia.",
-        note: "Si no sabes por dónde empezar, abre primero “Llegada al trabajo”. Este proyecto solo es una puerta a las formaciones correctas."
+        note: "Si no sabes por dónde empezar, abre primero “Llegada al trabajo”. Este proyecto solo es una puerta a las formaciones correctas.",
+        stableText: "Hydra es el enlace permanente. Los proyectos de cada lugar pueden cambiarse por separado, pero esta dirección queda igual para el trabajador."
       },
       fil: {
         languageLabel: "Wika",
         lead: "Isang permanenteng start link. Piliin ang pagdating o lokasyon ng trabaho.",
+        statusText: "Gumagana sa browser ng telepono",
+        flowOneTitle: "1. Pagdating",
+        flowOneText: "Unang beses? Magsimula sa ruta.",
+        flowTwoTitle: "2. Lokasyon",
+        flowTwoText: "Piliin ang lugar ng trabaho.",
+        flowThreeTitle: "3. Pagsasanay",
+        flowThreeText: "Buksan ang mga instruksyon para sa iyo.",
         startTitle: "Piliin muna kung ano ang kailangan mo",
-        startBadge: "DITO MAGSIMULA",
+        quickArrival: "Unang beses",
+        startBadge: "UNANG BESES? PINDUTIN DITO",
         arrivalTitle: "PAGDATING SA TRABAHO",
         arrivalText: "Hindi alam saan pupunta? Dito magsimula.",
         openArrival: "Buksan ang pagdating",
@@ -649,13 +856,22 @@
         siechniceText: "Piliin ito kung nagtatrabaho ka sa Siechnice.",
         ryczywolText: "Piliin ito kung nagtatrabaho ka sa Ryczywół.",
         zgorzelecText: "Piliin ito kung nagtatrabaho ka sa Zgorzelec o Bogatynia.",
-        note: "Kung hindi mo alam kung saan magsisimula, buksan muna ang “Pagdating sa trabaho”. Ang proyektong ito ay gateway lang sa tamang training."
+        note: "Kung hindi mo alam kung saan magsisimula, buksan muna ang “Pagdating sa trabaho”. Ang proyektong ito ay gateway lang sa tamang training.",
+        stableText: "Ang Hydra ay permanenteng link. Maaaring baguhin nang hiwalay ang mga proyekto ng lokasyon, pero pareho pa rin ang address na ito para sa worker."
       },
       id: {
         languageLabel: "Bahasa",
         lead: "Satu tautan awal tetap. Pilih kedatangan atau lokasi kerja.",
+        statusText: "Berfungsi di browser ponsel",
+        flowOneTitle: "1. Kedatangan",
+        flowOneText: "Pertama kali? Mulai dari rute.",
+        flowTwoTitle: "2. Lokasi",
+        flowTwoText: "Pilih lokasi kerja Anda.",
+        flowThreeTitle: "3. Pelatihan",
+        flowThreeText: "Buka instruksi untuk Anda.",
         startTitle: "Pilih dulu yang Anda butuhkan",
-        startBadge: "MULAI DI SINI",
+        quickArrival: "Pertama kali",
+        startBadge: "PERTAMA KALI? KETUK DI SINI",
         arrivalTitle: "DATANG KE TEMPAT KERJA",
         arrivalText: "Tidak tahu harus pergi ke mana? Mulai di sini.",
         openArrival: "Buka kedatangan",
@@ -663,13 +879,22 @@
         siechniceText: "Pilih ini jika Anda bekerja di Siechnice.",
         ryczywolText: "Pilih ini jika Anda bekerja di Ryczywół.",
         zgorzelecText: "Pilih ini jika Anda bekerja di Zgorzelec atau Bogatynia.",
-        note: "Jika tidak tahu mulai dari mana, buka dulu “Datang ke tempat kerja”. Proyek ini hanya gerbang ke pelatihan yang benar."
+        note: "Jika tidak tahu mulai dari mana, buka dulu “Datang ke tempat kerja”. Proyek ini hanya gerbang ke pelatihan yang benar.",
+        stableText: "Hydra adalah tautan tetap. Proyek lokasi bisa diperbarui secara terpisah, tetapi alamat ini tetap sama untuk pekerja."
       },
       ne: {
         languageLabel: "भाषा",
         lead: "एउटा स्थायी सुरुवाती लिंक। आगमन वा काम गर्ने स्थान छान्नुहोस्।",
+        statusText: "फोनको ब्राउजरमा काम गर्छ",
+        flowOneTitle: "1. आगमन",
+        flowOneText: "पहिलो पटक हो? बाटोबाट सुरु गर्नुहोस्।",
+        flowTwoTitle: "2. स्थान",
+        flowTwoText: "आफ्नो काम गर्ने स्थान छान्नुहोस्।",
+        flowThreeTitle: "3. तालिम",
+        flowThreeText: "आफ्नो लागि निर्देशन खोल्नुहोस्।",
         startTitle: "पहिले तपाईंलाई चाहिएको कुरा छान्नुहोस्",
-        startBadge: "यहाँबाट सुरु गर्नुहोस्",
+        quickArrival: "पहिलो पटक",
+        startBadge: "पहिलो पटक हो? यहाँ थिच्नुहोस्",
         arrivalTitle: "काममा आउने जानकारी",
         arrivalText: "कहाँ जाने थाहा छैन? यहाँबाट सुरु गर्नुहोस्।",
         openArrival: "आगमन खोल्नुहोस्",
@@ -677,7 +902,8 @@
         siechniceText: "Siechnice मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
         ryczywolText: "Ryczywół मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
         zgorzelecText: "Zgorzelec वा Bogatynia मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
-        note: "कहाँबाट सुरु गर्ने थाहा छैन भने पहिले “काममा आउने जानकारी” खोल्नुहोस्। यो प्रोजेक्ट सही तालिममा जाने प्रवेश मात्र हो।"
+        note: "कहाँबाट सुरु गर्ने थाहा छैन भने पहिले “काममा आउने जानकारी” खोल्नुहोस्। यो प्रोजेक्ट सही तालिममा जाने प्रवेश मात्र हो।",
+        stableText: "Hydra स्थायी लिंक हो। स्थानका प्रोजेक्टहरू छुट्टै अपडेट गर्न सकिन्छ, तर कामदारका लागि यो ठेगाना उस्तै रहन्छ।"
       }
     };
 
