@@ -594,8 +594,28 @@
       font-size: 12px;
       text-align: center;
       font-weight: 800;
-      letter-spacing: .08em;
+      letter-spacing: .06em;
       text-transform: uppercase;
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+    }
+
+    .version-line {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 6px 10px;
+      border: 1px solid rgba(217, 4, 22, .14);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--red-dark);
+      font-size: 11px;
+      line-height: 1.1;
+      font-weight: 950;
+      letter-spacing: 0;
+      text-transform: none;
     }
 
     @media (min-width: 680px) {
@@ -788,7 +808,10 @@
 
     <button class="reopen-intro" type="button" id="reopenIntro" data-i18n="reopenIntro">Pokaż intro ponownie</button>
 
-    <footer>CITRONEX HYDRA PROJECT · OLEKSANDR KIRIS</footer>
+    <footer>
+      <span>CITRONEX HYDRA PROJECT · OLEKSANDR KIRIS</span>
+      <span class="version-line" data-i18n="versionInfo">Wersja: 2026-07-13</span>
+    </footer>
   </div>
 
   <div class="intro-modal" id="introModal" role="dialog" aria-modal="true" aria-labelledby="introTitle" hidden>
@@ -844,6 +867,7 @@
         continueIntro: "Rozumiem",
         audioError: "Nie udało się odtworzyć nagrania. Sprawdź dźwięk w telefonie albo przeczytaj tekst.",
         reopenIntro: "Pokaż intro ponownie",
+        versionInfo: "Wersja: 2026-07-13",
         closeLabel: "Zamknij",
         startTitle: "Najpierw wybierz, czego potrzebujesz",
         startBadge: "PIERWSZY RAZ? KLIKNIJ TUTAJ",
@@ -867,6 +891,7 @@
         continueIntro: "Понятно",
         audioError: "Не удалось воспроизвести запись. Проверьте звук в телефоне или прочитайте текст.",
         reopenIntro: "Показать intro ещё раз",
+        versionInfo: "Версия: 2026-07-13",
         closeLabel: "Закрыть",
         startTitle: "Сначала выберите, что вам нужно",
         startBadge: "ПЕРВЫЙ РАЗ? НАЖМИТЕ ЗДЕСЬ",
@@ -890,6 +915,7 @@
         continueIntro: "Зрозуміло",
         audioError: "Не вдалося відтворити запис. Перевірте звук у телефоні або прочитайте текст.",
         reopenIntro: "Показати intro ще раз",
+        versionInfo: "Версія: 2026-07-13",
         closeLabel: "Закрити",
         startTitle: "Спочатку оберіть, що вам потрібно",
         startBadge: "ПЕРШИЙ РАЗ? НАТИСНІТЬ ТУТ",
@@ -913,6 +939,7 @@
         continueIntro: "I understand",
         audioError: "The recording could not be played. Check sound on the phone or read the text.",
         reopenIntro: "Show intro again",
+        versionInfo: "Version: 2026-07-13",
         closeLabel: "Close",
         startTitle: "First choose what you need",
         startBadge: "FIRST TIME? TAP HERE",
@@ -936,6 +963,7 @@
         continueIntro: "Başa düşdüm",
         audioError: "Səs yazısını oxutmaq mümkün olmadı. Telefonda səsi yoxlayın və ya mətni oxuyun.",
         reopenIntro: "İntronu yenidən göstər",
+        versionInfo: "Versiya: 2026-07-13",
         closeLabel: "Bağla",
         startTitle: "Əvvəl sizə lazım olanı seçin",
         startBadge: "İLK DƏFƏDİR? BURANI BASIN",
@@ -959,6 +987,7 @@
         continueIntro: "Entiendo",
         audioError: "No se pudo reproducir la grabación. Revisa el sonido del teléfono o lee el texto.",
         reopenIntro: "Mostrar intro otra vez",
+        versionInfo: "Versión: 2026-07-13",
         closeLabel: "Cerrar",
         startTitle: "Primero elige lo que necesitas",
         startBadge: "¿PRIMERA VEZ? PULSA AQUÍ",
@@ -982,6 +1011,7 @@
         continueIntro: "Naiintindihan ko",
         audioError: "Hindi ma-play ang recording. Suriin ang tunog ng telepono o basahin ang teksto.",
         reopenIntro: "Ipakita muli ang intro",
+        versionInfo: "Bersyon: 2026-07-13",
         closeLabel: "Isara",
         startTitle: "Piliin muna kung ano ang kailangan mo",
         startBadge: "UNANG BESES? PINDUTIN DITO",
@@ -1005,6 +1035,7 @@
         continueIntro: "Saya mengerti",
         audioError: "Rekaman tidak dapat diputar. Periksa suara di ponsel atau baca teks.",
         reopenIntro: "Tampilkan intro lagi",
+        versionInfo: "Versi: 2026-07-13",
         closeLabel: "Tutup",
         startTitle: "Pilih dulu yang Anda butuhkan",
         startBadge: "PERTAMA KALI? KETUK DI SINI",
@@ -1028,6 +1059,7 @@
         continueIntro: "बुझेँ",
         audioError: "रेकर्डिङ बजाउन सकिएन। फोनको आवाज जाँच्नुहोस् वा पाठ पढ्नुहोस्।",
         reopenIntro: "Intro फेरि देखाउनुहोस्",
+        versionInfo: "संस्करण: 2026-07-13",
         closeLabel: "बन्द गर्नुहोस्",
         startTitle: "पहिले तपाईंलाई चाहिएको कुरा छान्नुहोस्",
         startBadge: "पहिलो पटक हो? यहाँ थिच्नुहोस्",
