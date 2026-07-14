@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "citronex-hydra-srzb-";
-const CACHE_NAME = CACHE_PREFIX + "20260714-hydra-entry-splash1";
+const CACHE_NAME = CACHE_PREFIX + "20260714-hydra-phonefit2";
 
 const CORE_ASSETS = [
   "./",

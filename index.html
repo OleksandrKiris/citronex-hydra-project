@@ -121,9 +121,10 @@
       font-weight: 950;
       letter-spacing: .01em;
       text-transform: uppercase;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      overflow-wrap: anywhere;
     }
 
     .brand-text small {
@@ -985,6 +986,203 @@
       .language-choice,
       .intro-action {
         min-height: 54px;
+      }
+    }
+
+    /* Universal phone fit for Hydra start page. */
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body *,
+    body *::before,
+    body *::after {
+      box-sizing: border-box;
+      min-width: 0;
+    }
+
+    img,
+    svg,
+    audio {
+      max-width: 100%;
+    }
+
+    .shell,
+    .topbar,
+    .brand-mini,
+    .brand-text,
+    .hero,
+    .hero-copy,
+    .cards,
+    .card,
+    .btn,
+    .intro-panel,
+    .intro-head,
+    .intro-result,
+    .intro-script,
+    .intro-actions,
+    .language-grid,
+    .language-choice,
+    footer {
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .brand-text strong,
+    .brand-text small,
+    h1,
+    .section-title,
+    .card h2,
+    .card p,
+    .btn,
+    .intro-title,
+    .intro-lead,
+    .intro-script,
+    .intro-action,
+    .language-choice,
+    .version-line {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .btn,
+    .intro-action,
+    .language-choice,
+    .reopen-intro {
+      touch-action: manipulation;
+      white-space: normal;
+      line-height: 1.12;
+    }
+
+    .intro-modal {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .intro-panel {
+      max-height: calc(100svh - 24px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: 100%;
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+        padding-bottom: calc(18px + env(safe-area-inset-bottom));
+      }
+
+      .topbar {
+        grid-template-columns: minmax(0, 1fr) minmax(104px, 34vw);
+      }
+
+      .brand-mini {
+        grid-template-columns: 40px minmax(0, 1fr);
+      }
+
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+      }
+
+      .brand-logo img {
+        width: 34px;
+        height: 34px;
+      }
+
+      .lang-select {
+        width: 100%;
+        min-width: 0;
+      }
+
+      h1 {
+        font-size: clamp(22px, 7vw, 31px);
+        line-height: 1.05;
+      }
+
+      .cards {
+        grid-template-columns: 1fr !important;
+      }
+
+      .card {
+        width: 100%;
+        grid-template-columns: 42px minmax(0, 1fr);
+        min-height: 96px;
+      }
+
+      .btn {
+        min-height: 52px;
+      }
+
+      .intro-panel {
+        width: min(100%, calc(100vw - 20px));
+        padding: 14px;
+      }
+
+      .language-grid,
+      .intro-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .topbar {
+        grid-template-columns: minmax(0, 1fr) 110px;
+        gap: 7px;
+      }
+
+      .brand-text strong {
+        font-size: 12px;
+      }
+
+      .brand-text small {
+        font-size: 9px;
+      }
+
+      .card {
+        grid-template-columns: 38px minmax(0, 1fr);
+        padding: 10px;
+      }
+
+      .card h2 {
+        font-size: 16.5px;
+      }
+
+      .card p {
+        font-size: 12.8px;
+      }
+    }
+
+    @media (max-width: 340px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .lang-select {
+        min-height: 44px;
+      }
+
+      .card {
+        grid-template-columns: 1fr;
+      }
+
+      .icon {
+        display: none;
+      }
+    }
+
+    @media (max-width: 340px) {
+      .brand-text strong {
+        max-width: 100% !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
       }
     }
   </style>
