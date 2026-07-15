@@ -3,7 +3,7 @@
 Status techniczny:
 - Hydra ma komplet wersji jezykowych dla intro i interfejsu;
 - istnieja pliki audio dla: `pl`, `en`, `ua`, `ru`, `az`, `es`, `fil`, `id`, `ne`;
-- sprawdzono brak `undefined`, `NaN` i uszkodzonych znakow w renderze.
+- sprawdzono brak uszkodzonych znakow w renderze.
 
 Do szybkiej kontroli przez native speakera:
 - `az` - czy tekst intro brzmi naturalnie po azersku;
