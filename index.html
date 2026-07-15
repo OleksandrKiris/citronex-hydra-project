@@ -1794,6 +1794,154 @@
       pointer-events: none;
     }
 
+    /* Frontend standard 2026-07-15: compact phone-safe polish, no link/data changes. */
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .shell,
+    main,
+    .cards,
+    .card,
+    .hero,
+    .intro-panel {
+      min-width: 0;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 120;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 24px rgba(17, 24, 39, .08);
+    }
+
+    .brand-mini,
+    .lang-control,
+    .lang-select {
+      min-width: 0;
+    }
+
+    .brand-mini {
+      gap: 9px;
+    }
+
+    .brand-logo {
+      flex: 0 0 auto;
+    }
+
+    .brand-logo img,
+    .intro-mark img {
+      display: block;
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .brand-text strong,
+    .brand-text small,
+    .card h2,
+    .card p,
+    .btn,
+    .intro-script {
+      overflow-wrap: anywhere;
+    }
+
+    .card,
+    .btn,
+    .training-link,
+    .intro-action,
+    .language-choice,
+    .reopen-intro {
+      touch-action: manipulation;
+    }
+
+    .card {
+      will-change: transform;
+    }
+
+    .btn,
+    .training-link,
+    .intro-action,
+    .language-choice {
+      min-height: 54px;
+    }
+
+    .is-pressed {
+      transform: scale(.985);
+      filter: brightness(.98);
+    }
+
+    @media (max-width: 390px) {
+      .shell {
+        padding-inline: 10px;
+      }
+
+      .topbar {
+        gap: 8px;
+        padding: 9px 10px;
+      }
+
+      .brand-logo img {
+        width: 38px;
+        height: 38px;
+      }
+
+      .brand-text strong {
+        font-size: 13px;
+        line-height: 1.1;
+      }
+
+      .brand-text small {
+        font-size: 10.5px;
+      }
+
+      .lang-select {
+        max-width: 122px;
+        min-height: 42px;
+        padding-inline: 10px 28px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding-top: 14px;
+      }
+
+      .hero h1 {
+        font-size: clamp(26px, 8vw, 34px);
+      }
+
+      .cards {
+        gap: 10px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+
+      .icon {
+        width: 42px;
+        height: 42px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2359,6 +2507,17 @@
       });
     }
 
+    function setupFrontendStandard() {
+      if (document.body.dataset.frontendStandardReady === "1") return;
+      document.body.dataset.frontendStandardReady = "1";
+      document.addEventListener("click", (event) => {
+        const target = event.target.closest(".card, .btn, .training-link, .intro-action, .language-choice, .reopen-intro");
+        if (!target) return;
+        target.classList.add("is-pressed");
+        window.setTimeout(() => target.classList.remove("is-pressed"), 220);
+      }, { capture: true });
+    }
+
     function scrollTopLabel(lang = select.value) {
       const labels = {
         pl: "Do góry",
@@ -2476,6 +2635,7 @@
 
     setLang(initial);
     enhanceFrontend();
+    setupFrontendStandard();
     setupHydraLoading();
     setupScrollHelpers();
     if (params.get("intro") === "1" || localStorage.getItem(introSeenKey) !== "1") {
