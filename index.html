@@ -1791,7 +1791,7 @@
     }
 
     .hydra-page-loader.is-visible {
-      pointer-events: auto;
+      pointer-events: none;
     }
 
   </style>
@@ -2312,16 +2312,35 @@
       overlay.innerHTML = '<div class="hydra-page-loader-card"><span class="hydra-loader-dot" aria-hidden="true"></span><strong></strong></div>';
       document.body.appendChild(overlay);
       const label = overlay.querySelector('strong');
-      document.addEventListener('click', (event) => {
-        const link = event.target.closest('a.training-link[href]');
-        if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        event.preventDefault();
+      let loadingTimer = 0;
+
+      const hideLoader = () => {
+        window.clearTimeout(loadingTimer);
+        overlay.classList.remove('is-visible');
+        overlay.hidden = true;
+        document.querySelectorAll('.is-loading').forEach((item) => item.classList.remove('is-loading'));
+      };
+
+      const showLoader = (link) => {
+        window.clearTimeout(loadingTimer);
         const current = supported.includes(select.value) ? select.value : 'ru';
         label.textContent = hydraLoadingLabels[current] || hydraLoadingLabels.ru;
-        link.classList.add('is-loading');
+        if (link) link.classList.add('is-loading');
         overlay.hidden = false;
         requestAnimationFrame(() => overlay.classList.add('is-visible'));
-        window.setTimeout(() => { location.href = link.href; }, 160);
+        loadingTimer = window.setTimeout(hideLoader, 1800);
+      };
+
+      window.addEventListener('pageshow', hideLoader);
+      window.addEventListener('pagehide', hideLoader);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) hideLoader();
+      });
+
+      document.addEventListener('click', (event) => {
+        const link = event.target.closest('a.training-link[href]');
+        if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        showLoader(link);
       }, { capture: true });
     }
 
