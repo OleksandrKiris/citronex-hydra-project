@@ -1778,6 +1778,22 @@
       }
     }
 
+  
+
+    /* Hotfix 2026-07-15: hidden loader must never block phone touch/scroll. */
+    .hydra-page-loader[hidden] {
+      display: none !important;
+      pointer-events: none !important;
+    }
+
+    .hydra-page-loader {
+      pointer-events: none;
+    }
+
+    .hydra-page-loader.is-visible {
+      pointer-events: auto;
+    }
+
   </style>
 </head>
 <body>
