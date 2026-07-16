@@ -1,5 +1,5 @@
-﻿const CACHE_PREFIX = "citronex-hydra-srzb-";
-const CACHE_NAME = CACHE_PREFIX + "20260715-frontend-standard1-hydra";
+const CACHE_PREFIX = "citronex-hydra-srzb-";
+const CACHE_NAME = CACHE_PREFIX + "20260716-hardening1-hydra";
 
 const CORE_ASSETS = [
   "./",
@@ -44,7 +44,7 @@ function networkTimeout(ms = 1400) {
   });
 }
 
-async function cacheMatch(request, fallback = "./index.html") {
+async function cacheMatch(request, fallback = null) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request, { ignoreSearch: true }) || await caches.match(request, { ignoreSearch: true });
   if (cached) return cached;
@@ -65,6 +65,8 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith((async () => {
+    const accept = request.headers.get("accept") || "";
+    const fallback = request.mode === "navigate" || accept.includes("text/html") ? "./index.html" : null;
     const cached = await cacheMatch(request, null);
     if (cached) {
       fetch(request).then((response) => cacheResponse(request, response)).catch(() => {});
@@ -72,11 +74,11 @@ self.addEventListener("fetch", (event) => {
     }
     try {
       const response = await Promise.race([fetch(request), networkTimeout()]);
-      if (!response) return cacheMatch(request);
+      if (!response) return await cacheMatch(request, fallback) || Response.error();
       await cacheResponse(request, response);
       return response;
     } catch (error) {
-      return cacheMatch(request);
+      return await cacheMatch(request, fallback) || Response.error();
     }
   })());
 });
