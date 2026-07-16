@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#c90016">
   <title>CITRONEX hydra S.R.Z.B.</title>
-  <meta name="build-version" content="20260716-dragon-guide1-hydra">
+  <meta name="build-version" content="20260716-browser-lang1-hydra">
   <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
@@ -2347,7 +2347,18 @@
     const reopenIntroButton = document.querySelector("#reopenIntro");
     const supported = Object.keys(translations);
     const params = new URLSearchParams(location.search);
-    const initial = supported.includes(params.get("lang")) ? params.get("lang") : localStorage.getItem("hydraLang") || "ru";
+    function detectBrowserLanguage() {
+      const candidates = [navigator.language, ...(Array.isArray(navigator.languages) ? navigator.languages : [])];
+      for (const raw of candidates) {
+        const primary = String(raw || "").toLowerCase().split(/[-_]/)[0];
+        const normalized = primary === "uk" ? "ua" : primary;
+        if (supported.includes(normalized)) return normalized;
+      }
+      return "en";
+    }
+    const fromUrl = (params.get("lang") || "").toLowerCase();
+    const storedLanguage = (localStorage.getItem("hydraLang") || "").toLowerCase();
+    const initial = supported.includes(fromUrl) ? fromUrl : supported.includes(storedLanguage) ? storedLanguage : detectBrowserLanguage();
     const introSeenKey = "hydraIntroAudioSeenV1";
     const introAudioSrc = {
       pl: "assets/audio/intro-pl.mp3",
@@ -2367,20 +2378,20 @@
     }
 
     function showAudioStatus(lang) {
-      const current = supported.includes(lang) ? lang : "ru";
+      const current = supported.includes(lang) ? lang : "en";
       audioStatus.textContent = translations[current].audioError || translations.pl.audioError;
       audioStatus.hidden = false;
     }
 
     function setPlayingState(isPlaying) {
-      const current = supported.includes(select.value) ? select.value : "ru";
+      const current = supported.includes(select.value) ? select.value : "en";
       playIntroButton.textContent = translations[current][isPlaying ? "playingIntro" : "playIntro"] || translations.pl.playIntro;
       playIntroButton.disabled = isPlaying;
       playIntroButton.setAttribute("aria-busy", isPlaying ? "true" : "false");
     }
 
     function setAudioSource(lang) {
-      const current = supported.includes(lang) ? lang : "ru";
+      const current = supported.includes(lang) ? lang : "en";
       const src = introAudioSrc[current];
       if (introAudio.getAttribute("src") !== src) {
         introAudio.pause();
@@ -2390,7 +2401,7 @@
     }
 
     function setLang(lang) {
-      const current = supported.includes(lang) ? lang : "ru";
+      const current = supported.includes(lang) ? lang : "en";
       document.documentElement.lang = current === "ua" ? "uk" : current;
       select.value = current;
       localStorage.setItem("hydraLang", current);
@@ -2461,7 +2472,7 @@
     }
 
     function playIntroAudio(lang = select.value) {
-      const current = supported.includes(lang) ? lang : "ru";
+      const current = supported.includes(lang) ? lang : "en";
       setAudioSource(current);
       hideAudioStatus();
       introAudio.currentTime = 0;
@@ -2510,7 +2521,7 @@
 
       const showLoader = (link) => {
         window.clearTimeout(loadingTimer);
-        const current = supported.includes(select.value) ? select.value : 'ru';
+        const current = supported.includes(select.value) ? select.value : 'en';
         label.textContent = hydraLoadingLabels[current] || hydraLoadingLabels.ru;
         if (link) link.classList.add('is-loading');
         overlay.hidden = false;
@@ -2569,7 +2580,7 @@
         id: "Ke atas",
         ne: "माथि"
       };
-      return labels[lang] || labels.ru;
+      return labels[lang] || labels.en;
     }
 
     function setupScrollHelpers() {
