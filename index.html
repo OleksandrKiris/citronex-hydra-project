@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#c90016">
   <title>CITRONEX hydra S.R.Z.B.</title>
-  <meta name="build-version" content="20260716-diction1-hydra">
+  <meta name="build-version" content="20260716-diction2-hydra">
   <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
@@ -2371,10 +2371,21 @@
       id: "assets/audio/intro-id.mp3",
       ne: "assets/audio/intro-ne.mp3"
     };
+    const speechIntroText = {
+      pl: "Witaj w systemie Citronex. Wybierz przyjazd do pracy albo swoją lokalizację. Znajdziesz tu mapy, instrukcje, kontakty i ważne informacje.",
+      en: "Welcome to the Citronex system. Choose arrival to work or your work location. Here you will find maps, instructions, contacts, and important information.",
+      ua: "Вітаємо в системі Citronex. Оберіть приїзд на роботу або свою робочу локацію. Тут є карти, інструкції, контакти та важлива інформація.",
+      ru: "Добро пожаловать в систему Citronex. Выберите приезд на работу или свою рабочую локацию. Здесь вы найдёте карты, инструкции, контакты и важную информацию.",
+      az: "CITRONEX sisteminə xoş gəlmisiniz. İşə gəlişi və ya iş yerinizi seçin. Burada xəritələr, təlimatlar, kontaktlar və vacib məlumatlar var.",
+      es: "Bienvenido al sistema Citronex. Elige la llegada al trabajo o tu lugar de trabajo. Aquí encontrarás mapas, instrucciones, contactos e información importante.",
+      fil: "Maligayang pagdating sa sistema ng Citronex. Piliin ang pagdating sa trabaho o ang lugar ng iyong trabaho. Narito ang mga mapa, tagubilin, contact, at mahalagang impormasyon.",
+      id: "Selamat datang di sistem Citronex. Pilih kedatangan ke tempat kerja atau lokasi kerja Anda. Di sini ada peta, petunjuk, kontak, dan informasi penting.",
+      ne: "Citronex प्रणालीमा स्वागत छ। काममा आउने जानकारी वा आफ्नो काम गर्ने स्थान छान्नुहोस्। यहाँ नक्सा, निर्देशन, सम्पर्क र महत्वपूर्ण जानकारी छन्।"
+    };
     const voiceProfiles = {
-      pl: { rate: .84, pitch: 1 }, en: { rate: .88, pitch: 1 }, ua: { rate: .82, pitch: 1.02 },
-      ru: { rate: .82, pitch: 1 }, az: { rate: .78, pitch: 1 }, es: { rate: .86, pitch: 1.02 },
-      fil: { rate: .82, pitch: 1.03 }, id: { rate: .82, pitch: 1.02 }, ne: { rate: .76, pitch: 1.05 }
+      pl: { rate: .78, pitch: 1 }, en: { rate: .82, pitch: 1 }, ua: { rate: .76, pitch: 1 },
+      ru: { rate: .76, pitch: 1 }, az: { rate: .72, pitch: 1 }, es: { rate: .80, pitch: 1 },
+      fil: { rate: .76, pitch: 1 }, id: { rate: .76, pitch: 1 }, ne: { rate: .70, pitch: 1 }
     };
     const voiceLocales = { pl: "pl-PL", en: "en-US", ua: "uk-UA", ru: "ru-RU", az: "az-AZ", es: "es-ES", fil: "fil-PH", id: "id-ID", ne: "ne-NP" };
     let introFallbackActive = false;
@@ -2383,9 +2394,22 @@
       const voices = window.speechSynthesis?.getVoices?.() || [];
       const exact = locale.toLowerCase();
       const prefix = exact.split("-")[0];
-      return voices.find((voice) => String(voice.lang || "").toLowerCase() === exact)
-        || voices.find((voice) => String(voice.lang || "").toLowerCase().startsWith(`${prefix}-`))
-        || null;
+      const matching = voices.filter((voice) => {
+        const language = String(voice.lang || "").toLowerCase();
+        return language === exact || language.startsWith(`${prefix}-`);
+      });
+      return matching.sort((left, right) => {
+        const score = (voice) => {
+          const language = String(voice.lang || "").toLowerCase();
+          const name = String(voice.name || "").toLowerCase();
+          let value = language === exact ? 100 : 60;
+          if (/natural|neural|google|microsoft|enhanced|premium|siri/.test(name)) value += 35;
+          if (/compact|espeak|robot/.test(name)) value -= 20;
+          if (voice.default) value += 3;
+          return value;
+        };
+        return score(right) - score(left);
+      })[0] || null;
     }
 
     function waitForVoice(locale, callback) {
@@ -2446,6 +2470,8 @@
         const key = node.getAttribute("data-i18n");
         node.textContent = translations[current][key] || translations.pl[key] || node.textContent;
       });
+      const introScript = document.querySelector("#introScript");
+      if (introScript) introScript.textContent = speechIntroText[current] || speechIntroText.en;
       setPlayingState(!introAudio.paused && !introAudio.ended);
 
       document.querySelectorAll("[data-i18n-label]").forEach((node) => {
@@ -2520,7 +2546,7 @@
       const profile = voiceProfiles[current] || voiceProfiles.en;
       waitForVoice(locale, (voice) => {
         if (!introFallbackActive) return;
-        const utterance = new SpeechSynthesisUtterance(translations[current].introSpeech);
+        const utterance = new SpeechSynthesisUtterance(speechIntroText[current] || translations[current].introSpeech);
         utterance.lang = locale;
         utterance.rate = profile.rate;
         utterance.pitch = profile.pitch;
