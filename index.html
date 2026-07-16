@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#c90016">
   <title>CITRONEX hydra S.R.Z.B.</title>
-  <meta name="build-version" content="20260716-hardening1-hydra">
+  <meta name="build-version" content="20260716-dragon-guide1-hydra">
   <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
@@ -2032,7 +2032,7 @@
           <div class="card-body">
             <h2>Siechnice</h2>
             <p data-i18n="siechniceText">Wybierz, jeśli pracujesz w Siechnicach.</p>
-            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" href="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
+            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" data-guide-location="siechnice" href="https://oleksandrkiris.github.io/citronex-dragon-guide/?location=siechnice" data-i18n="openTraining">Otwórz szkolenie</a>
           </div>
         </article>
 
@@ -2043,7 +2043,7 @@
           <div class="card-body">
             <h2>Ryczywół</h2>
             <p data-i18n="ryczywolText">Wybierz, jeśli pracujesz w Ryczywole.</p>
-            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" href="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
+            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" data-guide-location="ryczywol" href="https://oleksandrkiris.github.io/citronex-dragon-guide/?location=ryczywol" data-i18n="openTraining">Otwórz szkolenie</a>
           </div>
         </article>
 
@@ -2054,7 +2054,7 @@
           <div class="card-body">
             <h2>Zgorzelec / Bogatynia</h2>
             <p data-i18n="zgorzelecText">Wybierz, jeśli pracujesz w Zgorzelcu albo Bogatyni.</p>
-            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" href="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
+            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" data-guide-location="zgorzelec_bogatynia" href="https://oleksandrkiris.github.io/citronex-dragon-guide/?location=zgorzelec_bogatynia" data-i18n="openTraining">Otwórz szkolenie</a>
           </div>
         </article>
       </section>
@@ -2413,6 +2413,14 @@
       });
 
       document.querySelectorAll(".training-link").forEach((link) => {
+        if (link.dataset.guideLocation) {
+          const guide = new URL("https://oleksandrkiris.github.io/citronex-dragon-guide/");
+          guide.searchParams.set("location", link.dataset.guideLocation);
+          guide.searchParams.set("lang", current);
+          guide.searchParams.set("from", "hydra");
+          link.href = guide.toString();
+          return;
+        }
         const target = new URL(link.dataset.base, location.href);
         target.searchParams.set("lang", current);
         if (target.pathname.includes("citronex-") && !target.pathname.includes("citronex-hydra-project")) {
