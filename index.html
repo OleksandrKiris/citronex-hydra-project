@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#c90016">
   <title>CITRONEX hydra S.R.Z.B.</title>
-  <meta name="build-version" content="20260716-browser-lang1-hydra">
+  <meta name="build-version" content="20260716-diction1-hydra">
   <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
@@ -2371,6 +2371,38 @@
       id: "assets/audio/intro-id.mp3",
       ne: "assets/audio/intro-ne.mp3"
     };
+    const voiceProfiles = {
+      pl: { rate: .84, pitch: 1 }, en: { rate: .88, pitch: 1 }, ua: { rate: .82, pitch: 1.02 },
+      ru: { rate: .82, pitch: 1 }, az: { rate: .78, pitch: 1 }, es: { rate: .86, pitch: 1.02 },
+      fil: { rate: .82, pitch: 1.03 }, id: { rate: .82, pitch: 1.02 }, ne: { rate: .76, pitch: 1.05 }
+    };
+    const voiceLocales = { pl: "pl-PL", en: "en-US", ua: "uk-UA", ru: "ru-RU", az: "az-AZ", es: "es-ES", fil: "fil-PH", id: "id-ID", ne: "ne-NP" };
+    let introFallbackActive = false;
+
+    function findVoice(locale) {
+      const voices = window.speechSynthesis?.getVoices?.() || [];
+      const exact = locale.toLowerCase();
+      const prefix = exact.split("-")[0];
+      return voices.find((voice) => String(voice.lang || "").toLowerCase() === exact)
+        || voices.find((voice) => String(voice.lang || "").toLowerCase().startsWith(`${prefix}-`))
+        || null;
+    }
+
+    function waitForVoice(locale, callback) {
+      const synth = window.speechSynthesis;
+      if (!synth) { callback(null); return; }
+      const immediate = findVoice(locale);
+      if (immediate) { callback(immediate); return; }
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        synth.removeEventListener?.("voiceschanged", finish);
+        callback(findVoice(locale));
+      };
+      synth.addEventListener?.("voiceschanged", finish, { once: true });
+      window.setTimeout(finish, 450);
+    }
 
     function hideAudioStatus() {
       audioStatus.hidden = true;
@@ -2393,6 +2425,8 @@
     function setAudioSource(lang) {
       const current = supported.includes(lang) ? lang : "en";
       const src = introAudioSrc[current];
+      introFallbackActive = false;
+      window.speechSynthesis?.cancel?.();
       if (introAudio.getAttribute("src") !== src) {
         introAudio.pause();
         introAudio.src = src;
@@ -2446,6 +2480,8 @@
     function stopIntroAudio() {
       introAudio.pause();
       introAudio.currentTime = 0;
+      introFallbackActive = false;
+      window.speechSynthesis?.cancel?.();
       setPlayingState(false);
     }
 
@@ -2471,6 +2507,32 @@
       });
     }
 
+    function speakIntroFallback(lang) {
+      const current = supported.includes(lang) ? lang : "en";
+      const synth = window.speechSynthesis;
+      if (!synth || typeof SpeechSynthesisUtterance === "undefined") {
+        showAudioStatus(current);
+        return;
+      }
+      if (introFallbackActive) return;
+      introFallbackActive = true;
+      const locale = voiceLocales[current] || "en-US";
+      const profile = voiceProfiles[current] || voiceProfiles.en;
+      waitForVoice(locale, (voice) => {
+        if (!introFallbackActive) return;
+        const utterance = new SpeechSynthesisUtterance(translations[current].introSpeech);
+        utterance.lang = locale;
+        utterance.rate = profile.rate;
+        utterance.pitch = profile.pitch;
+        if (voice) utterance.voice = voice;
+        utterance.onstart = () => { hideAudioStatus(); setPlayingState(true); };
+        utterance.onend = () => { introFallbackActive = false; setPlayingState(false); };
+        utterance.onerror = () => { introFallbackActive = false; setPlayingState(false); showAudioStatus(current); };
+        synth.cancel();
+        synth.speak(utterance);
+      });
+    }
+
     function playIntroAudio(lang = select.value) {
       const current = supported.includes(lang) ? lang : "en";
       setAudioSource(current);
@@ -2481,7 +2543,7 @@
       if (playResult && typeof playResult.catch === "function") {
         playResult.catch(() => {
           setPlayingState(false);
-          showAudioStatus(current);
+          speakIntroFallback(current);
         });
       }
     }
@@ -2659,7 +2721,9 @@
       playIntroAudio(select.value);
     });
     continueIntroButton.addEventListener("click", closeIntro);
-    introAudio.addEventListener("error", () => showAudioStatus(select.value));
+    introAudio.addEventListener("error", () => {
+      if (!introAudio.paused) speakIntroFallback(select.value);
+    });
     introAudio.addEventListener("ended", () => setPlayingState(false));
     introAudio.addEventListener("pause", () => setPlayingState(false));
     introAudio.addEventListener("play", () => setPlayingState(true));
