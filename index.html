@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#c90016">
   <title>CITRONEX hydra S.R.Z.B.</title>
-  <meta name="build-version" content="20260716-diction2-hydra">
+  <meta name="build-version" content="20260716-style1-hydra">
   <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
@@ -1973,6 +1973,306 @@
       }
     }
 
+    /* Unified CITRONEX frontend standard 2026-07-16. */
+    :root {
+      --cx-bg: #f4f7f5;
+      --cx-surface: #ffffff;
+      --cx-text: #17211c;
+      --cx-muted: #5f6d65;
+      --cx-line: #dce6df;
+      --cx-red: #c7352e;
+      --cx-green: #15803d;
+      --cx-blue: #2563eb;
+      --cx-yellow: #c26b08;
+      --cx-radius: 14px;
+      --cx-shadow: 0 8px 24px rgba(23, 33, 28, .08);
+    }
+
+    html {
+      min-width: 280px;
+      background: var(--cx-bg);
+      text-size-adjust: 100%;
+      scrollbar-gutter: stable;
+    }
+
+    body {
+      min-width: 280px;
+      background: linear-gradient(180deg, rgba(21, 128, 61, .06), transparent 280px), var(--cx-bg);
+      color: var(--cx-text);
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .shell {
+      width: min(100%, 860px);
+      padding: max(8px, env(safe-area-inset-top)) 12px max(26px, env(safe-area-inset-bottom));
+    }
+
+    .topbar {
+      top: max(4px, env(safe-area-inset-top));
+      min-height: 58px;
+      margin-bottom: 12px;
+      padding: 7px 9px;
+      border-radius: var(--cx-radius);
+      border-color: rgba(220, 230, 223, .95);
+      background: rgba(255, 255, 255, .94);
+      box-shadow: 0 6px 18px rgba(23, 33, 28, .07);
+    }
+
+    .brand-logo,
+    .intro-mark,
+    .icon,
+    .intro-close,
+    .language-choice,
+    .intro-action,
+    .reopen-intro,
+    .btn,
+    .card {
+      border-radius: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      box-shadow: 0 6px 14px rgba(23, 33, 28, .08);
+    }
+
+    .brand-logo img {
+      width: 34px;
+      height: 33px;
+    }
+
+    .brand-text strong {
+      font-size: 14px;
+      line-height: 1.12;
+    }
+
+    .brand-text small {
+      color: var(--cx-muted);
+      font-size: 9px;
+    }
+
+    .lang-select {
+      min-height: 48px;
+      border-color: var(--cx-line);
+      font-size: 13px;
+    }
+
+    .hero {
+      margin-bottom: 10px;
+      padding: 4px 2px 8px;
+    }
+
+    h1 {
+      color: var(--cx-red);
+      font-size: 34px;
+      line-height: 1.08;
+    }
+
+    .section-title {
+      margin-top: 12px;
+      font-size: 22px;
+      line-height: 1.16;
+    }
+
+    .cards {
+      gap: 12px;
+    }
+
+    .card {
+      min-height: 106px;
+      padding: 12px;
+      border-color: var(--cx-line);
+      box-shadow: var(--cx-shadow);
+    }
+
+    .card.priority {
+      min-height: 116px;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    .card h2 {
+      font-size: 20px;
+      line-height: 1.12;
+    }
+
+    .card p {
+      margin-top: 5px;
+      margin-bottom: 9px;
+      color: var(--cx-muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .btn,
+    .intro-action,
+    .reopen-intro,
+    .language-choice {
+      min-height: 54px;
+      padding: 10px 12px;
+      line-height: 1.2;
+      touch-action: manipulation;
+    }
+
+    .intro-panel {
+      width: min(100%, 520px);
+      border-radius: 16px;
+      border-color: var(--cx-line);
+    }
+
+    .language-choice {
+      border-color: var(--cx-line);
+      font-size: 14px;
+    }
+
+    .intro-script {
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .intro-actions {
+      gap: 10px;
+    }
+
+    footer {
+      margin-top: 22px;
+      border-top-color: var(--cx-line);
+      color: var(--cx-muted);
+    }
+
+    @media (min-width: 680px) {
+      .cards {
+        gap: 14px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .shell {
+        padding-inline: 9px;
+      }
+
+      .topbar {
+        gap: 7px;
+        padding: 6px 8px;
+      }
+
+      .brand-mini {
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 7px;
+      }
+
+      .brand-logo {
+        width: 34px;
+        height: 34px;
+      }
+
+      .brand-logo img {
+        width: 29px;
+        height: 28px;
+      }
+
+      .brand-text strong {
+        font-size: 11px;
+      }
+
+      .brand-text small {
+        display: none;
+      }
+
+      .lang-select {
+        width: 118px;
+        min-height: 44px;
+        font-size: 12px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .section-title {
+        font-size: 20px;
+      }
+
+      .card {
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 9px;
+        padding: 11px;
+      }
+
+      .card h2 {
+        font-size: 18px;
+      }
+
+      .card p {
+        font-size: 12.5px;
+      }
+
+      .intro-panel {
+        max-height: calc(100svh - 20px);
+        padding: 14px 12px 12px;
+      }
+
+      .intro-head {
+        grid-template-columns: 46px minmax(0, 1fr) 40px;
+        gap: 8px;
+      }
+
+      .intro-mark {
+        width: 46px;
+        height: 46px;
+      }
+
+      .intro-mark img {
+        width: 40px;
+        height: 39px;
+      }
+
+      .intro-title {
+        font-size: 22px;
+      }
+
+      .intro-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 340px) {
+      .shell {
+        padding-inline: 7px;
+      }
+
+      .lang-select {
+        width: 104px;
+        padding-inline: 7px 20px;
+      }
+
+      .card {
+        grid-template-columns: 36px minmax(0, 1fr);
+      }
+
+      .icon {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card,
+      .btn,
+      .intro-action,
+      .language-choice {
+        transition: none !important;
+      }
+    }
   </style>
 </head>
 <body>
