@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#c90016">
   <title>CITRONEX hydra S.R.Z.B.</title>
-  <meta name="build-version" content="20260717-voice4-hydra">
+  <meta name="build-version" content="20260717-style2-hydra">
   <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
@@ -2273,6 +2273,37 @@
         transition: none !important;
       }
     }
+    /* Final visual pass: calmer colors, clearer cards, less visual noise. */
+    :root {
+      --red: #c43b32 !important;
+      --red-dark: #8f2924 !important;
+      --red-soft: #fff3f1 !important;
+      --gold: #a86b08 !important;
+      --gold-soft: #fff8e8 !important;
+      --ink: #16211b !important;
+      --muted: #5c6b62 !important;
+      --line: #dbe5de !important;
+      --panel: #ffffff !important;
+      --soft: #f3f6f4 !important;
+      --blue: #2f6fca !important;
+      --green: #19713f !important;
+      --green-soft: #eef8f1 !important;
+      --shadow: 0 8px 20px rgba(22, 33, 27, .08) !important;
+      --radius: 14px !important;
+    }
+
+    body { background: var(--soft) !important; color: var(--ink) !important; }
+    .topbar { background: rgba(255, 255, 255, .96) !important; border-color: var(--line) !important; box-shadow: 0 5px 16px rgba(22, 33, 27, .07) !important; }
+    .hero h1 { color: var(--red) !important; }
+    .card { background: #ffffff !important; border-color: var(--line) !important; border-radius: 14px !important; box-shadow: var(--shadow) !important; }
+    .card.priority { background: var(--red-soft) !important; border-left-color: var(--red) !important; }
+    .card.green { background: var(--green-soft) !important; border-left-color: var(--green) !important; }
+    .card.gold { background: var(--gold-soft) !important; border-left-color: var(--gold) !important; }
+    .card-icon, .brand-mark, .intro-mark { border-radius: 12px !important; }
+    .btn, .intro-action, .language-choice, .reopen-intro { border-radius: 12px !important; }
+    .intro-panel { border-color: var(--line) !important; box-shadow: 0 18px 48px rgba(22, 33, 27, .18) !important; }
+    .intro-title { color: var(--ink) !important; }
+    .intro-lead, .intro-result { color: var(--muted) !important; }
   </style>
 </head>
 <body>
