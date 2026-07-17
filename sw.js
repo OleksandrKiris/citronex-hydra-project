@@ -64,6 +64,19 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  if (request.mode === "navigate" || (request.headers.get("accept") || "").includes("text/html")) {
+    event.respondWith((async () => {
+      try {
+        const response = await fetch(request, { cache: "no-store" });
+        await cacheResponse(request, response);
+        return response;
+      } catch (error) {
+        return await cacheMatch(request, "./index.html") || Response.error();
+      }
+    })());
+    return;
+  }
+
   event.respondWith((async () => {
     const accept = request.headers.get("accept") || "";
     const fallback = request.mode === "navigate" || accept.includes("text/html") ? "./index.html" : null;
