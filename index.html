@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#c90016">
   <title>CITRONEX hydra S.R.Z.B.</title>
-  <meta name="build-version" content="20260717-voice6-hydra">
+  <meta name="build-version" content="20260717-voice7-hydra">
   <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
@@ -2301,6 +2301,7 @@
     .card.gold { background: var(--gold-soft) !important; border-left-color: var(--gold) !important; }
     .card-icon, .brand-mark, .intro-mark { border-radius: 12px !important; }
     .btn, .intro-action, .language-choice, .reopen-intro { border-radius: 12px !important; }
+    button.btn { border: 0; font-family: inherit; cursor: pointer; }
     .intro-panel { border-color: var(--line) !important; box-shadow: 0 18px 48px rgba(22, 33, 27, .18) !important; }
     .intro-title { color: var(--ink) !important; }
     .intro-lead, .intro-result { color: var(--muted) !important; }
@@ -2388,10 +2389,19 @@
             <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" data-guide-location="zgorzelec_bogatynia" href="https://oleksandrkiris.github.io/citronex-dragon-guide/?location=zgorzelec_bogatynia" data-i18n="openTraining">Otwórz szkolenie</a>
           </div>
         </article>
+
+        <article class="card gold">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16v11H4z"/><path d="M8 20h8"/><path d="M12 16v4"/><path d="M9 9h.01"/><path d="M12 9h.01"/><path d="M15 9h.01"/></svg>
+          </div>
+          <div class="card-body">
+            <h2 data-i18n="voiceGuideTitle">Przewodnik głosowy</h2>
+            <p data-i18n="voiceGuideText">Krótka informacja o aplikacji i miejscach pracy.</p>
+            <button class="btn" type="button" id="reopenIntro" data-i18n="reopenIntro">Otwórz przewodnik</button>
+          </div>
+        </article>
       </section>
     </main>
-
-    <button class="reopen-intro" type="button" id="reopenIntro" data-i18n="reopenIntro">Pokaż intro ponownie</button>
 
     <footer>
       <span>CITRONEX hydra S.R.Z.B. · OLEKSANDR KIRIS</span>
@@ -2452,7 +2462,9 @@
         playingIntro: "Odtwarzam...",
         continueIntro: "Rozumiem",
         audioError: "Nie udało się odtworzyć nagrania. Sprawdź dźwięk w telefonie albo przeczytaj tekst.",
-        reopenIntro: "Pokaż intro ponownie",
+        reopenIntro: "Otwórz przewodnik",
+        voiceGuideTitle: "Przewodnik głosowy",
+        voiceGuideText: "Krótka informacja o aplikacji i miejscach pracy.",
         versionInfo: "Wersja: 2026-07-13",
         closeLabel: "Zamknij",
         startTitle: "Najpierw wybierz, czego potrzebujesz",
@@ -2477,7 +2489,9 @@
         playingIntro: "Воспроизвожу...",
         continueIntro: "Понятно",
         audioError: "Не удалось воспроизвести запись. Проверьте звук в телефоне или прочитайте текст.",
-        reopenIntro: "Показать intro ещё раз",
+        reopenIntro: "Открыть проводник",
+        voiceGuideTitle: "Голосовой проводник",
+        voiceGuideText: "Краткая информация о приложении и местах работы.",
         versionInfo: "Версия: 2026-07-13",
         closeLabel: "Закрыть",
         startTitle: "Сначала выберите, что вам нужно",
@@ -2502,7 +2516,9 @@
         playingIntro: "Відтворюю...",
         continueIntro: "Зрозуміло",
         audioError: "Не вдалося відтворити запис. Перевірте звук у телефоні або прочитайте текст.",
-        reopenIntro: "Показати intro ще раз",
+        reopenIntro: "Відкрити гід",
+        voiceGuideTitle: "Голосовий гід",
+        voiceGuideText: "Коротка інформація про застосунок і місця роботи.",
         versionInfo: "Версія: 2026-07-13",
         closeLabel: "Закрити",
         startTitle: "Спочатку оберіть, що вам потрібно",
@@ -2527,7 +2543,9 @@
         playingIntro: "Playing...",
         continueIntro: "I understand",
         audioError: "The recording could not be played. Check sound on the phone or read the text.",
-        reopenIntro: "Show intro again",
+        reopenIntro: "Open voice guide",
+        voiceGuideTitle: "Voice guide",
+        voiceGuideText: "A short explanation of the app and work locations.",
         versionInfo: "Version: 2026-07-13",
         closeLabel: "Close",
         startTitle: "First choose what you need",
@@ -2552,7 +2570,9 @@
         playingIntro: "Oynadılır...",
         continueIntro: "Başa düşdüm",
         audioError: "Səs yazısını oxutmaq mümkün olmadı. Telefonda səsi yoxlayın və ya mətni oxuyun.",
-        reopenIntro: "İntronu yenidən göstər",
+        reopenIntro: "Səsli bələdçini açın",
+        voiceGuideTitle: "Səsli bələdçi",
+        voiceGuideText: "Tətbiq və iş yerləri haqqında qısa məlumat.",
         versionInfo: "Versiya: 2026-07-13",
         closeLabel: "Bağla",
         startTitle: "Əvvəl sizə lazım olanı seçin",
@@ -2577,7 +2597,9 @@
         playingIntro: "Reproduciendo...",
         continueIntro: "Entiendo",
         audioError: "No se pudo reproducir la grabación. Revisa el sonido del teléfono o lee el texto.",
-        reopenIntro: "Mostrar intro otra vez",
+        reopenIntro: "Abrir la guía de voz",
+        voiceGuideTitle: "Guía de voz",
+        voiceGuideText: "Información breve sobre la aplicación y los lugares de trabajo.",
         versionInfo: "Versión: 2026-07-13",
         closeLabel: "Cerrar",
         startTitle: "Primero elige lo que necesitas",
@@ -2602,7 +2624,9 @@
         playingIntro: "Tumutugtog...",
         continueIntro: "Naiintindihan ko",
         audioError: "Hindi ma-play ang recording. Suriin ang tunog ng telepono o basahin ang teksto.",
-        reopenIntro: "Ipakita muli ang intro",
+        reopenIntro: "Buksan ang gabay na may boses",
+        voiceGuideTitle: "Gabay na may boses",
+        voiceGuideText: "Maikling paliwanag tungkol sa app at mga lugar ng trabaho.",
         versionInfo: "Bersyon: 2026-07-13",
         closeLabel: "Isara",
         startTitle: "Piliin muna kung ano ang kailangan mo",
@@ -2627,7 +2651,9 @@
         playingIntro: "Memutar...",
         continueIntro: "Saya mengerti",
         audioError: "Rekaman tidak dapat diputar. Periksa suara di ponsel atau baca teks.",
-        reopenIntro: "Tampilkan intro lagi",
+        reopenIntro: "Buka panduan suara",
+        voiceGuideTitle: "Panduan suara",
+        voiceGuideText: "Penjelasan singkat tentang aplikasi dan lokasi kerja.",
         versionInfo: "Versi: 2026-07-13",
         closeLabel: "Tutup",
         startTitle: "Pilih dulu yang Anda butuhkan",
@@ -2652,7 +2678,9 @@
         playingIntro: "बज्दैछ...",
         continueIntro: "बुझेँ",
         audioError: "रेकर्डिङ बजाउन सकिएन। फोनको आवाज जाँच्नुहोस् वा पाठ पढ्नुहोस्।",
-        reopenIntro: "Intro फेरि देखाउनुहोस्",
+        reopenIntro: "आवाज मार्गदर्शन खोल्नुहोस्",
+        voiceGuideTitle: "आवाज मार्गदर्शन",
+        voiceGuideText: "एप र काम गर्ने स्थानबारे छोटो जानकारी।",
         versionInfo: "संस्करण: 2026-07-13",
         closeLabel: "बन्द गर्नुहोस्",
         startTitle: "पहिले तपाईंलाई चाहिएको कुरा छान्नुहोस्",
@@ -2702,17 +2730,6 @@
       id: "assets/audio/intro-id.mp3?v=20260717-voice6",
       ne: "assets/audio/intro-ne.mp3?v=20260717-voice6"
     };
-  const speechIntroText = {
-  "pl": "Witaj. To system Citronex. Jestem Twoim przewodnikiem. Wybierz język. Potem wybierz miejsce pracy. Znajdziesz tu mapy, instrukcje, kontakty i zasady. Zaczynamy.",
-  "en": "Welcome. This is the Citronex system. I am your guide. Choose a language. Then choose your workplace. Here you can find maps, instructions, contacts, and rules. Let us begin.",
-  "ua": "Вітаю. Це система Citronex. Я ваш гід. Оберіть мову. Потім оберіть місце роботи. Тут є карти, інструкції, контакти та правила. Почнімо.",
-  "ru": "Здравствуйте. Это система Citronex. Я ваш помощник. Выберите язык. Затем выберите место работы. Здесь есть карты, инструкции, контакты и правила. Начнём.",
-  "az": "Salam. Bu, Citronex sistemidir. Mən sizin bələdçinizəm. Dil seçin. Sonra iş yerinizi seçin. Burada xəritələr, təlimatlar, əlaqə nömrələri və qaydalar var. Başlayaq.",
-  "es": "Bienvenido. Este es el sistema Citronex. Soy tu guía. Elige un idioma. Después, elige tu lugar de trabajo. Aquí encontrarás mapas, instrucciones, contactos y normas. Empecemos.",
-  "fil": "Maligayang pagdating. Ito ang sistema ng Citronex. Ako ang iyong gabay. Piliin ang iyong wika. Pagkatapos, piliin ang lugar ng iyong trabaho. Narito ang mga mapa, tagubilin, contact, at patakaran. Magsimula na tayo.",
-  "id": "Selamat datang. Ini sistem Citronex. Saya pemandu Anda. Pilih bahasa. Lalu pilih tempat kerja. Di sini ada peta, petunjuk, kontak, dan aturan. Mari kita mulai.",
-  "ne": "स्वागत छ। यो Citronex प्रणाली हो। म तपाईंको मार्गदर्शक हुँ\u0964 आफ्नो भाषा छान्नुहोस्। त्यसपछि काम गर्ने ठाउँ छान्नुहोस्। यहाँ नक्सा, निर्देशन, सम्पर्क र नियमहरू छन्। सुरु गरौँ।"
-};
     const clearSpeechIntroText = {
       pl: "Witaj. To jest system Citronex. Jestem Twoim przewodnikiem. Wybierz j\u0119zyk. Nast\u0119pnie wybierz miejsce pracy. W aplikacji znajdziesz mapy, instrukcje, kontakty i najwa\u017cniejsze zasady. Zaczynamy.",
       en: "Welcome. This is the Citronex system. I am your guide. Choose a language. Next, choose your workplace. In this app you will find maps, instructions, contacts, and the most important rules. Let us begin.",
@@ -3119,9 +3136,6 @@
     setupFrontendStandard();
     setupHydraLoading();
     setupScrollHelpers();
-    if (params.get("intro") === "1" || localStorage.getItem(introSeenKey) !== "1") {
-      openIntro();
-    }
 
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
