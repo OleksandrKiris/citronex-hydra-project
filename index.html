@@ -2306,6 +2306,16 @@
     .intro-title { color: var(--ink) !important; }
     .intro-lead, .intro-result { color: var(--muted) !important; }
   </style>
+  <style>
+    /* Compact previews keep the start screen calm without hiding module content. */
+    .card-body > p {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+    .section-title { max-width: 30ch; line-height: 1.15; }
+  </style>
 </head>
 <body>
   <div class="shell">
