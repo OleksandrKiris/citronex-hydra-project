@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "citronex-hydra-srzb-";
-const CACHE_NAME = CACHE_PREFIX + "20260718-greenhouse-link";
+const CACHE_NAME = CACHE_PREFIX + "20260718-remove-greenhouse-link";
 
 const CORE_ASSETS = [
   "./",
