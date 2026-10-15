@@ -14,3 +14,8 @@ Autor: OLEKSANDR KIRIS
 ## Cel
 
 Jeden niezmienny link dla ludzi. Hydra nie kopiuje tresci szkolen, tylko prowadzi do wlasciwej lokalizacji.
+
+## Testy service workera
+
+Bez instalowania zaleznosci: `node --test tests/sw.test.mjs` (Node.js 20+).
+Testy uzywaja atrap sieci i pamieci podrecznej; nie pobieraja mediow ani nie wysylaja formularzy.

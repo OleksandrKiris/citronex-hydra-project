@@ -80,20 +80,18 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith((async () => {
-    const accept = request.headers.get("accept") || "";
-    const fallback = request.mode === "navigate" || accept.includes("text/html") ? "./index.html" : null;
-    const cached = await cacheMatch(request, null);
+    const cached = await cacheMatch(request);
     if (cached) {
       fetch(request).then((response) => cacheResponse(request, response)).catch(() => {});
       return cached;
     }
     try {
       const response = await Promise.race([fetch(request), networkTimeout()]);
-      if (!response) return await cacheMatch(request, fallback) || Response.error();
+      if (!response) return await cacheMatch(request) || Response.error();
       await cacheResponse(request, response);
       return response;
     } catch (error) {
-      return await cacheMatch(request, fallback) || Response.error();
+      return await cacheMatch(request) || Response.error();
     }
   })());
 });
