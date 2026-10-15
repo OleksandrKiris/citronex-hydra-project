@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#ed1c24">
   <title>PrimServ | HYDRA CITRONEX</title>
-  <meta name="build-version" content="20261015-primserv-branding">
+  <meta name="build-version" content="20261015-primserv-services-1">
   <meta name="description" content="PrimServ — portal HYDRA: przyjazd do pracy, lokalizacje i szkolenia CITRONEX.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="PrimServ">
@@ -2313,6 +2313,39 @@
     .intro-panel { border-color: var(--line) !important; box-shadow: 0 18px 48px rgba(22, 33, 27, .18) !important; }
     .intro-title { color: var(--ink) !important; }
     .intro-lead, .intro-result { color: var(--muted) !important; }
+
+    /* Shared PrimServ services, with the existing training content kept direct. */
+    .primserv-services {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0 0 16px;
+    }
+    .primserv-services a {
+      display: flex;
+      min-width: 0;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 12px;
+      border: 1px solid #dbe2e9;
+      border-radius: 12px;
+      background: #fff;
+      color: #354c61;
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.35;
+      text-align: center;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+    .primserv-services a:hover { background: #f4f6f8; border-color: #354c61; }
+    .primserv-services a:focus-visible { outline: 3px solid #c51925; outline-offset: 2px; }
+    @media (max-width: 600px) {
+      .primserv-services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .primserv-services a:last-child { grid-column: 1 / -1; }
+    }
+
   </style>
   <style>
     /* Compact previews keep the start screen calm without hiding module content. */
@@ -2372,6 +2405,12 @@
         </select>
       </label>
     </header>
+
+    <nav class="primserv-services" aria-label="PrimServ">
+      <a href="https://www.primserv.pl/" target="_blank" rel="noopener noreferrer" data-i18n="serviceCompany">Firma PrimServ</a>
+      <a class="catalog-link" href="https://oleksandrkiris.github.io/kiris-jobs/?lang=pl" target="_blank" rel="noopener noreferrer" data-i18n="serviceJobs">Oferty pracy</a>
+      <a href="https://t.me/KirisWorkPoland_bot" target="_blank" rel="noopener noreferrer" data-i18n="serviceBot">Bot Telegram</a>
+    </nav>
 
     <main>
       <section class="hero">
@@ -2489,6 +2528,7 @@
   <script>
     const translations = {
       pl: {
+        serviceCompany: "Firma PrimServ", serviceJobs: "Oferty pracy", serviceBot: "Bot Telegram",
         heroTitle: "Wybierz lokalizację",
         languageLabel: "Język",
         introTitle: "Wybierz język",
@@ -2516,6 +2556,7 @@
         zgorzelecText: "Wybierz, jeśli pracujesz w Zgorzelcu albo Bogatyni.",
       },
       ru: {
+        serviceCompany: "Компания PrimServ", serviceJobs: "Вакансии", serviceBot: "Telegram-бот",
         heroTitle: "Выберите локацию",
         languageLabel: "Язык",
         introTitle: "Выберите язык",
@@ -2543,6 +2584,7 @@
         zgorzelecText: "Выберите, если работаете в Zgorzelec или Bogatynia.",
       },
       ua: {
+        serviceCompany: "Компанія PrimServ", serviceJobs: "Вакансії", serviceBot: "Telegram-бот",
         heroTitle: "Оберіть локацію",
         languageLabel: "Мова",
         introTitle: "Оберіть мову",
@@ -2570,6 +2612,7 @@
         zgorzelecText: "Оберіть, якщо працюєте в Zgorzelec або Bogatynia.",
       },
       en: {
+        serviceCompany: "Company PrimServ", serviceJobs: "Job vacancies", serviceBot: "Telegram bot",
         heroTitle: "Choose location",
         languageLabel: "Language",
         introTitle: "Choose language",
@@ -2597,6 +2640,7 @@
         zgorzelecText: "Choose this if you work in Zgorzelec or Bogatynia.",
       },
       az: {
+        serviceCompany: "PrimServ şirkəti", serviceJobs: "Vakansiyalar", serviceBot: "Telegram botu",
         heroTitle: "Məkanı seçin",
         languageLabel: "Dil",
         introTitle: "Dil seçin",
@@ -2624,6 +2668,7 @@
         zgorzelecText: "Zgorzelec və ya Bogatynia-da işləyirsinizsə bunu seçin.",
       },
       es: {
+        serviceCompany: "Empresa PrimServ", serviceJobs: "Ofertas de trabajo", serviceBot: "Bot de Telegram",
         heroTitle: "Elige ubicación",
         languageLabel: "Idioma",
         introTitle: "Elige idioma",
@@ -2651,6 +2696,7 @@
         zgorzelecText: "Elige esto si trabajas en Zgorzelec o Bogatynia.",
       },
       fil: {
+        serviceCompany: "Kumpanyang PrimServ", serviceJobs: "Mga bakanteng trabaho", serviceBot: "Telegram bot",
         heroTitle: "Piliin ang lokasyon",
         languageLabel: "Wika",
         introTitle: "Pumili ng wika",
@@ -2678,6 +2724,7 @@
         zgorzelecText: "Piliin ito kung nagtatrabaho ka sa Zgorzelec o Bogatynia.",
       },
       id: {
+        serviceCompany: "Perusahaan PrimServ", serviceJobs: "Lowongan kerja", serviceBot: "Bot Telegram",
         heroTitle: "Pilih lokasi",
         languageLabel: "Bahasa",
         introTitle: "Pilih bahasa",
@@ -2705,6 +2752,7 @@
         zgorzelecText: "Pilih ini jika Anda bekerja di Zgorzelec atau Bogatynia.",
       },
       ne: {
+        serviceCompany: "PrimServ कम्पनी", serviceJobs: "रोजगारीका अवसरहरू", serviceBot: "Telegram बोट",
         heroTitle: "स्थान छान्नुहोस्",
         languageLabel: "भाषा",
         introTitle: "भाषा छान्नुहोस्",
@@ -2753,9 +2801,12 @@
       }
       return "en";
     }
-    const fromUrl = (params.get("lang") || "").toLowerCase();
+    const requestedLanguage = (params.get("lang") || "").toLowerCase();
+    const fromUrl = requestedLanguage === "uk" ? "ua" : requestedLanguage;
     const storedLanguage = (localStorage.getItem("hydraLang") || "").toLowerCase();
-    const initial = supported.includes(fromUrl) ? fromUrl : supported.includes(storedLanguage) ? storedLanguage : detectBrowserLanguage();
+    const initial = fromUrl
+      ? (supported.includes(fromUrl) ? fromUrl : "en")
+      : (supported.includes(storedLanguage) ? storedLanguage : detectBrowserLanguage());
     const introSeenKey = "hydraIntroAudioSeenV3";
     const introAudioSrc = {
       pl: "assets/audio/intro-pl.mp3?v=20260717-voice6",
@@ -2860,6 +2911,14 @@
       document.documentElement.lang = current === "ua" ? "uk" : current;
       select.value = current;
       localStorage.setItem("hydraLang", current);
+      const currentUrl = new URL(location.href);
+      currentUrl.searchParams.set("lang", current);
+      history.replaceState(history.state, "", currentUrl);
+      document.querySelectorAll(".catalog-link").forEach((link) => {
+        const target = new URL("https://oleksandrkiris.github.io/kiris-jobs/");
+        target.searchParams.set("lang", current === "ua" ? "uk" : current);
+        link.href = target.toString();
+      });
       hideAudioStatus();
       setAudioSource(current);
 
