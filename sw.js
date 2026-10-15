@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "citronex-hydra-srzb-";
-const CACHE_NAME = CACHE_PREFIX + "20261015-primserv-branding";
+const CACHE_NAME = CACHE_PREFIX + "20261015-primserv-services-1";
 
 const CORE_ASSETS = [
   "./",
