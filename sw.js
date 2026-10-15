@@ -1,11 +1,13 @@
 const CACHE_PREFIX = "citronex-hydra-srzb-";
-const CACHE_NAME = CACHE_PREFIX + "20260718-remove-greenhouse-link";
+const CACHE_NAME = CACHE_PREFIX + "20261015-primserv-branding";
 
 const CORE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./assets/brand/citronex-hydra-logo-web.png"
+  "./assets/brand/primserv-logo.svg",
+  "./assets/brand/primserv-icon-192.png",
+  "./assets/brand/primserv-icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
