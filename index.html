@@ -4,12 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <meta name="theme-color" content="#c90016">
-  <title>CITRONEX hydra S.R.Z.B.</title>
-  <meta name="build-version" content="20260718-remove-greenhouse-link">
-  <meta name="description" content="CITRONEX hydra S.R.Z.B. - jeden stabilny portal do szkoleń i lokalizacji.">
+  <meta name="theme-color" content="#ed1c24">
+  <title>PrimServ | HYDRA CITRONEX</title>
+  <meta name="build-version" content="20261015-primserv-branding">
+  <meta name="description" content="PrimServ — portal HYDRA: przyjazd do pracy, lokalizacje i szkolenia CITRONEX.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PrimServ">
+  <meta property="og:title" content="PrimServ | HYDRA CITRONEX">
+  <meta property="og:description" content="PrimServ — portal HYDRA: przyjazd do pracy, lokalizacje i szkolenia CITRONEX.">
+  <meta property="og:image" content="https://oleksandrkiris.github.io/citronex-hydra-project/assets/brand/primserv-icon-512.png">
+  <meta property="og:image:alt" content="PrimServ">
+  <meta name="twitter:card" content="summary">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="assets/brand/citronex-hydra-logo-web.png">
+  <link rel="icon" href="assets/brand/primserv-logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/brand/primserv-icon-192.png">
   <style>
     :root {
       --red: #c90016;
@@ -2316,18 +2324,37 @@
     }
     .section-title { max-width: 30ch; line-height: 1.15; }
     .brand-text strong, .brand-text small { text-transform: none !important; }
+
+    /* Official company identity; HYDRA and CITRONEX remain project context. */
+    .brand-mini { grid-template-columns: 48px minmax(0, 1fr); }
+    .brand-logo { width: 48px; height: 58px; padding: 3px; background: #fff; }
+    .brand-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .brand-text strong { color: #354c61; font-size: 17px; }
+    .brand-text small { display: block; font-size: 9px; line-height: 1.3; letter-spacing: .01em; }
+    .intro-mark { width: 56px; height: 68px; padding: 3px; }
+    .intro-mark img { width: 100%; height: 100%; object-fit: contain; }
+    .company-credit { text-transform: none; letter-spacing: .01em; line-height: 1.5; }
+    .company-credit a { color: #354c61; text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 430px) {
+      .brand-mini { grid-template-columns: 38px minmax(0, 1fr); gap: 6px; }
+      .brand-logo { width: 38px; height: 50px; }
+      .brand-text strong { font-size: 14px; }
+      .brand-text small { font-size: 8px; }
+      .intro-mark { width: 46px; height: 60px; }
+    }
+
   </style>
 </head>
 <body>
   <div class="shell">
-    <header class="topbar" aria-label="CITRONEX hydra S.R.Z.B.">
+    <header class="topbar" aria-label="PrimServ — HYDRA CITRONEX">
       <div class="brand-mini">
         <span class="brand-logo" aria-hidden="true">
-          <img src="assets/brand/citronex-hydra-logo-web.png" width="50" height="48" alt="">
+          <img src="assets/brand/primserv-logo.svg" width="48" height="68" alt="">
         </span>
         <span class="brand-text">
-          <strong>CITRONEX hydra</strong>
-          <small>S.R.Z.B.</small>
+          <strong>PrimServ</strong>
+          <small>HYDRA · CITRONEX S.R.Z.B.</small>
         </span>
       </div>
       <label class="lang-control">
@@ -2415,8 +2442,8 @@
     </main>
 
     <footer>
-      <span>CITRONEX hydra S.R.Z.B. · OLEKSANDR KIRIS</span>
-      <span class="version-line" data-i18n="versionInfo">Wersja: 2026-07-13</span>
+      <span class="company-credit"><a href="https://www.primserv.pl/" target="_blank" rel="noopener noreferrer">PrimServ</a> · HYDRA CITRONEX S.R.Z.B. · OLEKSANDR KIRIS</span>
+      <span class="version-line" data-i18n="versionInfo">Wersja: 2026-10-15</span>
     </footer>
   </div>
 
@@ -2424,7 +2451,7 @@
     <div class="intro-panel">
       <div class="intro-head">
         <div class="intro-mark" aria-hidden="true">
-          <img src="assets/brand/citronex-hydra-logo-web.png" width="50" height="48" alt="">
+          <img src="assets/brand/primserv-logo.svg" width="48" height="68" alt="">
         </div>
         <div>
           <h2 class="intro-title" id="introTitle" data-i18n="introTitle">Wybierz język</h2>
@@ -2476,7 +2503,7 @@
         reopenIntro: "Otwórz przewodnik",
         voiceGuideTitle: "Przewodnik głosowy",
         voiceGuideText: "Krótka informacja o aplikacji i miejscach pracy.",
-        versionInfo: "Wersja: 2026-07-13",
+        versionInfo: "Wersja: 2026-10-15",
         closeLabel: "Zamknij",
         startTitle: "Najpierw wybierz, czego potrzebujesz",
         startBadge: "PIERWSZY RAZ? KLIKNIJ TUTAJ",
@@ -2503,7 +2530,7 @@
         reopenIntro: "Открыть проводник",
         voiceGuideTitle: "Голосовой проводник",
         voiceGuideText: "Краткая информация о приложении и местах работы.",
-        versionInfo: "Версия: 2026-07-13",
+        versionInfo: "Версия: 2026-10-15",
         closeLabel: "Закрыть",
         startTitle: "Сначала выберите, что вам нужно",
         startBadge: "ПЕРВЫЙ РАЗ? НАЖМИТЕ ЗДЕСЬ",
@@ -2530,7 +2557,7 @@
         reopenIntro: "Відкрити гід",
         voiceGuideTitle: "Голосовий гід",
         voiceGuideText: "Коротка інформація про застосунок і місця роботи.",
-        versionInfo: "Версія: 2026-07-13",
+        versionInfo: "Версія: 2026-10-15",
         closeLabel: "Закрити",
         startTitle: "Спочатку оберіть, що вам потрібно",
         startBadge: "ПЕРШИЙ РАЗ? НАТИСНІТЬ ТУТ",
@@ -2557,7 +2584,7 @@
         reopenIntro: "Open voice guide",
         voiceGuideTitle: "Voice guide",
         voiceGuideText: "A short explanation of the app and work locations.",
-        versionInfo: "Version: 2026-07-13",
+        versionInfo: "Version: 2026-10-15",
         closeLabel: "Close",
         startTitle: "First choose what you need",
         startBadge: "FIRST TIME? TAP HERE",
@@ -2584,7 +2611,7 @@
         reopenIntro: "Səsli bələdçini açın",
         voiceGuideTitle: "Səsli bələdçi",
         voiceGuideText: "Tətbiq və iş yerləri haqqında qısa məlumat.",
-        versionInfo: "Versiya: 2026-07-13",
+        versionInfo: "Versiya: 2026-10-15",
         closeLabel: "Bağla",
         startTitle: "Əvvəl sizə lazım olanı seçin",
         startBadge: "İLK DƏFƏDİR? BURANI BASIN",
@@ -2611,7 +2638,7 @@
         reopenIntro: "Abrir la guía de voz",
         voiceGuideTitle: "Guía de voz",
         voiceGuideText: "Información breve sobre la aplicación y los lugares de trabajo.",
-        versionInfo: "Versión: 2026-07-13",
+        versionInfo: "Versión: 2026-10-15",
         closeLabel: "Cerrar",
         startTitle: "Primero elige lo que necesitas",
         startBadge: "¿PRIMERA VEZ? PULSA AQUÍ",
@@ -2638,7 +2665,7 @@
         reopenIntro: "Buksan ang gabay na may boses",
         voiceGuideTitle: "Gabay na may boses",
         voiceGuideText: "Maikling paliwanag tungkol sa app at mga lugar ng trabaho.",
-        versionInfo: "Bersyon: 2026-07-13",
+        versionInfo: "Bersyon: 2026-10-15",
         closeLabel: "Isara",
         startTitle: "Piliin muna kung ano ang kailangan mo",
         startBadge: "UNANG BESES? PINDUTIN DITO",
@@ -2665,7 +2692,7 @@
         reopenIntro: "Buka panduan suara",
         voiceGuideTitle: "Panduan suara",
         voiceGuideText: "Penjelasan singkat tentang aplikasi dan lokasi kerja.",
-        versionInfo: "Versi: 2026-07-13",
+        versionInfo: "Versi: 2026-10-15",
         closeLabel: "Tutup",
         startTitle: "Pilih dulu yang Anda butuhkan",
         startBadge: "PERTAMA KALI? KETUK DI SINI",
@@ -2692,7 +2719,7 @@
         reopenIntro: "आवाज मार्गदर्शन खोल्नुहोस्",
         voiceGuideTitle: "आवाज मार्गदर्शन",
         voiceGuideText: "एप र काम गर्ने स्थानबारे छोटो जानकारी।",
-        versionInfo: "संस्करण: 2026-07-13",
+        versionInfo: "संस्करण: 2026-10-15",
         closeLabel: "बन्द गर्नुहोस्",
         startTitle: "पहिले तपाईंलाई चाहिएको कुरा छान्नुहोस्",
         startBadge: "पहिलो पटक हो? यहाँ थिच्नुहोस्",

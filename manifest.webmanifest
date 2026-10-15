@@ -1,18 +1,24 @@
 {
-  "name": "CITRONEX hydra S.R.Z.B.",
-  "short_name": "Hydra",
-  "description": "Jeden stabilny portal do szkoleń i lokalizacji.",
+  "name": "PrimServ | HYDRA CITRONEX",
+  "short_name": "PrimServ",
+  "description": "PrimServ — portal HYDRA: przyjazd do pracy, lokalizacje i szkolenia CITRONEX.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#c90016",
+  "theme_color": "#ed1c24",
   "icons": [
     {
-      "src": "assets/brand/citronex-hydra-logo-web.png",
+      "src": "assets/brand/primserv-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/brand/primserv-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
