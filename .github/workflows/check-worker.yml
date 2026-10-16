@@ -2,6 +2,8 @@ name: HYDRA service worker checks
 on:
   pull_request:
     paths:
+      - index.html
+      - tests/navigation.test.mjs
       - sw.js
       - tests/sw.test.mjs
       - .github/workflows/check-worker.yml
@@ -17,4 +19,4 @@ jobs:
         with:
           node-version: 20
       - run: node --check sw.js
-      - run: node --test tests/sw.test.mjs
+      - run: node --test tests/sw.test.mjs tests/navigation.test.mjs
