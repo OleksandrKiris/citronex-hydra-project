@@ -2314,6 +2314,19 @@
     .intro-title { color: var(--ink) !important; }
     .intro-lead, .intro-result { color: var(--muted) !important; }
 
+    .language-fallback {
+      margin: 0 0 16px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
     /* Shared PrimServ services, with the existing training content kept direct. */
     .primserv-services {
       display: grid;
@@ -2405,6 +2418,8 @@
         </select>
       </label>
     </header>
+
+    <p class="language-fallback" id="languageFallback" role="status" lang="en" hidden></p>
 
     <nav class="primserv-services" aria-label="PrimServ">
       <a href="https://www.primserv.pl/" target="_blank" rel="noopener noreferrer" data-i18n="serviceCompany">Firma PrimServ</a>
@@ -2815,6 +2830,9 @@
     const initial = fromUrl
       ? (supported.includes(fromUrl) ? fromUrl : "en")
       : (supported.includes(storedLanguage) ? storedLanguage : detectBrowserLanguage());
+    // Explain an explicit unsupported URL language once; a later choice dismisses it.
+    let showLanguageFallback = Boolean(fromUrl && !supported.includes(fromUrl));
+    const languageFallback = document.querySelector("#languageFallback");
     const introSeenKey = "hydraIntroAudioSeenV3";
     const introAudioSrc = {
       pl: "assets/audio/intro-pl.mp3?v=20260717-voice6",
@@ -2916,6 +2934,13 @@
 
     function setLang(lang) {
       const current = supported.includes(lang) ? lang : "en";
+      if (showLanguageFallback) {
+        const name = fromUrl === "ka" ? "ქართული" : fromUrl === "hy" ? "Հայերեն" : "";
+        languageFallback.textContent = (name ? name + " → English (EN). " : "") +
+          "This language is not available here. Showing English (EN). You can choose another language above.";
+      }
+      languageFallback.hidden = !showLanguageFallback;
+      showLanguageFallback = false;
       document.documentElement.lang = current === "ua" ? "uk" : current;
       select.value = current;
       savePreference("hydraLang", current);

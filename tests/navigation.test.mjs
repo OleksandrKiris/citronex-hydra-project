@@ -99,3 +99,47 @@ test('normal storage persists the selected language',()=>{
   const f=run({language:'ru'});f.c.api.setLang('en');
   assert.deepEqual(f.writes,[['hydraLang','ru'],['hydraLang','en']]);
 });
+test('fallback status exists once in real markup, hidden by default, before navigation',()=>{
+  const notices=markupNodes.filter(n=>n.attrs.id==='languageFallback');
+  assert.equal(notices.length,1);
+  assert.equal(notices[0].attrs.role,'status');
+  assert.equal(notices[0].attrs.lang,'en');
+  assert.match(markup,/<p\b[^>]*id="languageFallback"[^>]*\bhidden\b[^>]*><\/p>/);
+  assert.ok(markup.indexOf('id="languageFallback"')<markup.indexOf('<nav'));
+});
+for(const [language,label] of [['ka','ქართული'],['KA','ქართული'],['hy','Հայերեն']])test(`${language}: explicit unsupported language explains English fallback and preserves routes`,()=>{
+  const f=run({language,stored:'ru',blocked:true});
+  const notice=f.nodes.get('#languageFallback');
+  assert.equal(notice?.hidden,false);
+  assert.ok(notice.textContent.includes(label+' → English (EN)'));
+  assert.match(notice.textContent,/not available here/);
+  assert.equal(f.document.documentElement.lang,'en');
+  assert.equal(f.location.searchParams.get('lang'),'en');
+  assert.equal(f.location.searchParams.get('section'),'training');
+  assert.equal(f.location.hash,'#locations');
+  for(const link of [...f.links,f.catalog])assert.equal(new URL(link.href).searchParams.get('lang'),'en');
+  assert.equal(markupNodes.some(n=>n.tag==='option'&&n.attrs.value===language.toLowerCase()),false);
+});
+test('unrecognized language uses a fixed notice without reflecting URL text',()=>{
+  const f=run({language:encodeURIComponent('<img src=x onerror=alert(1)>')});
+  const notice=f.nodes.get('#languageFallback');
+  assert.equal(notice?.hidden,false);
+  assert.equal(notice.textContent,'This language is not available here. Showing English (EN). You can choose another language above.');
+});
+test('supported languages, Ukrainian alias and stored preference show no fallback notice',()=>{
+  for(const language of ['pl','ru','ua','uk','en','az','es','fil','id','ne','']){
+    const f=run({language,stored:'ru'});
+    assert.equal(f.nodes.get('#languageFallback')?.hidden,true,language);
+  }
+});
+test('manual language change dismisses fallback even after switching back to English',()=>{
+  const f=run({language:'ka'});
+  const select=f.nodes.get('#langSelect');
+  select.value='ua';select.events.change();
+  assert.equal(f.nodes.get('#languageFallback').hidden,true);
+  assert.equal(f.document.documentElement.lang,'uk');
+  assert.equal(new URL(f.catalog.href).searchParams.get('lang'),'uk');
+  for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),'ua');
+  select.value='en';select.events.change();
+  assert.equal(f.nodes.get('#languageFallback').hidden,true);
+});
