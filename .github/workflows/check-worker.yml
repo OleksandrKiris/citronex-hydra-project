@@ -1,0 +1,20 @@
+name: HYDRA service worker checks
+on:
+  pull_request:
+    paths:
+      - sw.js
+      - tests/sw.test.mjs
+      - .github/workflows/check-worker.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node --check sw.js
+      - run: node --test tests/sw.test.mjs
