@@ -13,6 +13,8 @@ function harness({ network = async () => new Response("network"), cached = null 
   const writes = [];
   const matches = [];
   const timers = [];
+  const clearedTimers = [];
+  const delays = [];
   const added = [];
   const deleted = [];
   let currentCache;
@@ -46,12 +48,13 @@ function harness({ network = async () => new Response("network"), cached = null 
     },
     caches, URL, Request: WorkerRequest, Response,
     fetch: (request, options) => { calls.push({ request, options }); return network(request, options); },
-    setTimeout: (callback) => timers.push(callback)
+    setTimeout: (callback, delay) => { delays.push(delay); return timers.push(callback); },
+    clearTimeout: (id) => { clearedTimers.push(id); }
   });
   vm.runInContext(source, context);
   currentCache = vm.runInContext("CACHE_NAME", context);
   return {
-    calls, writes, matches, timers, added, deleted,
+    calls, writes, matches, timers, clearedTimers, delays, added, deleted,
     request({ path = "assets/icon.png", method = "GET", mode = "cors", accept = "image/png" } = {}) {
       const request = { url: new URL(path, root).href, method, mode, headers: new Headers({ accept }) };
       let result;
@@ -128,6 +131,72 @@ test("cached assets are returned and refreshed in the background", async () => {
 test("uncached assets use and cache a successful response", async () => {
   const h = harness();
   assert.equal(await (await h.request().result).text(), "network");
+  assert.equal(h.writes.length, 1);
+});
+
+for (const status of [200, 404, 503]) {
+  test(`settled asset HTTP ${status} clears the now-unused timeout`, async () => {
+    const h = harness({ network: async () => new Response("result", { status }) });
+    const response = await h.request().result;
+    assert.equal(response.status, status);
+    assert.deepEqual(h.delays, [1400]);
+    assert.deepEqual(h.clearedTimers, [1]);
+    assert.equal(h.calls.length, 1);
+    assert.equal(h.calls[0].options, undefined, "No new request options, signal, or cancellation");
+  });
+}
+
+test("rejected asset network request clears its timeout and retains the error fallback", async () => {
+  const h = harness({ network: async () => { throw new Error("offline"); } });
+  assert.equal((await h.request().result).type, "error");
+  assert.deepEqual(h.clearedTimers, [1]);
+  assert.equal(h.writes.length, 0);
+});
+
+test("timeout expiry still returns the existing cache result without aborting a late network response", async () => {
+  let complete, timedOut = false;
+  const h = harness({
+    network: () => new Promise(resolve => { complete = resolve; }),
+    cached: () => timedOut ? new Response("appeared while waiting") : undefined
+  });
+  const { result } = h.request();
+  await new Promise(setImmediate);
+  assert.equal(h.timers.length, 1);
+  assert.equal(h.clearedTimers.length, 0);
+  timedOut = true;
+  h.timers[0]();
+  assert.equal(await (await result).text(), "appeared while waiting");
+  assert.deepEqual(h.clearedTimers, [1]);
+  complete(new Response("late"));
+  await new Promise(setImmediate);
+  assert.equal(h.calls.length, 1);
+  assert.equal(h.writes.length, 0, "Late response policy is unchanged");
+});
+
+test("HTML, audio and already-cached assets never allocate an asset timeout", async () => {
+  for (const request of [{ mode: "navigate" }, { path: "assets/audio/intro-pl.mp3" }, { path: "assets/icon.png" }]) {
+    const h = harness({ cached: () => new Response("cached") });
+    await h.request(request).result;
+    assert.equal(h.timers.length, 0);
+    assert.equal(h.clearedTimers.length, 0);
+  }
+});
+
+test("concurrent asset requests clear only their own timeout", async () => {
+  const pending = [];
+  const h = harness({ network: () => new Promise(resolve => pending.push(resolve)) });
+  const first = h.request({ path: "assets/first.png" }).result;
+  const second = h.request({ path: "assets/second.png" }).result;
+  await new Promise(setImmediate);
+  assert.equal(h.timers.length, 2);
+  pending[0](new Response("first"));
+  assert.equal(await (await first).text(), "first");
+  assert.deepEqual(h.clearedTimers, [1]);
+  h.timers[1]();
+  assert.equal((await second).type, "error");
+  assert.deepEqual(h.clearedTimers, [1, 2]);
+  pending[1](new Response("late second"));
+  await new Promise(setImmediate);
   assert.equal(h.writes.length, 1);
 });
 

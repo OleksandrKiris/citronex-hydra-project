@@ -40,10 +40,16 @@ async function cacheResponse(request, response) {
   await cache.put(request, response.clone());
 }
 
-function networkTimeout(ms = 1400) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(null), ms);
-  });
+async function fetchWithTimeout(request, ms = 1400) {
+  let timer;
+  try {
+    return await Promise.race([
+      fetch(request),
+      new Promise((resolve) => { timer = setTimeout(() => resolve(null), ms); })
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function cacheMatch(request, fallback = null) {
@@ -86,7 +92,7 @@ self.addEventListener("fetch", (event) => {
       return cached;
     }
     try {
-      const response = await Promise.race([fetch(request), networkTimeout()]);
+      const response = await fetchWithTimeout(request);
       if (!response) return await cacheMatch(request) || Response.error();
       await cacheResponse(request, response);
       return response;
