@@ -2791,6 +2791,14 @@
     const continueIntroButton = document.querySelector("#continueIntro");
     const reopenIntroButton = document.querySelector("#reopenIntro");
     const supported = Object.keys(translations);
+    function readPreference(key) {
+      try { return localStorage.getItem(key) || ""; }
+      catch (_) { return ""; }
+    }
+    function savePreference(key, value) {
+      try { localStorage.setItem(key, value); }
+      catch (_) { /* Language remains in the URL when browser storage is unavailable. */ }
+    }
     const params = new URLSearchParams(location.search);
     function detectBrowserLanguage() {
       const candidates = [navigator.language, ...(Array.isArray(navigator.languages) ? navigator.languages : [])];
@@ -2803,7 +2811,7 @@
     }
     const requestedLanguage = (params.get("lang") || "").toLowerCase();
     const fromUrl = requestedLanguage === "uk" ? "ua" : requestedLanguage;
-    const storedLanguage = (localStorage.getItem("hydraLang") || "").toLowerCase();
+    const storedLanguage = readPreference("hydraLang").toLowerCase();
     const initial = fromUrl
       ? (supported.includes(fromUrl) ? fromUrl : "en")
       : (supported.includes(storedLanguage) ? storedLanguage : detectBrowserLanguage());
@@ -2910,7 +2918,7 @@
       const current = supported.includes(lang) ? lang : "en";
       document.documentElement.lang = current === "ua" ? "uk" : current;
       select.value = current;
-      localStorage.setItem("hydraLang", current);
+      savePreference("hydraLang", current);
       const currentUrl = new URL(location.href);
       currentUrl.searchParams.set("lang", current);
       history.replaceState(history.state, "", currentUrl);
@@ -2960,7 +2968,7 @@
       stopIntroAudio();
       introModal.hidden = true;
       document.body.classList.remove("modal-open");
-      localStorage.setItem(introSeenKey, "1");
+      savePreference(introSeenKey, "1");
     }
 
     function openIntro() {
@@ -3188,7 +3196,7 @@
       window.location.assign(guide.toString());
     });
     playIntroButton.addEventListener("click", () => {
-      localStorage.setItem(introSeenKey, "1");
+      savePreference(introSeenKey, "1");
       revealIntroText();
       playIntroAudio(select.value);
     });
@@ -3205,7 +3213,7 @@
         const lang = button.getAttribute("data-lang-choice");
         setLang(lang);
         revealIntroText();
-        localStorage.setItem(introSeenKey, "1");
+        savePreference(introSeenKey, "1");
         playIntroAudio(lang);
       });
     });
