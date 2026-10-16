@@ -2391,8 +2391,8 @@
         </span>
       </div>
       <label class="lang-control">
-        <span class="sr-only" data-i18n="languageLabel">Język</span>
-        <select class="lang-select" id="langSelect" aria-label="Język">
+        <span class="sr-only" id="languageLabel" data-i18n="languageLabel">Język</span>
+        <select class="lang-select" id="langSelect" aria-labelledby="languageLabel">
           <option value="pl">Polski</option>
           <option value="ru">Русский</option>
           <option value="ua">Українська</option>
@@ -2419,9 +2419,9 @@
         </div>
       </section>
 
-      <h2 class="section-title" data-i18n="startTitle">Najpierw wybierz, czego potrzebujesz</h2>
+      <h2 class="section-title" id="startTitle" data-i18n="startTitle">Najpierw wybierz, czego potrzebujesz</h2>
 
-      <section class="cards" aria-label="Linki do szkoleń">
+      <section class="cards" aria-labelledby="startTitle">
         <article class="card priority">
           <div class="icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z"/><path d="M12 10.5h.01"/></svg>
@@ -2439,9 +2439,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-8h6v8"/></svg>
           </div>
           <div class="card-body">
-            <h2>Siechnice</h2>
+            <h2 id="siechniceTitle">Siechnice</h2>
             <p data-i18n="siechniceText">Wybierz, jeśli pracujesz w Siechnicach.</p>
-            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" href="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
+            <a class="btn training-link" id="siechniceTraining" aria-labelledby="siechniceTraining siechniceTitle" data-base="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" href="https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
           </div>
         </article>
 
@@ -2450,9 +2450,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19h16"/><path d="M4 15h16"/><path d="M6 15V7h12v8"/><path d="M9 15V9h6v6"/></svg>
           </div>
           <div class="card-body">
-            <h2>Ryczywół</h2>
+            <h2 id="ryczywolTitle">Ryczywół</h2>
             <p data-i18n="ryczywolText">Wybierz, jeśli pracujesz w Ryczywole.</p>
-            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" href="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
+            <a class="btn training-link" id="ryczywolTraining" aria-labelledby="ryczywolTraining ryczywolTitle" data-base="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" href="https://oleksandrkiris.github.io/citronex-ryczywol-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
           </div>
         </article>
 
@@ -2461,9 +2461,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20V8l8-4 8 4v12"/><path d="M8 20v-7h8v7"/><path d="M4 11h16"/></svg>
           </div>
           <div class="card-body">
-            <h2>Zgorzelec / Bogatynia</h2>
+            <h2 id="zgorzelecBogatyniaTitle">Zgorzelec / Bogatynia</h2>
             <p data-i18n="zgorzelecText">Wybierz, jeśli pracujesz w Zgorzelcu albo Bogatyni.</p>
-            <a class="btn training-link" data-base="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" href="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
+            <a class="btn training-link" id="zgorzelecBogatyniaTraining" aria-labelledby="zgorzelecBogatyniaTraining zgorzelecBogatyniaTitle" data-base="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" href="https://oleksandrkiris.github.io/citronex-zgorzelec-bogatynia-szkolenie/" data-i18n="openTraining">Otwórz szkolenie</a>
           </div>
         </article>
 
