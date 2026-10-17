@@ -163,6 +163,13 @@ try {
       // Keyboard move from visible resume action to explicit clear control.
       await page.locator('#lastLocationLink').focus();await page.keyboard.press('Tab');
       assert.equal(await page.locator('#clearLastLocation').evaluate(el=>el===document.activeElement),true);
+      await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
+      await page.locator('#lastLocation').scrollIntoViewIfNeeded();
+      const resumeView=await page.locator('#lastLocationLink').evaluate(el=>{
+        const r=el.getBoundingClientRect(), hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+        return {rect:{x:r.x,y:r.y,width:r.width,height:r.height},inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,unobscured:hit===el||el.contains(hit)};
+      });
+      assert.equal(resumeView.inside,true);assert.equal(resumeView.unobscured,true);
       await page.screenshot({path:join(output,`last-location-${width}-${mode||'normal'}.png`)});
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
       await page.reload();
@@ -180,7 +187,7 @@ try {
         assert.equal(await page.evaluate(()=>localStorage.getItem('hydraLastLocationV1')),null);
         await page.reload();assert.equal(await page.locator('#lastLocation').isVisible(),false);
       }
-      report.results.push({scenario:'last-location-keyboard-language-reload-Back-clear',viewport:{width,height:900},mode:mode||'normal',status:'passed',limits:mode==='both'?'in-memory only; denied storage loses location on reload':'external href inspected, training not opened'});
+      report.results.push({scenario:'last-location-keyboard-language-reload-Back-clear',viewport:{width,height:900},mode:mode||'normal',status:'passed',resumeView,limits:mode==='both'?'in-memory only; denied storage loses location on reload':'external href inspected, training not opened'});
     } finally {await ctx.close();}
   }
   for(const value of ['unknown','{"id":"siechniceTraining"}','https://evil.example/']){
