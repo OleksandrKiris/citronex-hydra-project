@@ -2314,6 +2314,8 @@
     .intro-title { color: var(--ink) !important; }
     .intro-lead, .intro-result { color: var(--muted) !important; }
 
+    .intro-action[hidden] { display: none !important; }
+    .intro-actions.text-only { grid-template-columns: minmax(0, 1fr); }
     .language-fallback {
       margin: 0 0 16px;
       padding: 12px 14px;
@@ -2415,6 +2417,9 @@
           <option value="fil">Filipino</option>
           <option value="id">Indonesia</option>
           <option value="ne">नेपाली</option>
+          <option value="ka">ქართული</option>
+          <option value="tr">Türkçe</option>
+          <option value="hy">Հայերեն</option>
         </select>
       </label>
     </header>
@@ -2435,6 +2440,7 @@
       </section>
 
       <h2 class="section-title" id="startTitle" data-i18n="startTitle">Najpierw wybierz, czego potrzebujesz</h2>
+      <p class="language-fallback" id="externalLanguageNotice" data-i18n="externalNotice" role="status" hidden></p>
 
       <section class="cards" aria-labelledby="startTitle">
         <article class="card priority">
@@ -2524,13 +2530,16 @@
         <button class="language-choice" type="button" data-lang-choice="fil">Filipino</button>
         <button class="language-choice" type="button" data-lang-choice="id">Indonesia</button>
         <button class="language-choice" type="button" data-lang-choice="ne">नेपाली</button>
+        <button class="language-choice" type="button" data-lang-choice="ka">ქართული</button>
+        <button class="language-choice" type="button" data-lang-choice="tr">Türkçe</button>
+        <button class="language-choice" type="button" data-lang-choice="hy">Հայերեն</button>
       </div>
 
       <div class="intro-result" id="introResult" aria-live="polite" hidden>
         <p class="intro-hint" data-i18n="introHint">Najpierw wybierz język. Potem otwórz przyjazd albo swoją lokalizację.</p>
         <p class="intro-script-label" data-i18n="introScriptLabel">Tekst, który usłyszysz:</p>
         <div class="intro-script" id="introScript" data-i18n="introSpeech">To jest CITRONEX hydra S.R.Z.B. Tutaj wybierasz przyjazd do pracy albo swoją lokalizację pracy. Po kliknięciu otworzy się właściwe szkolenie: mapy, instrukcje, kontakty i ważne informacje.</div>
-        <p class="audio-status" id="audioStatus" hidden></p>
+        <p class="audio-status" id="audioStatus" role="status" hidden></p>
         <div class="intro-actions">
           <button class="intro-action primary" type="button" id="playIntro" data-i18n="playIntro">Odsłuchaj</button>
           <button class="intro-action" type="button" id="continueIntro" data-i18n="continueIntro">Rozumiem</button>
@@ -2793,6 +2802,102 @@
         siechniceText: "Siechnice मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
         ryczywolText: "Ryczywół मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
         zgorzelecText: "Zgorzelec वा Bogatynia मा काम गर्नुहुन्छ भने यो छान्नुहोस्।",
+      },
+      ka: {
+        serviceCompany: "კომპანია PrimServ",
+        serviceJobs: "ვაკანსიები",
+        serviceBot: "Telegram ბოტი",
+        heroTitle: "აირჩიეთ სამუშაო ადგილი",
+        languageLabel: "ენა",
+        introTitle: "აირჩიეთ ენა",
+        introLead: "წაიკითხეთ მოკლე გზამკვლევი. ამ ენაზე აუდიოჩანაწერი ჯერ არ არის.",
+        introHint: "წაიკითხეთ მოკლე ტექსტი და დააჭირეთ ღილაკს „გასაგებია“.",
+        introSpeech: "ეს არის CITRONEX HYDRA. აქ შეგიძლიათ აირჩიოთ სამუშაოზე ჩამოსვლის ინსტრუქცია ან თქვენი სამუშაო ადგილი. შესაბამის გვერდზე ნახავთ რუკებს, ინსტრუქციებს, საკონტაქტო ინფორმაციასა და მნიშვნელოვან წესებს.",
+        introScriptLabel: "გზამკვლევის ტექსტი:",
+        playIntro: "მოსმენა",
+        playingIntro: "მიმდინარეობს...",
+        continueIntro: "გასაგებია",
+        audioError: "ჩანაწერის ჩართვა ვერ მოხერხდა. წაიკითხეთ ტექსტი.",
+        textOnlyIntro: "ქართულად აუდიოჩანაწერი ჯერ არ არის. წაიკითხეთ ტექსტი.",
+        reopenIntro: "გზამკვლევის წაკითხვა",
+        voiceGuideTitle: "ტექსტური გზამკვლევი",
+        voiceGuideText: "მოკლე ახსნა ამ გვერდისა და სამუშაო ადგილების შესახებ.",
+        versionInfo: "ვერსია: 2026-10-15",
+        closeLabel: "დახურვა",
+        startTitle: "აირჩიეთ, რა გჭირდებათ",
+        startBadge: "პირველად ხართ? დაიწყეთ აქ",
+        arrivalTitle: "სამუშაოზე ჩამოსვლა",
+        arrivalText: "არ იცით, სად უნდა მიხვიდეთ? დაიწყეთ აქ.",
+        openArrival: "ჩამოსვლის ინსტრუქციის გახსნა",
+        openTraining: "სწავლების გახსნა",
+        siechniceText: "აირჩიეთ, თუ Siechnice-ში მუშაობთ.",
+        ryczywolText: "აირჩიეთ, თუ Ryczywół-ში მუშაობთ.",
+        zgorzelecText: "აირჩიეთ, თუ Zgorzelec-ში ან Bogatynia-ში მუშაობთ.",
+        externalNotice: "HYDRA-ს ეს გვერდი ქართულადაა. ჩამოსვლისა და სწავლების გვერდები ამჟამად ინგლისურად იხსნება. დაბრუნებისას ქართული ენა შენარჩუნდება.",
+      },
+      tr: {
+        serviceCompany: "PrimServ şirketi",
+        serviceJobs: "İş ilanları",
+        serviceBot: "Telegram botu",
+        heroTitle: "Çalışma yerinizi seçin",
+        languageLabel: "Dil",
+        introTitle: "Dil seçin",
+        introLead: "Kısa rehberi okuyun. Bu dilde henüz ses kaydı yok.",
+        introHint: "Kısa metni okuyun ve Anladım düğmesine basın.",
+        introSpeech: "Burası CITRONEX HYDRA. Burada işe geliş bilgilerini veya çalıştığınız yeri seçebilirsiniz. İlgili sayfada haritalar, talimatlar, iletişim bilgileri ve önemli kurallar bulunur.",
+        introScriptLabel: "Rehber metni:",
+        playIntro: "Dinle",
+        playingIntro: "Oynatılıyor...",
+        continueIntro: "Anladım",
+        audioError: "Ses kaydı oynatılamadı. Metni okuyun.",
+        textOnlyIntro: "Türkçe ses kaydı henüz yok. Lütfen metni okuyun.",
+        reopenIntro: "Rehberi oku",
+        voiceGuideTitle: "Yazılı rehber",
+        voiceGuideText: "Bu sayfa ve çalışma yerleri hakkında kısa bilgi.",
+        versionInfo: "Sürüm: 2026-10-15",
+        closeLabel: "Kapat",
+        startTitle: "Önce neye ihtiyacınız olduğunu seçin",
+        startBadge: "İLK KEZ Mİ GELİYORSUNUZ? BURADAN BAŞLAYIN",
+        arrivalTitle: "İŞE GELİŞ",
+        arrivalText: "Nereye gideceğinizi bilmiyor musunuz? Buradan başlayın.",
+        openArrival: "Geliş talimatlarını aç",
+        openTraining: "Eğitimi aç",
+        siechniceText: "Siechnice'de çalışıyorsanız bunu seçin.",
+        ryczywolText: "Ryczywół'de çalışıyorsanız bunu seçin.",
+        zgorzelecText: "Zgorzelec veya Bogatynia'da çalışıyorsanız bunu seçin.",
+        externalNotice: "Bu HYDRA sayfası Türkçedir. İşe geliş ve eğitim sayfaları şimdilik İngilizce açılır. Geri döndüğünüzde Türkçe seçiminiz korunur.",
+      },
+      hy: {
+        serviceCompany: "PrimServ ընկերություն",
+        serviceJobs: "Աշխատատեղեր",
+        serviceBot: "Telegram բոտ",
+        heroTitle: "Ընտրեք աշխատանքի վայրը",
+        languageLabel: "Լեզու",
+        introTitle: "Ընտրեք լեզուն",
+        introLead: "Կարդացեք կարճ ուղեցույցը։ Այս լեզվով ձայնագրություն դեռ չկա։",
+        introHint: "Կարդացեք կարճ տեքստը և սեղմեք «Հասկացա» կոճակը։",
+        introSpeech: "Սա CITRONEX HYDRA-ն է։ Այստեղ կարող եք ընտրել աշխատանքի ժամանման հրահանգները կամ ձեր աշխատանքի վայրը։ Համապատասխան էջում կգտնեք քարտեզներ, հրահանգներ, կոնտակտներ և կարևոր կանոններ։",
+        introScriptLabel: "Ուղեցույցի տեքստը՝",
+        playIntro: "Լսել",
+        playingIntro: "Նվագարկվում է...",
+        continueIntro: "Հասկացա",
+        audioError: "Ձայնագրությունը հնարավոր չէ նվագարկել։ Կարդացեք տեքստը։",
+        textOnlyIntro: "Հայերեն ձայնագրություն դեռ չկա։ Կարդացեք տեքստը։",
+        reopenIntro: "Կարդալ ուղեցույցը",
+        voiceGuideTitle: "Տեքստային ուղեցույց",
+        voiceGuideText: "Կարճ տեղեկություն այս էջի և աշխատանքի վայրերի մասին։",
+        versionInfo: "Տարբերակ՝ 2026-10-15",
+        closeLabel: "Փակել",
+        startTitle: "Նախ ընտրեք, թե ինչ է ձեզ անհրաժեշտ",
+        startBadge: "ԱՌԱՋԻՆ ԱՆԳԱ՞ՄՆ Է։ ՍԿՍԵՔ ԱՅՍՏԵՂ",
+        arrivalTitle: "ԺԱՄԱՆՈՒՄ ԱՇԽԱՏԱՆՔԻ",
+        arrivalText: "Չգիտե՞ք՝ ուր գնալ։ Սկսեք այստեղից։",
+        openArrival: "Բացել ժամանման հրահանգները",
+        openTraining: "Բացել ուսուցումը",
+        siechniceText: "Ընտրեք, եթե աշխատում եք Siechnice-ում։",
+        ryczywolText: "Ընտրեք, եթե աշխատում եք Ryczywół-ում։",
+        zgorzelecText: "Ընտրեք, եթե աշխատում եք Zgorzelec-ում կամ Bogatynia-ում։",
+        externalNotice: "HYDRA-ի այս էջը հայերեն է։ Ժամանման և ուսուցման էջերն առայժմ բացվում են անգլերեն։ Վերադառնալիս հայերենը կպահպանվի։",
       }
     };
 
@@ -2833,6 +2938,8 @@
     // Explain an explicit unsupported URL language once; a later choice dismisses it.
     let showLanguageFallback = Boolean(fromUrl && !supported.includes(fromUrl));
     const languageFallback = document.querySelector("#languageFallback");
+    const externalLanguageNotice = document.querySelector("#externalLanguageNotice");
+    const textOnlyLanguages = new Set(["ka", "tr", "hy"]);
     const introSeenKey = "hydraIntroAudioSeenV3";
     const introAudioSrc = {
       pl: "assets/audio/intro-pl.mp3?v=20260717-voice6",
@@ -2925,6 +3032,11 @@
       const src = introAudioSrc[current];
       introFallbackActive = false;
       window.speechSynthesis?.cancel?.();
+      if (!src) {
+        introAudio.pause();
+        introAudio.removeAttribute("src");
+        return;
+      }
       if (introAudio.getAttribute("src") !== src) {
         introAudio.pause();
         introAudio.src = src;
@@ -2942,6 +3054,7 @@
       languageFallback.hidden = !showLanguageFallback;
       showLanguageFallback = false;
       document.documentElement.lang = current === "ua" ? "uk" : current;
+      externalLanguageNotice.hidden = !textOnlyLanguages.has(current);
       select.value = current;
       savePreference("hydraLang", current);
       const currentUrl = new URL(location.href);
@@ -2954,7 +3067,7 @@
       }
       document.querySelectorAll(".catalog-link").forEach((link) => {
         const target = new URL("https://oleksandrkiris.github.io/kiris-jobs/");
-        target.searchParams.set("lang", current === "ua" ? "uk" : current);
+        target.searchParams.set("lang", current === "ua" ? "uk" : current === "tr" ? "en" : current);
         link.href = target.toString();
       });
       hideAudioStatus();
@@ -2965,7 +3078,14 @@
         node.textContent = translations[current][key] || translations.pl[key] || node.textContent;
       });
       const introScript = document.querySelector("#introScript");
-      if (introScript) introScript.textContent = clearSpeechIntroText[current] || clearSpeechIntroText.en;
+      if (introScript) introScript.textContent = clearSpeechIntroText[current] || translations[current].introSpeech || clearSpeechIntroText.en;
+      const textOnly = textOnlyLanguages.has(current);
+      playIntroButton.hidden = textOnly;
+      document.querySelector(".intro-actions")?.classList.toggle("text-only", textOnly);
+      if (textOnly) {
+        audioStatus.textContent = translations[current].textOnlyIntro;
+        audioStatus.hidden = false;
+      }
       setPlayingState(!introAudio.paused && !introAudio.ended);
 
       document.querySelectorAll("[data-i18n-label]").forEach((node) => {
@@ -2979,7 +3099,7 @@
 
       document.querySelectorAll(".training-link").forEach((link) => {
         const target = new URL(link.dataset.base, location.href);
-        target.searchParams.set("lang", current);
+        target.searchParams.set("lang", textOnlyLanguages.has(current) ? "en" : current);
         link.href = target.toString();
       });
 
@@ -2994,23 +3114,32 @@
       setPlayingState(false);
     }
 
+    let introReturnFocus = null;
     function closeIntro() {
       stopIntroAudio();
       introModal.hidden = true;
       document.body.classList.remove("modal-open");
       savePreference(introSeenKey, "1");
+      if (introReturnFocus?.isConnected) introReturnFocus.focus();
+      introReturnFocus = null;
     }
 
     function openIntro() {
       introResult.hidden = true;
       hideAudioStatus();
       stopIntroAudio();
+      introReturnFocus = document.activeElement;
       introModal.hidden = false;
       document.body.classList.add("modal-open");
+      introClose.focus();
     }
 
     function revealIntroText() {
       introResult.hidden = false;
+      if (textOnlyLanguages.has(select.value)) {
+        audioStatus.textContent = translations[select.value].textOnlyIntro;
+        audioStatus.hidden = false;
+      }
       window.requestAnimationFrame(() => {
         introResult.scrollIntoView({ block: "nearest", behavior: "smooth" });
       });
@@ -3044,6 +3173,11 @@
 
     function playIntroAudio(lang = select.value) {
       const current = supported.includes(lang) ? lang : "en";
+      if (textOnlyLanguages.has(current)) {
+        audioStatus.textContent = translations[current].textOnlyIntro;
+        audioStatus.hidden = false;
+        return;
+      }
       setAudioSource(current);
       hideAudioStatus();
       introAudio.currentTime = 0;
@@ -3068,7 +3202,10 @@
       es: "Cargando versi\u00f3n actual",
       fil: "Nilo-load ang kasalukuyang bersyon",
       id: "Memuat versi terbaru",
-      ne: "\u0939\u093e\u0932\u0915\u094b \u0938\u0902\u0938\u094d\u0915\u0930\u0923 \u0932\u094b\u0921 \u0939\u0941\u0901\u0926\u0948\u091b"
+      ne: "\u0939\u093e\u0932\u0915\u094b \u0938\u0902\u0938\u094d\u0915\u0930\u0923 \u0932\u094b\u0921 \u0939\u0941\u0901\u0926\u0948\u091b",
+      ka: "მიმდინარე ვერსია იტვირთება",
+      tr: "Güncel sürüm yükleniyor",
+      hy: "Բեռնվում է ընթացիկ տարբերակը"
     };
 
     function setupHydraLoading() {
@@ -3149,7 +3286,10 @@
         es: "Arriba",
         fil: "Pataas",
         id: "Ke atas",
-        ne: "माथि"
+        ne: "माथि",
+        ka: "ზემოთ",
+        tr: "Başa dön",
+        hy: "Դեպի վեր"
       };
       return labels[lang] || labels.en;
     }
@@ -3221,6 +3361,11 @@
 
     select.addEventListener("change", () => setLang(select.value));
     reopenIntroButton.addEventListener("click", () => {
+      if (textOnlyLanguages.has(select.value)) {
+        openIntro();
+        revealIntroText();
+        return;
+      }
       const guide = new URL("https://oleksandrkiris.github.io/citronex-dragon-guide/");
       guide.searchParams.set("lang", select.value);
       window.location.assign(guide.toString());
@@ -3244,7 +3389,7 @@
         setLang(lang);
         revealIntroText();
         savePreference(introSeenKey, "1");
-        playIntroAudio(lang);
+        if (!textOnlyLanguages.has(lang)) playIntroAudio(lang);
       });
     });
 
@@ -3253,7 +3398,15 @@
       if (event.target === introModal) closeIntro();
     });
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !introModal.hidden) closeIntro();
+      if (introModal.hidden) return;
+      if (event.key === "Escape") { closeIntro(); return; }
+      if (event.key !== "Tab") return;
+      const focusable = [...introModal.querySelectorAll("button:not([hidden]):not(:disabled)")]
+        .filter((button) => button.getClientRects().length > 0);
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     });
 
     setLang(initial);
@@ -3270,4 +3423,3 @@
   </script>
 </body>
 </html>
-

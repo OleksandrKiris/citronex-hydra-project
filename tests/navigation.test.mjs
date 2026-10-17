@@ -17,7 +17,7 @@ function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlo
   function node(key) {
     if(!nodes.has(key))nodes.set(key,{value:'',textContent:'',dataset:{},attrs:{},events:{},paused:true,
       classList:{toggle(){},remove(){},add(){}},
-      setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k]||'';},
+      setAttribute(k,v){this.attrs[k]=v;},removeAttribute(k){delete this.attrs[k];},getAttribute(k){return this.attrs[k]||'';},
       addEventListener(k,v){this.events[k]=v;},pause(){this.paused=true;},load(){}
     });
     return nodes.get(key);
@@ -49,7 +49,7 @@ function accessibleLabel(element,nodes) {
   }).join(' ');
   return element.attrs['aria-label']||element.textContent;
 }
-for(const language of ['pl','en','ua','ru','az','es','fil','id','ne']) {
+for(const language of ['pl','en','ua','ru','az','es','fil','id','ne','ka','tr','hy']) {
   test(`${language}: language and card-region names follow the translated labels`,()=>{
     const f=run({language});
     const expected=key=>f.translated.find(n=>n.attrs['data-i18n']===key).textContent;
@@ -67,7 +67,7 @@ for(const language of ['pl','en','ua','ru','az','es','fil','id','ne']) {
       const link=f.links.find(n=>new URL(n.href).pathname===`/${repo}/`);
       const name=accessibleLabel(link,f.nodes);names.push(name);
       assert.equal(name,`${link.textContent} ${city}`);
-      assert.equal(new URL(link.href).searchParams.get('lang'),language);
+      assert.equal(new URL(link.href).searchParams.get('lang'),['ka','tr','hy'].includes(language)?'en':language);
     }
     assert.equal(new Set(names).size,3);
   });
@@ -76,11 +76,11 @@ test('all accessible label references identify one real markup node',()=>{
   const ids=markupNodes.map(n=>n.attrs.id).filter(Boolean);
   for(const n of markupNodes)for(const id of (n.attrs['aria-labelledby']||'').split(/\s+/).filter(Boolean))assert.equal(ids.filter(value=>value===id).length,1,id);
 });
-for(const language of ['pl','en','ua','ru','az','es','fil','id','ne'])test(`${language}: blocked storage keeps language, location links, catalog mapping and context`,()=>{
+for(const language of ['pl','en','ua','ru','az','es','fil','id','ne','ka','tr','hy'])test(`${language}: blocked storage keeps language, location links, catalog mapping and context`,()=>{
   const f=run({language,blocked:true});
   assert.equal(f.document.documentElement.lang,language==='ua'?'uk':language);
-  for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),language);
-  assert.equal(new URL(f.catalog.href).searchParams.get('lang'),language==='ua'?'uk':language);
+  for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),['ka','tr','hy'].includes(language)?'en':language);
+  assert.equal(new URL(f.catalog.href).searchParams.get('lang'),language==='ua'?'uk':language==='tr'?'en':language);
   f.c.api.setLang('ua');
   assert.equal(f.location.searchParams.get('lang'),'ua');
   assert.equal(f.location.searchParams.get('section'),'training');
@@ -90,10 +90,10 @@ for(const language of ['pl','en','ua','ru','az','es','fil','id','ne'])test(`${la
 });
 test('URL beats stored preference; supported browser language survives blocked storage',()=>{
   assert.equal(run({language:'uk'}).document.documentElement.lang,'uk');
-  assert.equal(run({language:'ka',stored:'ru'}).document.documentElement.lang,'en');
+  assert.equal(run({language:'ka',stored:'ru'}).document.documentElement.lang,'ka');
   assert.equal(run({language:'',stored:'es'}).document.documentElement.lang,'es');
   assert.equal(run({language:'',blocked:true,browser:'uk-UA'}).document.documentElement.lang,'uk');
-  assert.equal(run({language:'',blocked:true,browser:'ka-GE'}).document.documentElement.lang,'en');
+  assert.equal(run({language:'',blocked:true,browser:'ka-GE'}).document.documentElement.lang,'ka');
 });
 test('normal storage persists the selected language',()=>{
   const f=run({language:'ru'});f.c.api.setLang('en');
@@ -107,18 +107,31 @@ test('fallback status exists once in real markup, hidden by default, before navi
   assert.match(markup,/<p\b[^>]*id="languageFallback"[^>]*\bhidden\b[^>]*><\/p>/);
   assert.ok(markup.indexOf('id="languageFallback"')<markup.indexOf('<nav'));
 });
-for(const [language,label] of [['ka','ქართული'],['KA','ქართული'],['hy','Հայերեն']])test(`${language}: explicit unsupported language explains English fallback and preserves routes`,()=>{
-  const f=run({language,stored:'ru',blocked:true});
-  const notice=f.nodes.get('#languageFallback');
-  assert.equal(notice?.hidden,false);
-  assert.ok(notice.textContent.includes(label+' → English (EN)'));
-  assert.match(notice.textContent,/not available here/);
-  assert.equal(f.document.documentElement.lang,'en');
-  assert.equal(f.location.searchParams.get('lang'),'en');
+for(const language of ['ka','KA','tr','hy'])test(`${language}: native HYDRA and honest English handoff with no invented audio`,()=>{
+  const expected=language.toLowerCase(), f=run({language,stored:'ru',blocked:true});
+  assert.equal(f.nodes.get('#languageFallback').hidden,true);
+  assert.equal(f.nodes.get('#externalLanguageNotice').hidden,false);
+  assert.equal(f.document.documentElement.lang,expected);
+  assert.equal(f.location.searchParams.get('lang'),expected);
   assert.equal(f.location.searchParams.get('section'),'training');
   assert.equal(f.location.hash,'#locations');
-  for(const link of [...f.links,f.catalog])assert.equal(new URL(link.href).searchParams.get('lang'),'en');
-  assert.equal(markupNodes.some(n=>n.tag==='option'&&n.attrs.value===language.toLowerCase()),false);
+  assert.equal(f.nodes.get('#introScript').textContent.length>60,true);
+  assert.equal(f.nodes.get('#playIntro').hidden,true);
+  assert.equal(f.nodes.get('#audioStatus').hidden,false);
+  assert.equal(f.nodes.get('#introAudio').attrs.src,undefined);
+  for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),'en');
+  assert.equal(new URL(f.catalog.href).searchParams.get('lang'),expected==='tr'?'en':expected);
+});
+test('three full native locales match keys, no missing/blank labels or silent Polish fallback',()=>{
+  const f=run({language:'ka'});
+  const dictionaries=vm.runInContext('translations',f.c);
+  const baseline=Object.keys(dictionaries.en).sort();
+  for(const lang of ['ka','tr','hy']){
+    const keys=Object.keys(dictionaries[lang]).filter(key=>!['externalNotice','textOnlyIntro'].includes(key)).sort();
+    assert.deepEqual(keys,baseline);
+    for(const [key,value] of Object.entries(dictionaries[lang]))assert.ok(typeof value==='string'&&value.trim(),lang+':'+key);
+    assert.match(dictionaries[lang].externalNotice,/English|ინგლისურად|İngilizce|անգլերեն/);
+  }
 });
 test('unrecognized language uses a fixed notice without reflecting URL text',()=>{
   const f=run({language:encodeURIComponent('<img src=x onerror=alert(1)>')});
@@ -127,13 +140,13 @@ test('unrecognized language uses a fixed notice without reflecting URL text',()=
   assert.equal(notice.textContent,'This language is not available here. Showing English (EN). You can choose another language above.');
 });
 test('supported languages, Ukrainian alias and stored preference show no fallback notice',()=>{
-  for(const language of ['pl','ru','ua','uk','en','az','es','fil','id','ne','']){
+  for(const language of ['pl','ru','ua','uk','en','az','es','fil','id','ne','ka','tr','hy','']){
     const f=run({language,stored:'ru'});
     assert.equal(f.nodes.get('#languageFallback')?.hidden,true,language);
   }
 });
 test('manual language change dismisses fallback even after switching back to English',()=>{
-  const f=run({language:'ka'});
+  const f=run({language:'xx'});
   const select=f.nodes.get('#langSelect');
   select.value='ua';select.events.change();
   assert.equal(f.nodes.get('#languageFallback').hidden,true);
@@ -144,11 +157,11 @@ test('manual language change dismisses fallback even after switching back to Eng
   assert.equal(f.nodes.get('#languageFallback').hidden,true);
 });
 
-for(const language of ['pl','en','ua','ru','az','es','fil','id','ne'])test(`${language}: denied History API does not interrupt translations or routes`,()=>{
+for(const language of ['pl','en','ua','ru','az','es','fil','id','ne','ka','tr','hy'])test(`${language}: denied History API does not interrupt translations or routes`,()=>{
   const f=run({language,historyBlocked:true,blocked:true});
   const original=f.location.href;
   assert.equal(f.document.documentElement.lang,language==='ua'?'uk':language);
-  for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),language);
+  for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),['ka','tr','hy'].includes(language)?'en':language);
   f.c.api.setLang('ua');
   assert.equal(f.nodes.get('#langSelect').value,'ua');
   assert.equal(f.document.documentElement.lang,'uk');
@@ -158,15 +171,15 @@ for(const language of ['pl','en','ua','ru','az','es','fil','id','ne'])test(`${la
   assert.equal(f.location.href,original,'No navigation/reload fallback');
   assert.doesNotThrow(()=>f.c.api.closeIntro());
 });
-test('denied history.state still applies explicit ka fallback and audio language',()=>{
-  const f=run({language:'ka',stateBlocked:true});
+test('denied history.state still handles unknown language without breaking routes',()=>{
+  const f=run({language:'xx',stateBlocked:true});
   assert.equal(f.document.documentElement.lang,'en');
-  assert.match(f.nodes.get('#languageFallback').textContent,/ქართული → English/);
+  assert.match(f.nodes.get('#languageFallback').textContent,/not available here/);
   assert.equal(f.nodes.get('#languageFallback').hidden,false);
   for(const link of [...f.links,f.catalog])assert.equal(new URL(link.href).searchParams.get('lang'),'en');
   assert.match(f.nodes.get('#introAudio').src,/intro-en\.mp3/);
   assert.deepEqual(f.writes,[['hydraLang','en']]);
-  assert.equal(f.location.searchParams.get('lang'),'ka');
+  assert.equal(f.location.searchParams.get('lang'),'xx');
 });
 test('history refusal keeps non-language URL context and saved preference',()=>{
   const f=run({language:'ru',historyBlocked:true});
