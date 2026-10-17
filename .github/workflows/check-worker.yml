@@ -1,0 +1,39 @@
+name: HYDRA service worker checks
+on:
+  pull_request:
+    paths:
+      - index.html
+      - tests/**
+      - sw.js
+      - .github/workflows/check-worker.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node --check sw.js && node --check tests/browser.mjs
+      - run: node --test tests/sw.test.mjs tests/navigation.test.mjs
+      - name: Install pinned browser in temporary directory
+        run: |
+          npm install --prefix "$RUNNER_TEMP/hydra-browser" --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/hydra-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Exact-version browser acceptance
+        env:
+          TESTED_HEAD: ${{ github.event.pull_request.head.sha }}
+          TESTED_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          PLAYWRIGHT_PACKAGE="$RUNNER_TEMP/hydra-browser/node_modules/playwright" BROWSER_REPORT="$RUNNER_TEMP/hydra-browser-report" node tests/browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hydra-browser-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/hydra-browser-report
+          retention-days: 7
