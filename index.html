@@ -2315,7 +2315,20 @@
     .intro-lead, .intro-result { color: var(--muted) !important; }
 
     #lastLocation[hidden] { display: none !important; }
-    #lastLocation { margin-bottom: 16px; overflow-wrap: anywhere; }
+    #lastLocation {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      min-width: 0;
+      margin-bottom: 16px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    #lastLocationTitle { margin: 0; font-size: 1.1rem; line-height: 1.35; }
+    #lastLocation > * { width: 100%; min-width: 0; box-sizing: border-box; }
     #lastLocation .btn { margin: 6px 0; white-space: normal; }
     .intro-action[hidden] { display: none !important; }
     .intro-actions.text-only { grid-template-columns: minmax(0, 1fr); }
@@ -2445,7 +2458,7 @@
       <h2 class="section-title" id="startTitle" data-i18n="startTitle">Najpierw wybierz, czego potrzebujesz</h2>
       <p class="language-fallback" id="externalLanguageNotice" data-i18n="externalNotice" role="status" hidden></p>
 
-      <section id="lastLocation" class="card" aria-labelledby="lastLocationTitle" hidden>
+      <section id="lastLocation" aria-labelledby="lastLocationTitle" hidden>
         <h2 id="lastLocationTitle"></h2>
         <a class="btn" id="lastLocationLink"></a>
         <button class="btn" id="clearLastLocation" type="button"></button>

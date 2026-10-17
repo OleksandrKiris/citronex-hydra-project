@@ -170,6 +170,29 @@ try {
         return {rect:{x:r.x,y:r.y,width:r.width,height:r.height},inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,unobscured:hit===el||el.contains(hit)};
       });
       assert.equal(resumeView.inside,true);assert.equal(resumeView.unobscured,true);
+      const panelReadability=[];
+      for(const language of ['pl','ru','ua','en','az','es','fil','id','ne','ka','tr','hy']){
+        await page.locator('#langSelect').selectOption(language);
+        const layout=await page.locator('#lastLocation').evaluate(panel=>{
+          const p=panel.getBoundingClientRect();
+          const measure=id=>{
+            const el=document.querySelector(id), r=el.getBoundingClientRect(), style=getComputedStyle(el);
+            const range=document.createRange();range.selectNodeContents(el);
+            const lines=new Set([...range.getClientRects()].filter(r=>r.width>0).map(r=>Math.round(r.top))).size;
+            return {width:r.width,height:r.height,lines,overflow:el.scrollWidth>el.clientWidth+1};
+          };
+          return {panelWidth:p.width,panelHeight:p.height,heading:measure('#lastLocationTitle'),clear:measure('#clearLastLocation')};
+        });
+        for(const [name,measure] of [['heading',layout.heading],['clear',layout.clear]]){
+          assert.ok(measure.width>=200&&measure.width>=layout.panelWidth*.8,`${width}/${language} ${name} full text column: ${JSON.stringify(layout)}`);
+          assert.equal(measure.overflow,false);
+          assert.ok(measure.lines>=1&&measure.lines<=(name==='heading'?4:3),`${language} ${name} must wrap in readable lines`);
+        }
+        assert.ok(layout.panelHeight<360,`${language}: last-location panel must not become a tall icon-column layout`);
+        panelReadability.push({language,...layout});
+      }
+      await page.locator('#langSelect').selectOption('ka');
+      await page.locator('#lastLocation').scrollIntoViewIfNeeded();
       await page.screenshot({path:join(output,`last-location-${width}-${mode||'normal'}.png`)});
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
       await page.reload();
@@ -187,7 +210,7 @@ try {
         assert.equal(await page.evaluate(()=>localStorage.getItem('hydraLastLocationV1')),null);
         await page.reload();assert.equal(await page.locator('#lastLocation').isVisible(),false);
       }
-      report.results.push({scenario:'last-location-keyboard-language-reload-Back-clear',viewport:{width,height:900},mode:mode||'normal',status:'passed',resumeView,limits:mode==='both'?'in-memory only; denied storage loses location on reload':'external href inspected, training not opened'});
+      report.results.push({scenario:'last-location-keyboard-language-reload-Back-clear',viewport:{width,height:900},mode:mode||'normal',status:'passed',resumeView,panelReadability,limits:mode==='both'?'in-memory only; denied storage loses location on reload':'external href inspected, training not opened'});
     } finally {await ctx.close();}
   }
   for(const value of ['unknown','{"id":"siechniceTraining"}','https://evil.example/']){
@@ -212,7 +235,7 @@ try {
     await page.evaluate(()=>{localStorage.setItem('unrelated-test-key','preserve');localStorage.setItem('hydraIntroAudioSeenV3','1');});
     previous=false;
     await page.evaluate(async()=>{const registration=await navigator.serviceWorker.getRegistration();await registration.update();});
-    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-last-location1')&&!names.includes('citronex-hydra-srzb-20261017-locales3');});
+    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-last-location2')&&!names.includes('citronex-hydra-srzb-20261017-locales3');});
     // Cache deletion happens before clients.claim: wait for activation readiness,
     // not just a cache name, before testing a controlled upgrade/offline reload.
     await page.waitForFunction(async()=>{
@@ -220,7 +243,7 @@ try {
       return registration.active?.state==='activated'&&navigator.serviceWorker.controller?.state==='activated';
     });
     const upgradedShell=await page.evaluate(async()=>{
-      const cache=await caches.open('citronex-hydra-srzb-20261017-last-location1');
+      const cache=await caches.open('citronex-hydra-srzb-20261017-last-location2');
       const shell=await cache.match('./index.html');return shell?await shell.text():null;
     });
     assert.equal(upgradedShell,await readFile(join(root,'index.html'),'utf8'));

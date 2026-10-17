@@ -31,3 +31,14 @@ CI/artifact and acceptance outcome will be recorded in the PR journal.
 Function: prepared. Contract: no new API; existing IDs/routes reused.
 Acceptance/publication: pending role10; no merge/deploy by role2.
 Native-speaker and physical-phone verification remain evidence limits.
+
+## P2 review correction
+
+Independent review of 9e2c261 found the new panel inherited the 44px icon
+column from .card. The old 1280 PNG shows vertical heading/clear labels.
+Original CI12110755235 PNG bytes are preserved in docs/evidence/before-9e2c261-*.
+The return panel now has its own one-column layout, without .card inheritance.
+Browser assertions measure heading and clear width, text line count, horizontal
+overflow and total panel height in all 12 UI languages at 1280/320 across the
+existing fault matrix. All 54 scenarios and offline/load assertions are retained.
+New exact-head CI/artifact belongs in PR12; old green was not acceptance proof.
