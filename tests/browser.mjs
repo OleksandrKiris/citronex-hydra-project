@@ -259,6 +259,10 @@ try {
         assert.ok((await page.locator('#locationCopyStatus').innerText()).length>20);
       }
       await page.locator('#locationShare').scrollIntoViewIfNeeded();
+      await page.waitForFunction(()=>{
+        const r=document.querySelector('#locationShare').getBoundingClientRect();
+        return r.top>=0&&r.bottom<=innerHeight;
+      });
       const copyLayout=await page.locator('#locationShare').evaluate(el=>{
         const field=el.querySelector('input'), r=field.getBoundingClientRect(), hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
         return {width:r.width,inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,unobscured:hit===field};
