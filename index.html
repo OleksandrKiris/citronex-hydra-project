@@ -2327,6 +2327,9 @@
       border-radius: 14px;
       box-shadow: var(--shadow);
     }
+    #locationShare[hidden] { display: none; }
+    #locationUrl { display: block; width: 100%; min-width: 0; box-sizing: border-box; padding: 10px; font: inherit; }
+    #locationCopyStatus { margin: 8px 0 0; overflow-wrap: anywhere; }
     #lastLocationTitle { margin: 0; font-size: 1.1rem; line-height: 1.35; }
     #lastLocation > * { width: 100%; min-width: 0; box-sizing: border-box; }
     #lastLocation .btn { margin: 6px 0; white-space: normal; }
@@ -2462,6 +2465,12 @@
         <h2 id="lastLocationTitle"></h2>
         <a class="btn" id="lastLocationLink"></a>
         <button class="btn" id="clearLastLocation" type="button"></button>
+        <button class="btn" id="copyLocation" type="button"></button>
+        <div id="locationShare" hidden>
+          <label id="locationUrlLabel" for="locationUrl"></label>
+          <input id="locationUrl" type="url" readonly autocomplete="off" spellcheck="false" aria-describedby="locationCopyStatus">
+          <p id="locationCopyStatus" role="status" aria-live="polite"></p>
+        </div>
       </section>
 
       <section class="cards" aria-labelledby="startTitle">
@@ -2960,10 +2969,75 @@
       tr: ["Son seçilen çalışma yeri", "Seçimi sil"],
       hy: ["Վերջին ընտրված աշխատանքի վայրը", "Ջնջել ընտրությունը"]
     };
+    const copyLabels = {
+      pl: ["Kopiuj link do lokalizacji", "Publiczny link", "Link skopiowany.", "Nie udało się skopiować automatycznie. Zaznaczony link możesz skopiować ręcznie."],
+      ru: ["Копировать ссылку на площадку", "Публичная ссылка", "Ссылка скопирована.", "Автоматическое копирование недоступно. Скопируйте выделенную ссылку вручную."],
+      ua: ["Копіювати посилання на локацію", "Публічне посилання", "Посилання скопійовано.", "Автоматичне копіювання недоступне. Скопіюйте виділене посилання вручну."],
+      en: ["Copy location link", "Public link", "Link copied.", "Automatic copying is unavailable. Copy the selected link manually."],
+      az: ["İş yerinin linkini kopyala", "Açıq link", "Link kopyalandı.", "Avtomatik kopyalama mümkün deyil. Seçilmiş linki əl ilə kopyalayın."],
+      es: ["Copiar enlace de ubicación", "Enlace público", "Enlace copiado.", "No se puede copiar automáticamente. Copia el enlace seleccionado manualmente."],
+      fil: ["Kopyahin ang link ng lokasyon", "Pampublikong link", "Nakopya ang link.", "Hindi magagamit ang awtomatikong pagkopya. Kopyahin nang manu-mano ang napiling link."],
+      id: ["Salin tautan lokasi", "Tautan publik", "Tautan disalin.", "Penyalinan otomatis tidak tersedia. Salin tautan yang dipilih secara manual."],
+      ne: ["स्थानको लिङ्क प्रतिलिपि गर्नुहोस्", "सार्वजनिक लिङ्क", "लिङ्क प्रतिलिपि भयो।", "स्वचालित प्रतिलिपि उपलब्ध छैन। चयन गरिएको लिङ्क आफैं प्रतिलिपि गर्नुहोस्।"],
+      ka: ["სამუშაო ადგილის ბმულის კოპირება", "საჯარო ბმული", "ბმული დაკოპირებულია.", "ავტომატური კოპირება მიუწვდომელია. მონიშნული ბმული ხელით დააკოპირეთ."],
+      tr: ["Çalışma yeri bağlantısını kopyala", "Herkese açık bağlantı", "Bağlantı kopyalandı.", "Otomatik kopyalama kullanılamıyor. Seçili bağlantıyı elle kopyalayın."],
+      hy: ["Պատճենել աշխատանքի վայրի հղումը", "Հանրային հղում", "Հղումը պատճենված է։", "Ավտոմատ պատճենումը հասանելի չէ։ Ընտրված հղումը պատճենեք ձեռքով։"]
+    };
+    let copyVersion = 0;
+    let copyPending = false;
+    function publicLocationUrl() {
+      if (!locationIds.includes(lastLocationId)) return "";
+      // Trusted existing route only; no current-page query/hash or saved URL.
+      const source = document.querySelector("#" + lastLocationId);
+      const target = new URL(source.dataset.base);
+      target.searchParams.set("lang", textOnlyLanguages.has(select.value) ? "en" : select.value);
+      return target.toString();
+    }
+    function renderLocationShare() {
+      copyVersion++;
+      copyPending = false;
+      document.querySelector("#copyLocation").setAttribute("aria-busy", "false");
+      const url = publicLocationUrl();
+      const labels = copyLabels[select.value] || copyLabels.en;
+      document.querySelector("#copyLocation").textContent = labels[0];
+      document.querySelector("#copyLocation").disabled = !url;
+      document.querySelector("#locationUrlLabel").textContent = labels[1];
+      document.querySelector("#locationUrl").value = url;
+      document.querySelector("#locationCopyStatus").textContent = "";
+      if (!url) document.querySelector("#locationShare").hidden = true;
+    }
+    async function copyLocation() {
+      const url = publicLocationUrl();
+      if (!url || copyPending) return;
+      const version = copyVersion;
+      const labels = copyLabels[select.value] || copyLabels.en;
+      document.querySelector("#locationShare").hidden = false;
+      document.querySelector("#locationUrl").value = url;
+      copyPending = true;
+      document.querySelector("#copyLocation").setAttribute("aria-busy", "true");
+      let copied = false;
+      try {
+        if (typeof navigator.clipboard?.writeText === "function") {
+          await navigator.clipboard.writeText(url);
+          copied = true;
+        }
+      } catch { /* Readonly selectable URL remains available. */ }
+      // A changed language/location/clear invalidates an outstanding permission result.
+      if (version !== copyVersion) return;
+      copyPending = false;
+      document.querySelector("#copyLocation").setAttribute("aria-busy", "false");
+      document.querySelector("#locationCopyStatus").textContent = labels[copied ? 2 : 3];
+      if (!copied) {
+        const field = document.querySelector("#locationUrl");
+        field.focus();
+        field.select();
+      }
+    }
     function renderLastLocation() {
       const panel = document.querySelector("#lastLocation");
       const link = document.querySelector("#lastLocationLink");
       panel.hidden = !locationIds.includes(lastLocationId);
+      renderLocationShare();
       if (panel.hidden) { link.removeAttribute("href"); return; }
       const source = document.querySelector("#" + lastLocationId);
       const titleId = source.getAttribute("aria-labelledby").split(" ")[1];
@@ -3430,6 +3504,7 @@
     locationIds.forEach(id => document.querySelector("#" + id).addEventListener("click", event => {
       if (!event.defaultPrevented) rememberLocation(id);
     }));
+    document.querySelector("#copyLocation").addEventListener("click", copyLocation);
     document.querySelector("#clearLastLocation").addEventListener("click", clearLastLocation);
     window.addEventListener?.("pageshow", () => renderLastLocation());
     select.addEventListener("change", () => setLang(select.value));

@@ -219,9 +219,68 @@ try {
       await ctx.addInitScript(value=>localStorage.setItem('hydraLastLocationV1',value),value);
       await page.goto(base+'?lang=ru');assert.equal(await page.locator('#lastLocation').isVisible(),false);
       assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),null);
+      assert.equal(await page.locator('#locationUrl').inputValue(),'');
+      assert.equal(await page.locator('#locationShare').isVisible(),false);
       await check(page,'ru');
       report.results.push({scenario:'invalid-location-does-not-change-routes',value,status:'passed'});
     } finally {await ctx.close();}
+  }
+  // Inject only the Clipboard API boundary: no actual operating-system clipboard
+  // read/write or external destination navigation is performed by these tests.
+  for(const width of [1280,320])for(const clipboardMode of ['accepted','rejected','unavailable'])for(const mode of ['', 'both']){
+    const ctx=await context({width,height:900},mode), page=await ctx.newPage();
+    try {
+      await ctx.addInitScript(clipboardMode=>{
+        window.__clipboardWrites=[];
+        Object.defineProperty(navigator,'clipboard',{configurable:true,value:clipboardMode==='unavailable'?undefined:{writeText:async value=>{
+          window.__clipboardWrites.push(value);
+          if(clipboardMode==='rejected')throw new DOMException('Injected permission denial','NotAllowedError');
+        }}});
+      },clipboardMode);
+      await page.goto(base+'?lang=ua&person=must-not-copy#progress');
+      await page.evaluate(()=>document.addEventListener('click',event=>{
+        if(event.target.closest('a.training-link'))event.preventDefault();
+      }));
+      await page.locator('#ryczywolTraining').focus();await page.keyboard.press('Enter');
+      await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
+      await page.locator('#langSelect').selectOption('ka');
+      await page.locator('#copyLocation').focus();await page.keyboard.press('Enter');
+      await page.waitForFunction(()=>Boolean(document.querySelector('#locationCopyStatus').textContent));
+      const expected=await page.locator('#ryczywolTraining').getAttribute('href');
+      assert.equal(await page.locator('#locationUrl').inputValue(),expected);
+      assert.equal(new URL(expected).search,'?lang=en');assert.equal(new URL(expected).hash,'');
+      assert.equal(await page.locator('#locationUrl').getAttribute('readonly'),'');
+      assert.equal(await page.locator('#locationUrlLabel').getAttribute('for'),'locationUrl');
+      assert.equal(await page.locator('#locationCopyStatus').getAttribute('role'),'status');
+      assert.deepEqual(await page.evaluate(()=>window.__clipboardWrites),clipboardMode==='unavailable'?[]:[expected]);
+      if(clipboardMode==='accepted')assert.equal(await page.locator('#copyLocation').evaluate(el=>el===document.activeElement),true);
+      else {
+        assert.equal(await page.locator('#locationUrl').evaluate(el=>el===document.activeElement&&el.selectionStart===0&&el.selectionEnd===el.value.length),true);
+        assert.ok((await page.locator('#locationCopyStatus').innerText()).length>20);
+      }
+      await page.locator('#locationShare').scrollIntoViewIfNeeded();
+      const copyLayout=await page.locator('#locationShare').evaluate(el=>{
+        const field=el.querySelector('input'), r=field.getBoundingClientRect(), hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+        return {width:r.width,inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,unobscured:hit===field};
+      });
+      assert.ok(copyLayout.width>=200);assert.equal(copyLayout.inside,true);assert.equal(copyLayout.unobscured,true);
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+      if(!mode)await page.screenshot({path:join(output,`copy-${clipboardMode}-${width}.png`)});
+      await page.locator('#langSelect').selectOption('ua');
+      assert.equal(new URL(await page.locator('#locationUrl').inputValue()).search,'?lang=ua');
+      assert.equal(await page.locator('#locationCopyStatus').innerText(),'');
+      await page.reload();assert.equal(await page.locator('#locationShare').isVisible(),false);
+      assert.equal(await page.locator('#lastLocation').isVisible(),mode!=='both');
+      await page.goto(base+'?lang=pl');await page.goBack();
+      if(!mode){
+        await page.locator('#copyLocation').focus();await page.keyboard.press('Enter');
+        await page.waitForFunction(()=>Boolean(document.querySelector('#locationCopyStatus').textContent));
+        assert.equal(await page.locator('#locationUrl').inputValue(),await page.locator('#ryczywolTraining').getAttribute('href'));
+        await page.locator('#clearLastLocation').click();assert.equal(await page.locator('#locationUrl').inputValue(),'');
+        assert.equal(await page.locator('#locationShare').isVisible(),false);
+      }
+      report.results.push({scenario:'copy-public-location',width,clipboardMode,storage:mode||'normal',copyLayout,status:'passed',limit:'Clipboard boundary injected; OS clipboard not exercised'});
+    }finally{await ctx.close();}
   }
   // Upgrade the real old shell/worker, preserving previous non-secret preferences.
   previous=true;
@@ -235,7 +294,7 @@ try {
     await page.evaluate(()=>{localStorage.setItem('unrelated-test-key','preserve');localStorage.setItem('hydraIntroAudioSeenV3','1');});
     previous=false;
     await page.evaluate(async()=>{const registration=await navigator.serviceWorker.getRegistration();await registration.update();});
-    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-last-location2')&&!names.includes('citronex-hydra-srzb-20261017-locales3');});
+    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-copy-location1')&&!names.includes('citronex-hydra-srzb-20261017-last-location2');});
     // Cache deletion happens before clients.claim: wait for activation readiness,
     // not just a cache name, before testing a controlled upgrade/offline reload.
     await page.waitForFunction(async()=>{
@@ -243,7 +302,7 @@ try {
       return registration.active?.state==='activated'&&navigator.serviceWorker.controller?.state==='activated';
     });
     const upgradedShell=await page.evaluate(async()=>{
-      const cache=await caches.open('citronex-hydra-srzb-20261017-last-location2');
+      const cache=await caches.open('citronex-hydra-srzb-20261017-copy-location1');
       const shell=await cache.match('./index.html');return shell?await shell.text():null;
     });
     assert.equal(upgradedShell,await readFile(join(root,'index.html'),'utf8'));

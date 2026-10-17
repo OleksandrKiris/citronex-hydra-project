@@ -10,15 +10,15 @@ const markupNodes = [...markup.matchAll(/<([a-z][\w-]*)\b([^>]*)>([^<]*)/g)].map
   tag, text: text.trim(), attrs: Object.fromEntries([...attributes.matchAll(/([\w-]+)="([^"]*)"/g)].map(([,key,value]) => [key,value]))
 }));
 // Execute real language initialization and registered handlers, excluding visual startup.
-const startup = source.slice(0,source.indexOf('    setLang(initial);')) + '\nsetLang(initial); globalThis.api = {setLang, closeIntro, rememberLocation, clearLastLocation};';
+const startup = source.slice(0,source.indexOf('    setLang(initial);')) + '\nsetLang(initial); globalThis.api = {setLang, closeIntro, rememberLocation, clearLastLocation, copyLocation};';
 assert.ok(startup.length > 10000 && !startup.includes('    enhanceFrontend();'));
-function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlocked=false,stateBlocked=false,lastLocation=''}={}) {
+function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlocked=false,stateBlocked=false,lastLocation='',clipboard}={}) {
   const nodes=new Map();
   function node(key) {
     if(!nodes.has(key))nodes.set(key,{value:'',textContent:'',dataset:{},attrs:{},events:{},paused:true,
       classList:{toggle(){},remove(){},add(){}},
       setAttribute(k,v){this.attrs[k]=v;},removeAttribute(k){delete this.attrs[k];},getAttribute(k){return this.attrs[k]||'';},
-      addEventListener(k,v){this.events[k]=v;},pause(){this.paused=true;},load(){},focus(){this.focused=true;}
+      addEventListener(k,v){this.events[k]=v;},pause(){this.paused=true;},load(){},focus(){this.focused=true;},select(){this.selected=true;}
     });
     return nodes.get(key);
   }
@@ -38,7 +38,7 @@ function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlo
     querySelectorAll(s){return s==='.training-link'?links:s==='.catalog-link'?[catalog]:s==='[data-i18n]'?translated:s==='[data-i18n-label]'?elements.filter(n=>n.attrs['data-i18n-label']):[];},addEventListener(){}};
   const writes=[];
   const storage={getItem(key){if(blocked)throw Error('SecurityError');return key==='hydraLastLocationV1'?lastLocation:stored;},removeItem(key){if(blocked)throw Error('SecurityError');writes.push([key,null]);},setItem(k,v){if(blocked)throw Error('QuotaExceededError');writes.push([k,v]);}};
-  const c=vm.createContext({document,window:{},location,URL,URLSearchParams,navigator:{language:browser,languages:[browser]},
+  const c=vm.createContext({document,window:{},location,URL,URLSearchParams,navigator:{language:browser,languages:[browser],clipboard},
     localStorage:storage,history:{get state(){if(stateBlocked)throw Error('SecurityError');return null;},replaceState(_state,_title,url){if(historyBlocked)throw Error('SecurityError');location.href=url.toString();}}});
   vm.runInContext(startup,c);
   return {c,document,location,links,catalog,cards,translated,nodes,writes};
@@ -209,4 +209,25 @@ test('denied storage permits in-memory selection and explicit clear without brea
  assert.equal(f.nodes.get('#lastLocation').hidden,false);f.c.api.setLang('tr');
  assert.equal(new URL(f.nodes.get('#lastLocationLink').href).searchParams.get('lang'),'en');
  assert.doesNotThrow(()=>f.c.api.clearLastLocation());assert.equal(f.nodes.get('#lastLocation').hidden,true);
+});
+
+for(const mode of ['accepted','rejected','unavailable'])test(`copy public location: ${mode}`,async()=>{
+ const copied=[];const clipboard=mode==='unavailable'?undefined:{async writeText(value){copied.push(value);if(mode==='rejected')throw Error('NotAllowedError');}};
+ const f=run({language:'ka',lastLocation:'siechniceTraining',clipboard});
+ await f.c.api.copyLocation();
+ const url=f.nodes.get('#locationUrl').value;
+ assert.equal(url,'https://oleksandrkiris.github.io/citronex-siechnice-szkolenie/?lang=en');
+ assert.equal(f.nodes.get('#locationShare').hidden,false);
+ assert.equal(f.nodes.get('#locationUrl').selected,mode==='accepted'?undefined:true);
+ if(mode!=='unavailable')assert.deepEqual(copied,[url]);
+ f.c.api.setLang('ua');assert.equal(new URL(f.nodes.get('#locationUrl').value).searchParams.get('lang'),'ua');
+ assert.equal(f.nodes.get('#locationCopyStatus').textContent,'');
+ f.c.api.clearLastLocation();assert.equal(f.nodes.get('#locationUrl').value,'');assert.equal(f.nodes.get('#locationShare').hidden,true);
+});
+test('unknown ID never copies; late clipboard result cannot overwrite a changed language',async()=>{
+ let complete;const f=run({lastLocation:'siechniceTraining',clipboard:{writeText(){return new Promise(resolve=>complete=resolve);}}});
+ const pending=f.c.api.copyLocation();f.c.api.setLang('tr');complete();await pending;
+ assert.equal(f.nodes.get('#locationCopyStatus').textContent,'');
+ const invalid=run({lastLocation:'https://evil.example/'});await invalid.c.api.copyLocation();
+ assert.equal(invalid.nodes.get('#locationUrl').value,'');assert.equal(invalid.nodes.get('#locationShare').hidden,true);
 });
