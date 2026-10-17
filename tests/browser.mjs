@@ -203,6 +203,9 @@ try {
   // Upgrade the real old shell/worker, preserving previous non-secret preferences.
   previous=true;
   const ctx=await context({width:320,height:900});const page=await ctx.newPage();
+  await ctx.tracing.start({screenshots:true,snapshots:true});
+  const upgradeEvents=[];
+  page.on('requestfailed',request=>upgradeEvents.push({url:request.url(),failure:request.failure()}));
   try {
     await page.goto(base+'?lang=ua');await check(page,'ua');
     await page.waitForFunction(()=>Boolean(navigator.serviceWorker.controller));
@@ -210,6 +213,17 @@ try {
     previous=false;
     await page.evaluate(async()=>{const registration=await navigator.serviceWorker.getRegistration();await registration.update();});
     await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-last-location1')&&!names.includes('citronex-hydra-srzb-20261017-locales3');});
+    // Cache deletion happens before clients.claim: wait for activation readiness,
+    // not just a cache name, before testing a controlled upgrade/offline reload.
+    await page.waitForFunction(async()=>{
+      const registration=await navigator.serviceWorker.ready;
+      return registration.active?.state==='activated'&&navigator.serviceWorker.controller?.state==='activated';
+    });
+    const upgradedShell=await page.evaluate(async()=>{
+      const cache=await caches.open('citronex-hydra-srzb-20261017-last-location1');
+      const shell=await cache.match('./index.html');return shell?await shell.text():null;
+    });
+    assert.equal(upgradedShell,await readFile(join(root,'index.html'),'utf8'));
     await page.reload();await check(page,'ua');
     await ctx.setOffline(true);await page.reload();await check(page,'ua');
     assert.equal(await page.evaluate(()=>localStorage.getItem('unrelated-test-key')),'preserve');
@@ -217,7 +231,7 @@ try {
     assert.equal(await page.evaluate(()=>localStorage.getItem('hydraLang')),'ua');
     await page.screenshot({path:join(output,'upgrade-offline.png')});
     report.results.push({scenario:'previous-worker-upgrade/offline/preferences',status:'passed'});
-  } finally {await ctx.close();}
+  } finally {report.upgradeEvents=upgradeEvents;await ctx.tracing.stop({path:join(output,'upgrade-trace.zip')});await ctx.close();}
   report.status='passed';
 } catch(error) {report.status='failed';report.error=error.stack;process.exitCode=1;}
 finally {await browser?.close();await new Promise(resolve=>server.close(resolve));await writeFile(join(output,'acceptance.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));}
