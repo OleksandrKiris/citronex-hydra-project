@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "citronex-hydra-srzb-";
-const CACHE_NAME = CACHE_PREFIX + "20261017-locales3";
+const CACHE_NAME = CACHE_PREFIX + "20261017-last-location2";
 
 const CORE_ASSETS = [
   "./",
