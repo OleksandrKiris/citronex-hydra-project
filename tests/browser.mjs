@@ -81,6 +81,9 @@ try {
       // Same-origin route/Back without following any external service.
       await page.goto(base+'?lang=pl');await check(page,'pl');await page.goBack();
       await check(page,['history','state','both'].includes(mode)?'en':'ua');
+      assert.equal(new URL(page.url()).searchParams.get('section'),'training');
+      assert.equal(new URL(page.url()).hash,'#locations');
+      if(['history','state','both'].includes(mode))assert.equal(await page.locator('#languageFallback').isVisible(),true);
       assert.deepEqual(errors,[]);
       report.results.push({viewport:{width,height:900},mode:mode||'normal',status:'passed',steps:['ka fallback','keyboard','9 languages/routes','offline reload','Back']});
     } finally {await ctx.tracing.stop({path:join(output,`${width}-${mode||'normal'}-trace.zip`)});await ctx.close();}
@@ -94,7 +97,7 @@ try {
     await page.evaluate(()=>{localStorage.setItem('unrelated-test-key','preserve');localStorage.setItem('hydraIntroAudioSeenV3','1');});
     previous=false;
     await page.evaluate(async()=>{const registration=await navigator.serviceWorker.getRegistration();await registration.update();});
-    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-history1')&&!names.includes('citronex-hydra-srzb-20261016-fallback1');});
+    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-history2')&&!names.includes('citronex-hydra-srzb-20261016-fallback1');});
     await page.reload();await check(page,'ua');
     await ctx.setOffline(true);await page.reload();await check(page,'ua');
     assert.equal(await page.evaluate(()=>localStorage.getItem('unrelated-test-key')),'preserve');
@@ -106,3 +109,4 @@ try {
   report.status='passed';
 } catch(error) {report.status='failed';report.error=error.stack;process.exitCode=1;}
 finally {await browser?.close();await new Promise(resolve=>server.close(resolve));await writeFile(join(output,'acceptance.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));}
+

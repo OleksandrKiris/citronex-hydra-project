@@ -12,7 +12,16 @@ No reload/navigation fallback, new storage or network calls. Existing URL state 
 preserved; when URL writes are denied, its explicit language wins again on reload.
 This limitation is intentional, not a promise that the URL changed.
 
-Runtime: index.html + guarded history call; sw.js cache 20261017-history1.
+CI 39014161902 reproduced another part of the same history-denial scenario:
+Back restored the select's previous Ukrainian value without firing change,
+while the explicit unsupported URL had already initialized English text/routes.
+The language select now disables native form-value autocomplete/restoration;
+the existing URL/preference initialization remains its single state owner.
+The browser regression retains its strict select/text/route language assertions
+and also checks the restored section/hash and explicit fallback explanation.
+
+Runtime: index.html + guarded history call and select restoration; sw.js cache
+20261017-history2. Relative to the previous PR head, HTML grows by 19 bytes.
 All content, translations, audio and routes are unchanged. Six core cache entries
 remain six. No extra runtime requests, dependencies or media preloading.
 
@@ -34,3 +43,4 @@ matrix is run and reviewed, keep the PR draft; unit tests are not browser proof.
 Rollback: separate reviewed revert PR of this change, with a fresh cache suffix;
 keep later unrelated commits and preferences. Never reset/force-push. No merge,
 main write or deploy by owner 2. Exact tested head/results belong in the PR journal.
+
