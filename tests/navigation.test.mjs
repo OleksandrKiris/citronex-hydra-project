@@ -12,7 +12,7 @@ const markupNodes = [...markup.matchAll(/<([a-z][\w-]*)\b([^>]*)>([^<]*)/g)].map
 // Execute real language initialization and registered handlers, excluding visual startup.
 const startup = source.slice(0,source.indexOf('    setLang(initial);')) + '\nsetLang(initial); globalThis.api = {setLang, closeIntro};';
 assert.ok(startup.length > 10000 && !startup.includes('    enhanceFrontend();'));
-function run({language='ru',stored='pl',blocked=false,browser='pl-PL'}={}) {
+function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlocked=false,stateBlocked=false}={}) {
   const nodes=new Map();
   function node(key) {
     if(!nodes.has(key))nodes.set(key,{value:'',textContent:'',dataset:{},attrs:{},events:{},paused:true,
@@ -39,7 +39,7 @@ function run({language='ru',stored='pl',blocked=false,browser='pl-PL'}={}) {
   const writes=[];
   const storage={getItem(){if(blocked)throw Error('SecurityError');return stored;},setItem(k,v){if(blocked)throw Error('QuotaExceededError');writes.push([k,v]);}};
   const c=vm.createContext({document,window:{},location,URL,URLSearchParams,navigator:{language:browser,languages:[browser]},
-    localStorage:storage,history:{state:null,replaceState(_state,_title,url){location.href=url.toString();}}});
+    localStorage:storage,history:{get state(){if(stateBlocked)throw Error('SecurityError');return null;},replaceState(_state,_title,url){if(historyBlocked)throw Error('SecurityError');location.href=url.toString();}}});
   vm.runInContext(startup,c);
   return {c,document,location,links,catalog,cards,translated,nodes,writes};
 }
@@ -142,4 +142,38 @@ test('manual language change dismisses fallback even after switching back to Eng
   for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),'ua');
   select.value='en';select.events.change();
   assert.equal(f.nodes.get('#languageFallback').hidden,true);
+});
+
+for(const language of ['pl','en','ua','ru','az','es','fil','id','ne'])test(`${language}: denied History API does not interrupt translations or routes`,()=>{
+  const f=run({language,historyBlocked:true,blocked:true});
+  const original=f.location.href;
+  assert.equal(f.document.documentElement.lang,language==='ua'?'uk':language);
+  for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),language);
+  f.c.api.setLang('ua');
+  assert.equal(f.nodes.get('#langSelect').value,'ua');
+  assert.equal(f.document.documentElement.lang,'uk');
+  assert.equal(new URL(f.catalog.href).searchParams.get('lang'),'uk');
+  for(const link of f.links)assert.equal(new URL(link.href).searchParams.get('lang'),'ua');
+  assert.equal(accessibleLabel(f.nodes.get('#langSelect'),f.nodes),'Мова');
+  assert.equal(f.location.href,original,'No navigation/reload fallback');
+  assert.doesNotThrow(()=>f.c.api.closeIntro());
+});
+test('denied history.state still applies explicit ka fallback and audio language',()=>{
+  const f=run({language:'ka',stateBlocked:true});
+  assert.equal(f.document.documentElement.lang,'en');
+  assert.match(f.nodes.get('#languageFallback').textContent,/ქართული → English/);
+  assert.equal(f.nodes.get('#languageFallback').hidden,false);
+  for(const link of [...f.links,f.catalog])assert.equal(new URL(link.href).searchParams.get('lang'),'en');
+  assert.match(f.nodes.get('#introAudio').src,/intro-en\.mp3/);
+  assert.deepEqual(f.writes,[['hydraLang','en']]);
+  assert.equal(f.location.searchParams.get('lang'),'ka');
+});
+test('history refusal keeps non-language URL context and saved preference',()=>{
+  const f=run({language:'ru',historyBlocked:true});
+  f.c.api.setLang('en');
+  assert.deepEqual(f.writes,[['hydraLang','ru'],['hydraLang','en']]);
+  assert.equal(f.location.searchParams.get('section'),'training');
+  assert.equal(f.location.hash,'#locations');
+  assert.equal(f.location.searchParams.get('lang'),'ru');
+  assert.equal(f.document.documentElement.lang,'en');
 });

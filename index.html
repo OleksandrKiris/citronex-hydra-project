@@ -2405,7 +2405,7 @@
       </div>
       <label class="lang-control">
         <span class="sr-only" id="languageLabel" data-i18n="languageLabel">Język</span>
-        <select class="lang-select" id="langSelect" aria-labelledby="languageLabel">
+        <select class="lang-select" id="langSelect" aria-labelledby="languageLabel" autocomplete="off">
           <option value="pl">Polski</option>
           <option value="ru">Русский</option>
           <option value="ua">Українська</option>
@@ -2946,7 +2946,12 @@
       savePreference("hydraLang", current);
       const currentUrl = new URL(location.href);
       currentUrl.searchParams.set("lang", current);
-      history.replaceState(history.state, "", currentUrl);
+      try {
+        history.replaceState(history.state, "", currentUrl);
+      } catch {
+        // URL persistence is optional: keep translating and updating routes.
+        // Do not reload or navigate when the browser denies History access.
+      }
       document.querySelectorAll(".catalog-link").forEach((link) => {
         const target = new URL("https://oleksandrkiris.github.io/kiris-jobs/");
         target.searchParams.set("lang", current === "ua" ? "uk" : current);
@@ -3265,3 +3270,4 @@
   </script>
 </body>
 </html>
+
