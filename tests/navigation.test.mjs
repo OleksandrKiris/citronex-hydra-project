@@ -10,15 +10,15 @@ const markupNodes = [...markup.matchAll(/<([a-z][\w-]*)\b([^>]*)>([^<]*)/g)].map
   tag, text: text.trim(), attrs: Object.fromEntries([...attributes.matchAll(/([\w-]+)="([^"]*)"/g)].map(([,key,value]) => [key,value]))
 }));
 // Execute real language initialization and registered handlers, excluding visual startup.
-const startup = source.slice(0,source.indexOf('    setLang(initial);')) + '\nsetLang(initial); globalThis.api = {setLang, closeIntro};';
+const startup = source.slice(0,source.indexOf('    setLang(initial);')) + '\nsetLang(initial); globalThis.api = {setLang, closeIntro, rememberLocation, clearLastLocation};';
 assert.ok(startup.length > 10000 && !startup.includes('    enhanceFrontend();'));
-function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlocked=false,stateBlocked=false}={}) {
+function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlocked=false,stateBlocked=false,lastLocation=''}={}) {
   const nodes=new Map();
   function node(key) {
     if(!nodes.has(key))nodes.set(key,{value:'',textContent:'',dataset:{},attrs:{},events:{},paused:true,
       classList:{toggle(){},remove(){},add(){}},
       setAttribute(k,v){this.attrs[k]=v;},removeAttribute(k){delete this.attrs[k];},getAttribute(k){return this.attrs[k]||'';},
-      addEventListener(k,v){this.events[k]=v;},pause(){this.paused=true;},load(){}
+      addEventListener(k,v){this.events[k]=v;},pause(){this.paused=true;},load(){},focus(){this.focused=true;}
     });
     return nodes.get(key);
   }
@@ -37,7 +37,7 @@ function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlo
   const document={documentElement:{},body:{classList:{remove(){}}},querySelector:node,
     querySelectorAll(s){return s==='.training-link'?links:s==='.catalog-link'?[catalog]:s==='[data-i18n]'?translated:s==='[data-i18n-label]'?elements.filter(n=>n.attrs['data-i18n-label']):[];},addEventListener(){}};
   const writes=[];
-  const storage={getItem(){if(blocked)throw Error('SecurityError');return stored;},setItem(k,v){if(blocked)throw Error('QuotaExceededError');writes.push([k,v]);}};
+  const storage={getItem(key){if(blocked)throw Error('SecurityError');return key==='hydraLastLocationV1'?lastLocation:stored;},removeItem(key){if(blocked)throw Error('SecurityError');writes.push([key,null]);},setItem(k,v){if(blocked)throw Error('QuotaExceededError');writes.push([k,v]);}};
   const c=vm.createContext({document,window:{},location,URL,URLSearchParams,navigator:{language:browser,languages:[browser]},
     localStorage:storage,history:{get state(){if(stateBlocked)throw Error('SecurityError');return null;},replaceState(_state,_title,url){if(historyBlocked)throw Error('SecurityError');location.href=url.toString();}}});
   vm.runInContext(startup,c);
@@ -189,4 +189,24 @@ test('history refusal keeps non-language URL context and saved preference',()=>{
   assert.equal(f.location.hash,'#locations');
   assert.equal(f.location.searchParams.get('lang'),'ru');
   assert.equal(f.document.documentElement.lang,'en');
+});
+
+for(const lastLocation of ['unknown','{"id":"siechniceTraining"}','https://evil.example/',''])test(`invalid saved location stays hidden: ${lastLocation}`,()=>{
+ const f=run({lastLocation});assert.equal(f.nodes.get('#lastLocation').hidden,true);
+ assert.equal(f.nodes.get('#lastLocationLink').attrs.href,undefined);
+});
+for(const id of ['siechniceTraining','ryczywolTraining','zgorzelecBogatyniaTraining'])test(`remember only public ID, rebuild language and clear: ${id}`,()=>{
+ const f=run({lastLocation:id,language:'ka'});
+ assert.equal(f.nodes.get('#lastLocation').hidden,false);
+ assert.equal(f.nodes.get('#lastLocationLink').href,f.nodes.get('#'+id).href);
+ f.c.api.setLang('ua');assert.equal(new URL(f.nodes.get('#lastLocationLink').href).searchParams.get('lang'),'ua');
+ f.c.api.rememberLocation(id);assert.deepEqual(f.writes.at(-1),['hydraLastLocationV1',id]);
+ f.c.api.rememberLocation('https://evil.example/');assert.deepEqual(f.writes.at(-1),['hydraLastLocationV1',id]);
+ f.c.api.clearLastLocation();assert.equal(f.nodes.get('#lastLocation').hidden,true);assert.equal(f.nodes.get('#langSelect').focused,true);
+});
+test('denied storage permits in-memory selection and explicit clear without breaking routes',()=>{
+ const f=run({blocked:true,historyBlocked:true});f.c.api.rememberLocation('siechniceTraining');
+ assert.equal(f.nodes.get('#lastLocation').hidden,false);f.c.api.setLang('tr');
+ assert.equal(new URL(f.nodes.get('#lastLocationLink').href).searchParams.get('lang'),'en');
+ assert.doesNotThrow(()=>f.c.api.clearLastLocation());assert.equal(f.nodes.get('#lastLocation').hidden,true);
 });

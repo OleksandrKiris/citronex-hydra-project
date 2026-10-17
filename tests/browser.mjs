@@ -142,6 +142,57 @@ try {
       report.results.push({viewport:{width,height:900},mode:mode||'normal',status:'passed',steps:['unknown-language fallback','keyboard','12 languages/routes','native guide in viewport','Tab/Shift+Tab modal cycles','Escape and focus return','offline reload','Back']});
     } finally {await ctx.tracing.stop({path:join(output,`${width}-${mode||'normal'}-trace.zip`)});await ctx.close();}
   }
+  // Real keyboard activation; cancel external navigation at document bubble only,
+  // after the product's source-link handler. No external training is requested.
+  for(const width of [1280,320])for(const mode of ['', 'history','state','both','corrupt']) {
+    const ctx=await context({width,height:900},mode), page=await ctx.newPage();
+    try {
+      await page.goto(base+'?lang=ua');
+      assert.equal(await page.locator('#lastLocation').isVisible(),false);
+      await page.evaluate(()=>document.addEventListener('click',event=>{
+        if(event.target.closest('a.training-link'))event.preventDefault();
+      }));
+      for(const id of ['siechniceTraining','ryczywolTraining','zgorzelecBogatyniaTraining']){
+        await page.locator('#'+id).focus();await page.keyboard.press('Enter');
+        await page.waitForFunction(()=>!document.querySelector('#lastLocation').hidden);
+        assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),await page.locator('#'+id).getAttribute('href'));
+      }
+      if(mode!=='both')assert.equal(await page.evaluate(()=>localStorage.getItem('hydraLastLocationV1')),'zgorzelecBogatyniaTraining');
+      await page.locator('#langSelect').selectOption('ka');
+      assert.equal(new URL(await page.locator('#lastLocationLink').getAttribute('href')).searchParams.get('lang'),'en');
+      // Keyboard move from visible resume action to explicit clear control.
+      await page.locator('#lastLocationLink').focus();await page.keyboard.press('Tab');
+      assert.equal(await page.locator('#clearLastLocation').evaluate(el=>el===document.activeElement),true);
+      await page.screenshot({path:join(output,`last-location-${width}-${mode||'normal'}.png`)});
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+      await page.reload();
+      assert.equal(await page.locator('#lastLocation').isVisible(),mode!=='both');
+      if(mode!=='both'){
+        assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),await page.locator('#zgorzelecBogatyniaTraining').getAttribute('href'));
+        await page.goto(base+'?lang=pl');await page.goBack();
+        assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),await page.locator('#zgorzelecBogatyniaTraining').getAttribute('href'));
+        await page.waitForFunction(()=>Boolean(navigator.serviceWorker.controller));
+        await ctx.setOffline(true);await page.reload();
+        assert.equal(await page.locator('#lastLocation').isVisible(),true);
+        await page.locator('#lastLocationLink').focus();await page.keyboard.press('Tab');await page.keyboard.press('Space');
+        assert.equal(await page.locator('#lastLocation').isVisible(),false);
+        assert.equal(await page.locator('#langSelect').evaluate(el=>el===document.activeElement),true);
+        assert.equal(await page.evaluate(()=>localStorage.getItem('hydraLastLocationV1')),null);
+        await page.reload();assert.equal(await page.locator('#lastLocation').isVisible(),false);
+      }
+      report.results.push({scenario:'last-location-keyboard-language-reload-Back-clear',viewport:{width,height:900},mode:mode||'normal',status:'passed',limits:mode==='both'?'in-memory only; denied storage loses location on reload':'external href inspected, training not opened'});
+    } finally {await ctx.close();}
+  }
+  for(const value of ['unknown','{"id":"siechniceTraining"}','https://evil.example/']){
+    const ctx=await context({width:320,height:900}), page=await ctx.newPage();
+    try {
+      await ctx.addInitScript(value=>localStorage.setItem('hydraLastLocationV1',value),value);
+      await page.goto(base+'?lang=ru');assert.equal(await page.locator('#lastLocation').isVisible(),false);
+      assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),null);
+      await check(page,'ru');
+      report.results.push({scenario:'invalid-location-does-not-change-routes',value,status:'passed'});
+    } finally {await ctx.close();}
+  }
   // Upgrade the real old shell/worker, preserving previous non-secret preferences.
   previous=true;
   const ctx=await context({width:320,height:900});const page=await ctx.newPage();
@@ -151,7 +202,7 @@ try {
     await page.evaluate(()=>{localStorage.setItem('unrelated-test-key','preserve');localStorage.setItem('hydraIntroAudioSeenV3','1');});
     previous=false;
     await page.evaluate(async()=>{const registration=await navigator.serviceWorker.getRegistration();await registration.update();});
-    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-locales3')&&!names.includes('citronex-hydra-srzb-20261017-history2');});
+    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-last-location1')&&!names.includes('citronex-hydra-srzb-20261017-locales3');});
     await page.reload();await check(page,'ua');
     await ctx.setOffline(true);await page.reload();await check(page,'ua');
     assert.equal(await page.evaluate(()=>localStorage.getItem('unrelated-test-key')),'preserve');

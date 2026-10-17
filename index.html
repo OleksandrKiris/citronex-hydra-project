@@ -2314,6 +2314,9 @@
     .intro-title { color: var(--ink) !important; }
     .intro-lead, .intro-result { color: var(--muted) !important; }
 
+    #lastLocation[hidden] { display: none !important; }
+    #lastLocation { margin-bottom: 16px; overflow-wrap: anywhere; }
+    #lastLocation .btn { margin: 6px 0; white-space: normal; }
     .intro-action[hidden] { display: none !important; }
     .intro-actions.text-only { grid-template-columns: minmax(0, 1fr); }
     .language-fallback {
@@ -2441,6 +2444,12 @@
 
       <h2 class="section-title" id="startTitle" data-i18n="startTitle">Najpierw wybierz, czego potrzebujesz</h2>
       <p class="language-fallback" id="externalLanguageNotice" data-i18n="externalNotice" role="status" hidden></p>
+
+      <section id="lastLocation" class="card" aria-labelledby="lastLocationTitle" hidden>
+        <h2 id="lastLocationTitle"></h2>
+        <a class="btn" id="lastLocationLink"></a>
+        <button class="btn" id="clearLastLocation" type="button"></button>
+      </section>
 
       <section class="cards" aria-labelledby="startTitle">
         <article class="card priority">
@@ -2919,6 +2928,51 @@
       try { localStorage.setItem(key, value); }
       catch (_) { /* Language remains in the URL when browser storage is unavailable. */ }
     }
+    // Public existing element IDs only; never persist a URL or a person record.
+    const locationIds = ["siechniceTraining", "ryczywolTraining", "zgorzelecBogatyniaTraining"];
+    const lastLocationKey = "hydraLastLocationV1";
+    let lastLocationId = readPreference(lastLocationKey);
+    if (!locationIds.includes(lastLocationId)) lastLocationId = "";
+    const returnLabels = {
+      pl: ["Ostatnio wybrana lokalizacja", "Usuń wybór"],
+      ru: ["Последняя выбранная площадка", "Удалить выбор"],
+      ua: ["Остання вибрана локація", "Видалити вибір"],
+      en: ["Last selected location", "Clear selection"],
+      az: ["Son seçilmiş iş yeri", "Seçimi sil"],
+      es: ["Última ubicación elegida", "Borrar selección"],
+      fil: ["Huling napiling lokasyon", "Alisin ang pinili"],
+      id: ["Lokasi terakhir dipilih", "Hapus pilihan"],
+      ne: ["पछिल्लो चयन गरिएको स्थान", "चयन हटाउनुहोस्"],
+      ka: ["ბოლოს არჩეული სამუშაო ადგილი", "არჩევანის წაშლა"],
+      tr: ["Son seçilen çalışma yeri", "Seçimi sil"],
+      hy: ["Վերջին ընտրված աշխատանքի վայրը", "Ջնջել ընտրությունը"]
+    };
+    function renderLastLocation() {
+      const panel = document.querySelector("#lastLocation");
+      const link = document.querySelector("#lastLocationLink");
+      panel.hidden = !locationIds.includes(lastLocationId);
+      if (panel.hidden) { link.removeAttribute("href"); return; }
+      const source = document.querySelector("#" + lastLocationId);
+      const titleId = source.getAttribute("aria-labelledby").split(" ")[1];
+      const labels = returnLabels[select.value] || returnLabels.en;
+      document.querySelector("#lastLocationTitle").textContent = labels[0];
+      document.querySelector("#clearLastLocation").textContent = labels[1];
+      // Copy only the just-rebuilt allowlisted route, including effective language.
+      link.href = source.href;
+      link.textContent = source.textContent + " — " + document.querySelector("#" + titleId).textContent;
+    }
+    function rememberLocation(id) {
+      if (!locationIds.includes(id)) return;
+      lastLocationId = id;
+      savePreference(lastLocationKey, id);
+      renderLastLocation();
+    }
+    function clearLastLocation() {
+      lastLocationId = "";
+      try { localStorage.removeItem(lastLocationKey); } catch { /* in-memory clear still works */ }
+      renderLastLocation();
+      select.focus();
+    }
     const params = new URLSearchParams(location.search);
     function detectBrowserLanguage() {
       const candidates = [navigator.language, ...(Array.isArray(navigator.languages) ? navigator.languages : [])];
@@ -3103,6 +3157,7 @@
         link.href = target.toString();
       });
 
+      renderLastLocation();
       document.querySelector(".app-to-top")?.setAttribute("aria-label", scrollTopLabel(current));
     }
 
@@ -3359,6 +3414,11 @@
       window.setTimeout(requestUpdate, 250);
     }
 
+    locationIds.forEach(id => document.querySelector("#" + id).addEventListener("click", event => {
+      if (!event.defaultPrevented) rememberLocation(id);
+    }));
+    document.querySelector("#clearLastLocation").addEventListener("click", clearLastLocation);
+    window.addEventListener?.("pageshow", () => renderLastLocation());
     select.addEventListener("change", () => setLang(select.value));
     reopenIntroButton.addEventListener("click", () => {
       if (textOnlyLanguages.has(select.value)) {
