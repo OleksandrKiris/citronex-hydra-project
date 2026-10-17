@@ -231,3 +231,20 @@ test('unknown ID never copies; late clipboard result cannot overwrite a changed 
  const invalid=run({lastLocation:'https://evil.example/'});await invalid.c.api.copyLocation();
  assert.equal(invalid.nodes.get('#locationUrl').value,'');assert.equal(invalid.nodes.get('#locationShare').hidden,true);
 });
+
+for(const language of ['pl','en','ua','ru','az','es','fil','id','ne','ka','tr','hy'])for(const [id,location] of Object.entries({siechniceTraining:'siechnice',ryczywolTraining:'ryczywol',zgorzelecBogatyniaTraining:'zgorzelec_bogatynia'}))test(`${language}/${location}: selected guide keeps requested language and public site`,()=>{
+ const f=run({language,lastLocation:id});const url=new URL(f.nodes.get('#selectedGuideLink').href);
+ assert.equal(url.origin,'https://oleksandrkiris.github.io');assert.equal(url.pathname,'/citronex-dragon-guide/');
+ assert.equal(url.searchParams.get('lang'),language);assert.equal(url.searchParams.get('location'),location);assert.equal(url.searchParams.get('welcome'),'1');
+ assert.deepEqual([...url.searchParams.keys()].sort(),['lang','location','welcome']);assert.equal(url.hash,'');
+ assert.equal(f.nodes.get('#selectedGuide').hidden,false);assert.ok(f.nodes.get('#selectedGuideSteps').textContent.length>20);
+ assert.equal(f.nodes.get('#selectedGuideFallback').hidden,!['ka','tr','hy'].includes(language));
+ f.c.api.clearLastLocation();assert.equal(f.nodes.get('#selectedGuide').hidden,true);assert.equal(f.nodes.get('#selectedGuideLink').attrs.href,undefined);
+});
+test('guide rejects unknown ID, preserves in-memory context under storage/history denial',()=>{
+ const bad=run({lastLocation:'https://evil.example/'});assert.equal(bad.nodes.get('#selectedGuide').hidden,true);assert.equal(bad.nodes.get('#selectedGuideLink').attrs.href,undefined);
+ const f=run({language:'ka',blocked:true,historyBlocked:true});f.c.api.rememberLocation('ryczywolTraining');
+ assert.equal(new URL(f.nodes.get('#selectedGuideLink').href).searchParams.get('lang'),'ka');
+ f.c.api.setLang('tr');assert.equal(new URL(f.nodes.get('#selectedGuideLink').href).searchParams.get('lang'),'tr');
+ assert.equal(new URL(f.nodes.get('#selectedGuideLink').href).searchParams.get('location'),'ryczywol');
+});
