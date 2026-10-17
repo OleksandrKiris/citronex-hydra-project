@@ -55,8 +55,8 @@ try {
   const check=async(page,lang)=>{
     await page.waitForFunction(lang=>document.documentElement.lang===(lang==='ua'?'uk':lang),lang);
     assert.equal(await page.locator('#langSelect').inputValue(),lang);
-    for(const link of await page.locator('.training-link').all())assert.equal(new URL(await link.getAttribute('href')).searchParams.get('lang'),lang);
-    assert.equal(new URL(await page.locator('.catalog-link').getAttribute('href')).searchParams.get('lang'),lang==='ua'?'uk':lang);
+    for(const link of await page.locator('.training-link').all())assert.equal(new URL(await link.getAttribute('href')).searchParams.get('lang'),['ka','tr','hy'].includes(lang)?'en':lang);
+    assert.equal(new URL(await page.locator('.catalog-link').getAttribute('href')).searchParams.get('lang'),lang==='ua'?'uk':lang==='tr'?'en':lang);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
   };
   for(const width of [1280,320])for(const mode of ['', 'history','state','both','corrupt']) {
@@ -64,14 +64,68 @@ try {
     page.on('pageerror',error=>errors.push(error.message));
     await ctx.tracing.start({screenshots:true,snapshots:true});
     try {
-      await page.goto(base+'?lang=ka&section=training#locations');await check(page,'en');
+      await page.goto(base+'?lang=xx&section=training#locations');await check(page,'en');
       assert.equal(await page.locator('#languageFallback').isVisible(),true);
-      assert.match(await page.locator('#languageFallback').innerText(),/ქართული → English/);
+      assert.match(await page.locator('#languageFallback').innerText(),/not available here/);
       const select=page.locator('#langSelect');await select.focus();
       await page.keyboard.press('Home');await page.keyboard.press('ArrowDown');await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');
       await check(page,'ua');assert.equal(await select.evaluate(el=>el===document.activeElement),true);
       assert.equal(await page.locator('#languageFallback').isVisible(),false);
-      for(const lang of ['pl','ru','en','az','es','fil','id','ne','ua']){await select.selectOption(lang);await check(page,lang);}
+      for(const lang of ['pl','ru','en','az','es','fil','id','ne','ua','ka','tr','hy']){
+         await select.selectOption(lang);await check(page,lang);
+         if(['ka','tr','hy'].includes(lang)){
+           assert.equal(await page.locator('#externalLanguageNotice').isVisible(),true);
+           await page.locator('#reopenIntro').click();
+           assert.equal(await page.locator('#introScript').isVisible(),true);
+           assert.equal(await page.locator('#playIntro').isVisible(),false);
+           assert.equal(await page.locator('#audioStatus').isVisible(),true);
+           assert.equal(await page.locator('#introClose').evaluate(el=>el===document.activeElement),true);
+           // Visibility alone permits offscreen/clipped text. Wait for the actual
+           // smooth scroll to put the whole short guide in the usable viewport.
+           await page.waitForFunction(()=>{
+             const el=document.querySelector('#introScript'), r=el.getBoundingClientRect();
+             const v=window.visualViewport;
+             let left=v?.offsetLeft||0, top=v?.offsetTop||0;
+             let right=left+(v?.width||innerWidth), bottom=top+(v?.height||innerHeight);
+             for(let p=el.parentElement;p;p=p.parentElement){
+               const s=getComputedStyle(p), b=p.getBoundingClientRect();
+               if(/auto|scroll|hidden|clip/.test(s.overflowY)){top=Math.max(top,b.top);bottom=Math.min(bottom,b.bottom);}
+               if(/auto|scroll|hidden|clip/.test(s.overflowX)){left=Math.max(left,b.left);right=Math.min(right,b.right);}
+             }
+             return r.width>0&&r.height>0&&r.left>=left-1&&r.right<=right+1&&r.top>=top-1&&r.bottom<=bottom+1;
+           },null,{timeout:5000});
+           const guide=await page.locator('#introScript').evaluate(el=>{
+             const r=el.getBoundingClientRect(), hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+             return {rect:{x:r.x,y:r.y,width:r.width,height:r.height},viewport:{width:innerWidth,height:innerHeight},unobscured:el===hit||el.contains(hit)};
+           });
+           assert.equal(guide.unobscured,true);
+           if(width===320&&!mode)await page.screenshot({path:join(output,`guide-${lang}-320.png`)});
+           assert.equal(await page.locator('#introModal').getAttribute('aria-modal'),'true');
+           const focusIds=await page.locator('#introModal button:not([hidden]):not(:disabled)').evaluateAll(nodes=>nodes.filter(n=>n.getClientRects().length>0).map(n=>n.id||n.dataset.langChoice));
+           assert.equal(focusIds[0],'introClose');
+           assert.equal(focusIds.at(-1),'continueIntro');
+           assert.ok(!focusIds.includes('playIntro'),'Hidden audio action must not receive focus');
+           const focused=()=>page.evaluate(()=>{
+             const el=document.activeElement;
+             return {inside:document.querySelector('#introModal').contains(el),id:el.id||el.dataset.langChoice};
+           });
+           // Exercise every native browser Tab stop, including both boundaries.
+           for(let i=1;i<=focusIds.length;i++){
+             await page.keyboard.press('Tab');
+             assert.deepEqual(await focused(),{inside:true,id:focusIds[i%focusIds.length]});
+           }
+           for(let i=1;i<=focusIds.length;i++){
+             await page.keyboard.press('Shift+Tab');
+             assert.deepEqual(await focused(),{inside:true,id:focusIds[(focusIds.length-i)%focusIds.length]});
+           }
+           report.results.push({scenario:'native-guide-read-and-keyboard-close',lang,viewport:{width,height:900},mode:mode||'normal',guide,tabStops:focusIds.length,forwardCycle:'passed',reverseCycle:'passed'});
+           await page.keyboard.press('Escape');
+           assert.equal(await page.locator('#introModal').isVisible(),false);
+           assert.equal(await page.locator('#reopenIntro').evaluate(el=>el===document.activeElement),true);
+           if(width===320&&!mode)await page.screenshot({path:join(output,`locale-${lang}-320.png`)});
+         }
+       }
+       await select.selectOption('ua');await check(page,'ua');
       await page.screenshot({path:join(output,`${width}-${mode||'normal'}.png`)});
       await page.waitForFunction(()=>Boolean(navigator.serviceWorker.controller));
       await ctx.setOffline(true);await page.reload();await check(page,['history','state','both'].includes(mode)?'en':'ua');
@@ -85,7 +139,7 @@ try {
       assert.equal(new URL(page.url()).hash,'#locations');
       if(['history','state','both'].includes(mode))assert.equal(await page.locator('#languageFallback').isVisible(),true);
       assert.deepEqual(errors,[]);
-      report.results.push({viewport:{width,height:900},mode:mode||'normal',status:'passed',steps:['ka fallback','keyboard','9 languages/routes','offline reload','Back']});
+      report.results.push({viewport:{width,height:900},mode:mode||'normal',status:'passed',steps:['unknown-language fallback','keyboard','12 languages/routes','native guide in viewport','Tab/Shift+Tab modal cycles','Escape and focus return','offline reload','Back']});
     } finally {await ctx.tracing.stop({path:join(output,`${width}-${mode||'normal'}-trace.zip`)});await ctx.close();}
   }
   // Upgrade the real old shell/worker, preserving previous non-secret preferences.
@@ -97,7 +151,7 @@ try {
     await page.evaluate(()=>{localStorage.setItem('unrelated-test-key','preserve');localStorage.setItem('hydraIntroAudioSeenV3','1');});
     previous=false;
     await page.evaluate(async()=>{const registration=await navigator.serviceWorker.getRegistration();await registration.update();});
-    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-history2')&&!names.includes('citronex-hydra-srzb-20261016-fallback1');});
+    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-locales3')&&!names.includes('citronex-hydra-srzb-20261017-history2');});
     await page.reload();await check(page,'ua');
     await ctx.setOffline(true);await page.reload();await check(page,'ua');
     assert.equal(await page.evaluate(()=>localStorage.getItem('unrelated-test-key')),'preserve');
@@ -109,4 +163,3 @@ try {
   report.status='passed';
 } catch(error) {report.status='failed';report.error=error.stack;process.exitCode=1;}
 finally {await browser?.close();await new Promise(resolve=>server.close(resolve));await writeFile(join(output,'acceptance.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));}
-
