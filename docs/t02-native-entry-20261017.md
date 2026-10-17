@@ -35,3 +35,7 @@ Acceptance/publication: not accepted, not merged, not deployed.
 Fresh CI evidence: Pages 39035254461 success on base; PR10 CI 39018008178
 success on its pre-merge head 0c0db6f8a9af9985cc8c7cfb3e2ff34706f32e56.
 Neither run proves this WIP. Next: exact-head CI, review, release decision by 10.
+
+CI 39045212681 on b2ed637: unit/syntax passed; browser found missing audio-status
+on reopening native text guide (browser.mjs:81). revealIntroText now restores the
+explicit no-audio explanation. Follow-up exact-head CI required; assertions retained.

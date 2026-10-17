@@ -3136,6 +3136,10 @@
 
     function revealIntroText() {
       introResult.hidden = false;
+      if (textOnlyLanguages.has(select.value)) {
+        audioStatus.textContent = translations[select.value].textOnlyIntro;
+        audioStatus.hidden = false;
+      }
       window.requestAnimationFrame(() => {
         introResult.scrollIntoView({ block: "nearest", behavior: "smooth" });
       });
