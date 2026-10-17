@@ -80,6 +80,45 @@ try {
            assert.equal(await page.locator('#playIntro').isVisible(),false);
            assert.equal(await page.locator('#audioStatus').isVisible(),true);
            assert.equal(await page.locator('#introClose').evaluate(el=>el===document.activeElement),true);
+           // Visibility alone permits offscreen/clipped text. Wait for the actual
+           // smooth scroll to put the whole short guide in the usable viewport.
+           await page.waitForFunction(()=>{
+             const el=document.querySelector('#introScript'), r=el.getBoundingClientRect();
+             const v=window.visualViewport;
+             let left=v?.offsetLeft||0, top=v?.offsetTop||0;
+             let right=left+(v?.width||innerWidth), bottom=top+(v?.height||innerHeight);
+             for(let p=el.parentElement;p;p=p.parentElement){
+               const s=getComputedStyle(p), b=p.getBoundingClientRect();
+               if(/auto|scroll|hidden|clip/.test(s.overflowY)){top=Math.max(top,b.top);bottom=Math.min(bottom,b.bottom);}
+               if(/auto|scroll|hidden|clip/.test(s.overflowX)){left=Math.max(left,b.left);right=Math.min(right,b.right);}
+             }
+             return r.width>0&&r.height>0&&r.left>=left-1&&r.right<=right+1&&r.top>=top-1&&r.bottom<=bottom+1;
+           },null,{timeout:5000});
+           const guide=await page.locator('#introScript').evaluate(el=>{
+             const r=el.getBoundingClientRect(), hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+             return {rect:{x:r.x,y:r.y,width:r.width,height:r.height},viewport:{width:innerWidth,height:innerHeight},unobscured:el===hit||el.contains(hit)};
+           });
+           assert.equal(guide.unobscured,true);
+           if(width===320&&!mode)await page.screenshot({path:join(output,`guide-${lang}-320.png`)});
+           assert.equal(await page.locator('#introModal').getAttribute('aria-modal'),'true');
+           const focusIds=await page.locator('#introModal button:not([hidden]):not(:disabled)').evaluateAll(nodes=>nodes.filter(n=>n.getClientRects().length>0).map(n=>n.id||n.dataset.langChoice));
+           assert.equal(focusIds[0],'introClose');
+           assert.equal(focusIds.at(-1),'continueIntro');
+           assert.ok(!focusIds.includes('playIntro'),'Hidden audio action must not receive focus');
+           const focused=()=>page.evaluate(()=>{
+             const el=document.activeElement;
+             return {inside:document.querySelector('#introModal').contains(el),id:el.id||el.dataset.langChoice};
+           });
+           // Exercise every native browser Tab stop, including both boundaries.
+           for(let i=1;i<=focusIds.length;i++){
+             await page.keyboard.press('Tab');
+             assert.deepEqual(await focused(),{inside:true,id:focusIds[i%focusIds.length]});
+           }
+           for(let i=1;i<=focusIds.length;i++){
+             await page.keyboard.press('Shift+Tab');
+             assert.deepEqual(await focused(),{inside:true,id:focusIds[(focusIds.length-i)%focusIds.length]});
+           }
+           report.results.push({scenario:'native-guide-read-and-keyboard-close',lang,viewport:{width,height:900},mode:mode||'normal',guide,tabStops:focusIds.length,forwardCycle:'passed',reverseCycle:'passed'});
            await page.keyboard.press('Escape');
            assert.equal(await page.locator('#introModal').isVisible(),false);
            assert.equal(await page.locator('#reopenIntro').evaluate(el=>el===document.activeElement),true);
@@ -100,7 +139,7 @@ try {
       assert.equal(new URL(page.url()).hash,'#locations');
       if(['history','state','both'].includes(mode))assert.equal(await page.locator('#languageFallback').isVisible(),true);
       assert.deepEqual(errors,[]);
-      report.results.push({viewport:{width,height:900},mode:mode||'normal',status:'passed',steps:['unknown-language fallback','keyboard','12 languages/routes','native text-only guide','offline reload','Back']});
+      report.results.push({viewport:{width,height:900},mode:mode||'normal',status:'passed',steps:['unknown-language fallback','keyboard','12 languages/routes','native guide in viewport','Tab/Shift+Tab modal cycles','Escape and focus return','offline reload','Back']});
     } finally {await ctx.tracing.stop({path:join(output,`${width}-${mode||'normal'}-trace.zip`)});await ctx.close();}
   }
   // Upgrade the real old shell/worker, preserving previous non-secret preferences.
