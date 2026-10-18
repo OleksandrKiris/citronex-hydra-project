@@ -2327,6 +2327,11 @@
       border-radius: 14px;
       box-shadow: var(--shadow);
     }
+    #selectedGuide[hidden], #selectedGuideFallback[hidden] { display: none; }
+    #selectedGuide { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-bottom: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+    #selectedGuide > * { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+    #selectedGuideTitle { font-size: 1.1rem; line-height: 1.35; }
+    #selectedGuide .btn { white-space: normal; }
     #locationShare[hidden] { display: none; }
     #locationShare { padding-bottom: 16px; scroll-margin-block: 16px; }
     #locationUrl { display: block; width: 100%; min-width: 0; box-sizing: border-box; padding: 10px; font: inherit; }
@@ -2472,6 +2477,13 @@
           <input id="locationUrl" type="url" readonly autocomplete="off" spellcheck="false" aria-describedby="locationCopyStatus">
           <p id="locationCopyStatus" role="status" aria-live="polite"></p>
         </div>
+      </section>
+
+      <section id="selectedGuide" aria-labelledby="selectedGuideTitle" hidden>
+        <h2 id="selectedGuideTitle"></h2>
+        <p id="selectedGuideSteps"></p>
+        <p id="selectedGuideFallback" hidden></p>
+        <a class="btn" id="selectedGuideLink" aria-describedby="selectedGuideSteps selectedGuideFallback"></a>
       </section>
 
       <section class="cards" aria-labelledby="startTitle">
@@ -3035,11 +3047,51 @@
       }
       document.querySelector("#locationShare").scrollIntoView?.({block: "nearest", behavior: "smooth"});
     }
+    const guideLocations = {
+      siechniceTraining: "siechnice",
+      ryczywolTraining: "ryczywol",
+      zgorzelecBogatyniaTraining: "zgorzelec_bogatynia"
+    };
+    const selectedGuideLabels = {
+      pl: ["Potrzebujesz wskazówek przed szkoleniem?", "Przeczytaj przewodnik swojej lokalizacji. Następnie przejdź z niego do szkolenia.", "Otwórz przewodnik"],
+      ru: ["Нужны подсказки перед обучением?", "Прочитайте гид своей площадки. Затем перейдите из него к обучению.", "Открыть гид"],
+      ua: ["Потрібні підказки перед навчанням?", "Прочитайте гід своєї локації. Потім перейдіть із нього до навчання.", "Відкрити гід"],
+      en: ["Need guidance before training?", "Read your location guide. Then continue from it to training.", "Open guide"],
+      az: ["Təlimdən əvvəl kömək lazımdır?", "İş yerinizin bələdçisini oxuyun. Sonra oradan təlimə keçin.", "Bələdçini aç"],
+      es: ["¿Necesitas orientación antes de la formación?", "Lee la guía de tu ubicación. Después continúa desde allí a la formación.", "Abrir guía"],
+      fil: ["Kailangan ng gabay bago ang pagsasanay?", "Basahin ang gabay ng iyong lokasyon. Pagkatapos ay magpatuloy sa pagsasanay mula roon.", "Buksan ang gabay"],
+      id: ["Perlu panduan sebelum pelatihan?", "Baca panduan lokasi Anda. Lalu lanjutkan dari sana ke pelatihan.", "Buka panduan"],
+      ne: ["तालिमअघि मार्गदर्शन चाहिन्छ?", "आफ्नो कार्यस्थलको मार्गदर्शन पढ्नुहोस्। त्यसपछि त्यहाँबाट तालिममा जानुहोस्।", "मार्गदर्शन खोल्नुहोस्"],
+      ka: ["სწავლებამდე გზამკვლევი გჭირდებათ?", "წაიკითხეთ თქვენი სამუშაო ადგილის გზამკვლევი. შემდეგ იქიდან გადადით სწავლებაზე.", "გზამკვლევის გახსნა", "გზამკვლევის ან სწავლების ნაწილი შეიძლება ინგლისურად იყოს. ბმულში თქვენი არჩეული ენა შენარჩუნდება."],
+      tr: ["Eğitimden önce rehbere ihtiyacınız var mı?", "Çalışma yerinizin rehberini okuyun. Sonra oradan eğitime geçin.", "Rehberi aç", "Rehberin veya eğitimin bazı bölümleri İngilizce olabilir. Seçtiğiniz dil bağlantıda korunur."],
+      hy: ["Ուսուցումից առաջ ուղեցույցի կարի՞ք ունեք։", "Կարդացեք ձեր աշխատավայրի ուղեցույցը։ Այնուհետև այնտեղից անցեք ուսուցմանը։", "Բացել ուղեցույցը", "Ուղեցույցի կամ ուսուցման որոշ մասեր կարող են անգլերեն լինել։ Ձեր ընտրած լեզուն կպահպանվի հղման մեջ։"]
+    };
+    function renderSelectedGuide() {
+      const panel = document.querySelector("#selectedGuide");
+      const link = document.querySelector("#selectedGuideLink");
+      panel.hidden = !locationIds.includes(lastLocationId);
+      if (panel.hidden) { link.removeAttribute("href"); return; }
+      const labels = selectedGuideLabels[select.value] || selectedGuideLabels.en;
+      const source = document.querySelector("#" + lastLocationId);
+      const titleId = source.getAttribute("aria-labelledby").split(" ")[1];
+      const target = new URL("https://oleksandrkiris.github.io/citronex-dragon-guide/");
+      target.searchParams.set("lang", select.value);
+      target.searchParams.set("location", guideLocations[lastLocationId]);
+      target.searchParams.set("welcome", "1");
+      link.href = target.toString();
+      link.textContent = labels[2] + " — " + document.querySelector("#" + titleId).textContent;
+      document.querySelector("#selectedGuideTitle").textContent = labels[0];
+      document.querySelector("#selectedGuideSteps").textContent = labels[1];
+      const notice = document.querySelector("#selectedGuideFallback");
+      notice.hidden = !labels[3];
+      notice.textContent = labels[3] || "";
+    }
     function renderLastLocation() {
       const panel = document.querySelector("#lastLocation");
       const link = document.querySelector("#lastLocationLink");
       panel.hidden = !locationIds.includes(lastLocationId);
       renderLocationShare();
+      renderSelectedGuide();
       if (panel.hidden) { link.removeAttribute("href"); return; }
       const source = document.querySelector("#" + lastLocationId);
       const titleId = source.getAttribute("aria-labelledby").split(" ")[1];

@@ -59,6 +59,16 @@ try {
     assert.equal(new URL(await page.locator('.catalog-link').getAttribute('href')).searchParams.get('lang'),lang==='ua'?'uk':lang==='tr'?'en':lang);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
   };
+  const checkSelectedGuide=async(page,language,location)=>{
+    const link=page.locator('#selectedGuideLink');const url=new URL(await link.getAttribute('href'));
+    assert.equal(url.origin,'https://oleksandrkiris.github.io');assert.equal(url.pathname,'/citronex-dragon-guide/');
+    assert.equal(url.searchParams.get('lang'),language);assert.equal(url.searchParams.get('location'),location);
+    assert.equal(url.searchParams.get('welcome'),'1');assert.equal(url.hash,'');
+    assert.deepEqual([...url.searchParams.keys()].sort(),['lang','location','welcome']);
+    assert.equal(await page.locator('#selectedGuide').isVisible(),true);
+    assert.ok((await page.locator('#selectedGuideSteps').innerText()).length>20);
+    assert.equal(await page.locator('#selectedGuideFallback').isVisible(),['ka','tr','hy'].includes(language));
+  };
   for(const width of [1280,320])for(const mode of ['', 'history','state','both','corrupt']) {
     const ctx=await context({width,height:900},mode);const page=await ctx.newPage();const errors=[];
     page.on('pageerror',error=>errors.push(error.message));
@@ -156,6 +166,7 @@ try {
         await page.locator('#'+id).focus();await page.keyboard.press('Enter');
         await page.waitForFunction(()=>!document.querySelector('#lastLocation').hidden);
         assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),await page.locator('#'+id).getAttribute('href'));
+        await checkSelectedGuide(page,'ua',({siechniceTraining:'siechnice',ryczywolTraining:'ryczywol',zgorzelecBogatyniaTraining:'zgorzelec_bogatynia'})[id]);
       }
       if(mode!=='both')assert.equal(await page.evaluate(()=>localStorage.getItem('hydraLastLocationV1')),'zgorzelecBogatyniaTraining');
       await page.locator('#langSelect').selectOption('ka');
@@ -173,6 +184,7 @@ try {
       const panelReadability=[];
       for(const language of ['pl','ru','ua','en','az','es','fil','id','ne','ka','tr','hy']){
         await page.locator('#langSelect').selectOption(language);
+        await checkSelectedGuide(page,language,'zgorzelec_bogatynia');
         const layout=await page.locator('#lastLocation').evaluate(panel=>{
           const p=panel.getBoundingClientRect();
           const measure=id=>{
@@ -194,23 +206,38 @@ try {
       await page.locator('#langSelect').selectOption('ka');
       await page.locator('#lastLocation').scrollIntoViewIfNeeded();
       await page.screenshot({path:join(output,`last-location-${width}-${mode||'normal'}.png`)});
+      await page.locator('#selectedGuideLink').focus();
+      await page.keyboard.press('Tab');
+      assert.equal(await page.locator('.training-link').first().evaluate(el=>el===document.activeElement),true);
+      await page.locator('#selectedGuide').scrollIntoViewIfNeeded();
+      const guideLayout=await page.locator('#selectedGuide').evaluate(el=>{
+        const p=el.getBoundingClientRect();
+        return {panelWidth:p.width,items:[...el.children].filter(n=>!n.hidden).map(n=>{const r=n.getBoundingClientRect();return {id:n.id,width:r.width,inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,overflow:n.scrollWidth>n.clientWidth+1};})};
+      });
+      for(const item of guideLayout.items){assert.ok(item.width>=200&&item.width>=guideLayout.panelWidth*.8);assert.equal(item.inside,true);assert.equal(item.overflow,false);}
+      if(!mode)await page.screenshot({path:join(output,`selected-guide-${width}.png`)});
+
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
       await page.reload();
       assert.equal(await page.locator('#lastLocation').isVisible(),mode!=='both');
+      assert.equal(await page.locator('#selectedGuide').isVisible(),mode!=='both');
       if(mode!=='both'){
+        await checkSelectedGuide(page,await page.locator('#langSelect').inputValue(),'zgorzelec_bogatynia');
         assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),await page.locator('#zgorzelecBogatyniaTraining').getAttribute('href'));
         await page.goto(base+'?lang=pl');await page.goBack();
+        await checkSelectedGuide(page,await page.locator('#langSelect').inputValue(),'zgorzelec_bogatynia');
         assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),await page.locator('#zgorzelecBogatyniaTraining').getAttribute('href'));
         await page.waitForFunction(()=>Boolean(navigator.serviceWorker.controller));
         await ctx.setOffline(true);await page.reload();
         assert.equal(await page.locator('#lastLocation').isVisible(),true);
+        await checkSelectedGuide(page,await page.locator('#langSelect').inputValue(),'zgorzelec_bogatynia');
         await page.locator('#lastLocationLink').focus();await page.keyboard.press('Tab');await page.keyboard.press('Space');
         assert.equal(await page.locator('#lastLocation').isVisible(),false);
         assert.equal(await page.locator('#langSelect').evaluate(el=>el===document.activeElement),true);
         assert.equal(await page.evaluate(()=>localStorage.getItem('hydraLastLocationV1')),null);
         await page.reload();assert.equal(await page.locator('#lastLocation').isVisible(),false);
       }
-      report.results.push({scenario:'last-location-keyboard-language-reload-Back-clear',viewport:{width,height:900},mode:mode||'normal',status:'passed',resumeView,panelReadability,limits:mode==='both'?'in-memory only; denied storage loses location on reload':'external href inspected, training not opened'});
+      report.results.push({scenario:'last-location-keyboard-language-reload-Back-clear',viewport:{width,height:900},mode:mode||'normal',status:'passed',resumeView,panelReadability,guideLayout,selectedGuide:'all 3 sites / 12 requested languages / keyboard / reload / Back / offline',limits:mode==='both'?'in-memory only; denied storage loses location on reload':'external href inspected, training not opened'});
     } finally {await ctx.close();}
   }
   for(const value of ['unknown','{"id":"siechniceTraining"}','https://evil.example/']){
@@ -219,6 +246,8 @@ try {
       await ctx.addInitScript(value=>localStorage.setItem('hydraLastLocationV1',value),value);
       await page.goto(base+'?lang=ru');assert.equal(await page.locator('#lastLocation').isVisible(),false);
       assert.equal(await page.locator('#lastLocationLink').getAttribute('href'),null);
+      assert.equal(await page.locator('#selectedGuide').isVisible(),false);
+      assert.equal(await page.locator('#selectedGuideLink').getAttribute('href'),null);
       assert.equal(await page.locator('#locationUrl').inputValue(),'');
       assert.equal(await page.locator('#locationShare').isVisible(),false);
       await check(page,'ru');
@@ -298,7 +327,7 @@ try {
     await page.evaluate(()=>{localStorage.setItem('unrelated-test-key','preserve');localStorage.setItem('hydraIntroAudioSeenV3','1');});
     previous=false;
     await page.evaluate(async()=>{const registration=await navigator.serviceWorker.getRegistration();await registration.update();});
-    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261017-copy-location1')&&!names.includes('citronex-hydra-srzb-20261017-last-location2');});
+    await page.waitForFunction(async()=> {const names=await caches.keys();return names.includes('citronex-hydra-srzb-20261018-selected-guide1')&&!names.includes('citronex-hydra-srzb-20261017-copy-location1');});
     // Cache deletion happens before clients.claim: wait for activation readiness,
     // not just a cache name, before testing a controlled upgrade/offline reload.
     await page.waitForFunction(async()=>{
@@ -306,7 +335,7 @@ try {
       return registration.active?.state==='activated'&&navigator.serviceWorker.controller?.state==='activated';
     });
     const upgradedShell=await page.evaluate(async()=>{
-      const cache=await caches.open('citronex-hydra-srzb-20261017-copy-location1');
+      const cache=await caches.open('citronex-hydra-srzb-20261018-selected-guide1');
       const shell=await cache.match('./index.html');return shell?await shell.text():null;
     });
     assert.equal(upgradedShell,await readFile(join(root,'index.html'),'utf8'));
