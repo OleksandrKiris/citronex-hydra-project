@@ -208,6 +208,8 @@ try {
       await page.screenshot({path:join(output,`last-location-${width}-${mode||'normal'}.png`)});
       await page.locator('#selectedGuideLink').focus();
       await page.keyboard.press('Tab');
+      assert.equal(await page.locator('#copyRoute').evaluate(el=>el===document.activeElement),true);
+      await page.keyboard.press('Tab');
       assert.equal(await page.locator('.training-link').first().evaluate(el=>el===document.activeElement),true);
       await page.locator('#selectedGuide').scrollIntoViewIfNeeded();
       const guideLayout=await page.locator('#selectedGuide').evaluate(el=>{
