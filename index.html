@@ -2336,6 +2336,7 @@
     #locationShare { padding-bottom: 16px; scroll-margin-block: 16px; }
     #locationUrl { display: block; width: 100%; min-width: 0; box-sizing: border-box; padding: 10px; font: inherit; }
     #locationCopyStatus { margin: 8px 0 0; overflow-wrap: anywhere; }
+    #routeText { width: 100%; box-sizing: border-box; min-height: 12rem; resize: vertical; font: inherit; overflow-wrap: anywhere; }
     #lastLocationTitle { margin: 0; font-size: 1.1rem; line-height: 1.35; }
     #lastLocation > * { width: 100%; min-width: 0; box-sizing: border-box; }
     #lastLocation .btn { margin: 6px 0; white-space: normal; }
@@ -2472,6 +2473,12 @@
         <a class="btn" id="lastLocationLink"></a>
         <button class="btn" id="clearLastLocation" type="button"></button>
         <button class="btn" id="copyLocation" type="button"></button>
+        <button class="btn" id="copyRoute" type="button"></button>
+        <div id="routeShare" hidden>
+          <label id="routeTextLabel" for="routeText"></label>
+          <textarea id="routeText" rows="9" readonly autocomplete="off" spellcheck="false" aria-describedby="routeCopyStatus"></textarea>
+          <p id="routeCopyStatus" role="status" aria-live="polite"></p>
+        </div>
         <div id="locationShare" hidden>
           <label id="locationUrlLabel" for="locationUrl"></label>
           <input id="locationUrl" type="url" readonly autocomplete="off" spellcheck="false" aria-describedby="locationCopyStatus">
@@ -2996,57 +3003,100 @@
       tr: ["Çalışma yeri bağlantısını kopyala", "Herkese açık bağlantı", "Bağlantı kopyalandı.", "Otomatik kopyalama kullanılamıyor. Seçili bağlantıyı elle kopyalayın."],
       hy: ["Պատճենել աշխատանքի վայրի հղումը", "Հանրային հղում", "Հղումը պատճենված է։", "Ավտոմատ պատճենումը հասանելի չէ։ Ընտրված հղումը պատճենեք ձեռքով։"]
     };
+    const routeLabels = {
+      en: ["Copy route", "Public route text", "Route copied.", "Automatic copying is unavailable. Copy the selected route text manually.", "Guide", "Training", "Requested UI language", "Training link opens in English."],
+      pl: ["Kopiuj trasę", "Publiczny tekst trasy", "Trasa skopiowana.", "Kopiowanie automatyczne jest niedostępne. Skopiuj zaznaczony tekst trasy ręcznie.", "Przewodnik", "Szkolenie", "Wybrany język interfejsu", "Link do szkolenia otwiera się po angielsku."],
+      ru: ["Копировать маршрут", "Публичный текст маршрута", "Маршрут скопирован.", "Автоматическое копирование недоступно. Скопируйте выделенный текст маршрута вручную.", "Гид", "Обучение", "Выбранный язык интерфейса", "Ссылка на обучение открывается на английском."],
+      ua: ["Копіювати маршрут", "Публічний текст маршруту", "Маршрут скопійовано.", "Автоматичне копіювання недоступне. Скопіюйте виділений текст маршруту вручну.", "Гід", "Навчання", "Вибрана мова інтерфейсу", "Посилання на навчання відкривається англійською."],
+      az: ["Marşrutu kopyala", "Açıq marşrut mətni", "Marşrut kopyalandı.", "Avtomatik kopyalama mümkün deyil. Seçilmiş marşrut mətnini əl ilə kopyalayın.", "Bələdçi", "Təlim", "Seçilmiş interfeys dili", "Təlim linki ingiliscə açılır."],
+      es: ["Copiar ruta", "Texto público de la ruta", "Ruta copiada.", "La copia automática no está disponible. Copia el texto seleccionado manualmente.", "Guía", "Formación", "Idioma de interfaz elegido", "El enlace de formación se abre en inglés."],
+      fil: ["Kopyahin ang ruta", "Pampublikong teksto ng ruta", "Nakopya ang ruta.", "Hindi magagamit ang awtomatikong pagkopya. Kopyahin nang manu-mano ang napiling teksto.", "Gabay", "Pagsasanay", "Napiling wika ng interface", "Sa Ingles bubukas ang link ng pagsasanay."],
+      id: ["Salin rute", "Teks rute publik", "Rute disalin.", "Penyalinan otomatis tidak tersedia. Salin teks rute yang dipilih secara manual.", "Panduan", "Pelatihan", "Bahasa antarmuka pilihan", "Tautan pelatihan terbuka dalam bahasa Inggris."],
+      ne: ["मार्ग प्रतिलिपि गर्नुहोस्", "सार्वजनिक मार्ग पाठ", "मार्ग प्रतिलिपि भयो।", "स्वचालित प्रतिलिपि उपलब्ध छैन। चयन गरिएको मार्ग पाठ आफैं प्रतिलिपि गर्नुहोस्।", "मार्गदर्शन", "तालिम", "छानिएको इन्टरफेस भाषा", "तालिमको लिङ्क अंग्रेजीमा खुल्छ।"],
+      ka: ["მარშრუტის კოპირება", "მარშრუტის საჯარო ტექსტი", "მარშრუტი დაკოპირებულია.", "ავტომატური კოპირება მიუწვდომელია. მონიშნული ტექსტი ხელით დააკოპირეთ.", "გზამკვლევი", "სწავლება", "არჩეული ინტერფეისის ენა", "სწავლების ბმული ინგლისურად იხსნება."],
+      tr: ["Rotayı kopyala", "Herkese açık rota metni", "Rota kopyalandı.", "Otomatik kopyalama kullanılamıyor. Seçili rota metnini elle kopyalayın.", "Rehber", "Eğitim", "Seçilen arayüz dili", "Eğitim bağlantısı İngilizce açılır."],
+      hy: ["Պատճենել երթուղին", "Երթուղու հանրային տեքստ", "Երթուղին պատճենված է։", "Ավտոմատ պատճենումը հասանելի չէ։ Ընտրված տեքստը պատճենեք ձեռքով։", "Ուղեցույց", "Ուսուցում", "Ընտրված միջերեսի լեզու", "Ուսուցման հղումը բացվում է անգլերեն։"]
+    };
     let copyVersion = 0;
-    let copyPending = false;
     function publicLocationUrl() {
       if (!locationIds.includes(lastLocationId)) return "";
-      // Trusted existing route only; no current-page query/hash or saved URL.
-      const source = document.querySelector("#" + lastLocationId);
-      const target = new URL(source.dataset.base);
+      const target = new URL(document.querySelector("#" + lastLocationId).dataset.base);
       target.searchParams.set("lang", textOnlyLanguages.has(select.value) ? "en" : select.value);
       return target.toString();
     }
-    function renderLocationShare() {
+    function publicGuideUrl() {
+      if (!locationIds.includes(lastLocationId)) return "";
+      const target = new URL("https://oleksandrkiris.github.io/citronex-dragon-guide/");
+      target.searchParams.set("lang", select.value);
+      target.searchParams.set("location", guideLocations[lastLocationId]);
+      target.searchParams.set("welcome", "1");
+      return target.toString();
+    }
+    function publicSiteName() {
+      if (!locationIds.includes(lastLocationId)) return "";
+      const source = document.querySelector("#" + lastLocationId);
+      return document.querySelector("#" + source.getAttribute("aria-labelledby").split(" ")[1]).textContent;
+    }
+    function publicRouteText() {
+      if (!locationIds.includes(lastLocationId)) return "";
+      const labels = routeLabels[select.value] || routeLabels.en;
+      const lines = [publicSiteName(), labels[6] + ": " + select.value,
+        labels[4] + ": " + publicGuideUrl(), labels[5] + ": " + publicLocationUrl()];
+      if (textOnlyLanguages.has(select.value)) lines.push(labels[7]);
+      return lines.join("\n");
+    }
+    function invalidateCopy() {
       copyVersion++;
-      copyPending = false;
-      document.querySelector("#copyLocation").setAttribute("aria-busy", "false");
+      for (const id of ["copyLocation", "copyRoute"]) document.querySelector("#" + id).setAttribute("aria-busy", "false");
+      for (const id of ["locationCopyStatus", "routeCopyStatus"]) document.querySelector("#" + id).textContent = "";
+    }
+    function renderLocationShare() {
+      invalidateCopy();
       const url = publicLocationUrl();
       const labels = copyLabels[select.value] || copyLabels.en;
+      const route = routeLabels[select.value] || routeLabels.en;
       document.querySelector("#copyLocation").textContent = labels[0];
       document.querySelector("#copyLocation").disabled = !url;
       document.querySelector("#locationUrlLabel").textContent = labels[1];
       document.querySelector("#locationUrl").value = url;
-      document.querySelector("#locationCopyStatus").textContent = "";
-      if (!url) document.querySelector("#locationShare").hidden = true;
+      document.querySelector("#copyRoute").textContent = route[0];
+      document.querySelector("#copyRoute").disabled = !url;
+      document.querySelector("#routeTextLabel").textContent = route[1];
+      document.querySelector("#routeText").value = publicRouteText();
+      if (!url) for (const id of ["locationShare", "routeShare"]) document.querySelector("#" + id).hidden = true;
     }
-    async function copyLocation() {
-      const url = publicLocationUrl();
-      if (!url || copyPending) return;
+    async function copyPublic(kind) {
+      const memo = kind === "route";
+      const value = memo ? publicRouteText() : publicLocationUrl();
+      if (!value) return;
+      invalidateCopy();
       const version = copyVersion;
-      const labels = copyLabels[select.value] || copyLabels.en;
-      document.querySelector("#locationShare").hidden = false;
-      document.querySelector("#locationUrl").value = url;
-      copyPending = true;
-      document.querySelector("#copyLocation").setAttribute("aria-busy", "true");
+      const labels = (memo ? routeLabels : copyLabels)[select.value] || (memo ? routeLabels : copyLabels).en;
+      const panel = document.querySelector(memo ? "#routeShare" : "#locationShare");
+      const field = document.querySelector(memo ? "#routeText" : "#locationUrl");
+      const button = document.querySelector(memo ? "#copyRoute" : "#copyLocation");
+      const status = document.querySelector(memo ? "#routeCopyStatus" : "#locationCopyStatus");
+      document.querySelector(memo ? "#locationShare" : "#routeShare").hidden = true;
+      panel.hidden = false;
+      field.value = value;
+      button.setAttribute("aria-busy", "true");
       let copied = false;
       try {
         if (typeof navigator.clipboard?.writeText === "function") {
-          await navigator.clipboard.writeText(url);
+          await navigator.clipboard.writeText(value);
           copied = true;
         }
-      } catch { /* Readonly selectable URL remains available. */ }
-      // A changed language/location/clear invalidates an outstanding permission result.
+      } catch { /* Readonly manual text is available for unsupported/denied/throw. */ }
+      // UI invalidation cannot cancel an already-started OS clipboard write.
       if (version !== copyVersion) return;
-      copyPending = false;
-      document.querySelector("#copyLocation").setAttribute("aria-busy", "false");
-      document.querySelector("#locationCopyStatus").textContent = labels[copied ? 2 : 3];
-      if (!copied) {
-        const field = document.querySelector("#locationUrl");
-        field.focus();
-        field.select();
-      }
-      document.querySelector("#locationShare").scrollIntoView?.({block: "nearest", behavior: "smooth"});
+      button.setAttribute("aria-busy", "false");
+      status.textContent = labels[copied ? 2 : 3];
+      if (!copied) { field.focus(); field.select(); }
+      panel.scrollIntoView?.({block: "nearest", behavior: "smooth"});
     }
+    function copyLocation() { return copyPublic("link"); }
+    function copyRoute() { return copyPublic("route"); }
+    window.addEventListener("pagehide", invalidateCopy);
     const guideLocations = {
       siechniceTraining: "siechnice",
       ryczywolTraining: "ryczywol",
@@ -3074,11 +3124,7 @@
       const labels = selectedGuideLabels[select.value] || selectedGuideLabels.en;
       const source = document.querySelector("#" + lastLocationId);
       const titleId = source.getAttribute("aria-labelledby").split(" ")[1];
-      const target = new URL("https://oleksandrkiris.github.io/citronex-dragon-guide/");
-      target.searchParams.set("lang", select.value);
-      target.searchParams.set("location", guideLocations[lastLocationId]);
-      target.searchParams.set("welcome", "1");
-      link.href = target.toString();
+      link.href = publicGuideUrl();
       link.textContent = labels[2] + " — " + document.querySelector("#" + titleId).textContent;
       document.querySelector("#selectedGuideTitle").textContent = labels[0];
       document.querySelector("#selectedGuideSteps").textContent = labels[1];
@@ -3559,6 +3605,7 @@
       if (!event.defaultPrevented) rememberLocation(id);
     }));
     document.querySelector("#copyLocation").addEventListener("click", copyLocation);
+    document.querySelector("#copyRoute").addEventListener("click", copyRoute);
     document.querySelector("#clearLastLocation").addEventListener("click", clearLastLocation);
     window.addEventListener?.("pageshow", () => renderLastLocation());
     select.addEventListener("change", () => setLang(select.value));
