@@ -2473,12 +2473,6 @@
         <a class="btn" id="lastLocationLink"></a>
         <button class="btn" id="clearLastLocation" type="button"></button>
         <button class="btn" id="copyLocation" type="button"></button>
-        <button class="btn" id="copyRoute" type="button"></button>
-        <div id="routeShare" hidden>
-          <label id="routeTextLabel" for="routeText"></label>
-          <textarea id="routeText" rows="9" readonly autocomplete="off" spellcheck="false" aria-describedby="routeCopyStatus"></textarea>
-          <p id="routeCopyStatus" role="status" aria-live="polite"></p>
-        </div>
         <div id="locationShare" hidden>
           <label id="locationUrlLabel" for="locationUrl"></label>
           <input id="locationUrl" type="url" readonly autocomplete="off" spellcheck="false" aria-describedby="locationCopyStatus">
@@ -2491,6 +2485,12 @@
         <p id="selectedGuideSteps"></p>
         <p id="selectedGuideFallback" hidden></p>
         <a class="btn" id="selectedGuideLink" aria-describedby="selectedGuideSteps selectedGuideFallback"></a>
+        <button class="btn" id="copyRoute" type="button"></button>
+        <div id="routeShare" hidden>
+          <label id="routeTextLabel" for="routeText"></label>
+          <textarea id="routeText" rows="9" readonly autocomplete="off" spellcheck="false" aria-describedby="routeCopyStatus"></textarea>
+          <p id="routeCopyStatus" role="status" aria-live="polite"></p>
+        </div>
       </section>
 
       <section class="cards" aria-labelledby="startTitle">
