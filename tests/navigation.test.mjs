@@ -10,7 +10,7 @@ const markupNodes = [...markup.matchAll(/<([a-z][\w-]*)\b([^>]*)>([^<]*)/g)].map
   tag, text: text.trim(), attrs: Object.fromEntries([...attributes.matchAll(/([\w-]+)="([^"]*)"/g)].map(([,key,value]) => [key,value]))
 }));
 // Execute real language initialization and registered handlers, excluding visual startup.
-const startup = source.slice(0,source.indexOf('    setLang(initial);')) + '\nsetLang(initial); globalThis.api = {setLang, closeIntro, rememberLocation, clearLastLocation, copyLocation};';
+const startup = source.slice(0,source.indexOf('    setLang(initial);')) + '\nsetLang(initial); globalThis.api = {setLang, closeIntro, rememberLocation, clearLastLocation, copyLocation, copyRoute, publicRouteText};';
 assert.ok(startup.length > 10000 && !startup.includes('    enhanceFrontend();'));
 function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlocked=false,stateBlocked=false,lastLocation='',clipboard}={}) {
   const nodes=new Map();
@@ -38,7 +38,7 @@ function run({language='ru',stored='pl',blocked=false,browser='pl-PL',historyBlo
     querySelectorAll(s){return s==='.training-link'?links:s==='.catalog-link'?[catalog]:s==='[data-i18n]'?translated:s==='[data-i18n-label]'?elements.filter(n=>n.attrs['data-i18n-label']):[];},addEventListener(){}};
   const writes=[];
   const storage={getItem(key){if(blocked)throw Error('SecurityError');return key==='hydraLastLocationV1'?lastLocation:stored;},removeItem(key){if(blocked)throw Error('SecurityError');writes.push([key,null]);},setItem(k,v){if(blocked)throw Error('QuotaExceededError');writes.push([k,v]);}};
-  const c=vm.createContext({document,window:{},location,URL,URLSearchParams,navigator:{language:browser,languages:[browser],clipboard},
+  const c=vm.createContext({document,window:{addEventListener(k,v){this[k]=v;}},location,URL,URLSearchParams,navigator:{language:browser,languages:[browser],clipboard},
     localStorage:storage,history:{get state(){if(stateBlocked)throw Error('SecurityError');return null;},replaceState(_state,_title,url){if(historyBlocked)throw Error('SecurityError');location.href=url.toString();}}});
   vm.runInContext(startup,c);
   return {c,document,location,links,catalog,cards,translated,nodes,writes};
@@ -247,4 +247,34 @@ test('guide rejects unknown ID, preserves in-memory context under storage/histor
  assert.equal(new URL(f.nodes.get('#selectedGuideLink').href).searchParams.get('lang'),'ka');
  f.c.api.setLang('tr');assert.equal(new URL(f.nodes.get('#selectedGuideLink').href).searchParams.get('lang'),'tr');
  assert.equal(new URL(f.nodes.get('#selectedGuideLink').href).searchParams.get('location'),'ryczywol');
+});
+
+for(const language of ['pl','en','ua','ru','az','es','fil','id','ne','ka','tr','hy','uk'])for(const id of ['siechniceTraining','ryczywolTraining','zgorzelecBogatyniaTraining'])test(`route memo canonical ${language}/${id}`,async()=>{
+ const values=[];const f=run({language,lastLocation:id,clipboard:{async writeText(v){values.push(v);}}});const before=JSON.stringify(f.writes);
+ await f.c.api.copyRoute();const text=f.nodes.get('#routeText').value,lines=text.split('\n');
+ assert.equal(text,values[0]);assert.equal(lines[0],f.nodes.get('#'+f.links.find(x=>x===f.nodes.get('#'+id)).attrs['aria-labelledby'].split(' ')[1]).textContent);
+ assert.ok(lines[1].endsWith(': '+(language==='uk'?'ua':language)));
+ const urls=text.match(/https:\/\/\S+/g);assert.equal(urls.length,2);assert.equal(urls[0],f.nodes.get('#selectedGuideLink').href);assert.equal(urls[1],f.nodes.get('#locationUrl').value);
+ for(const url of urls){const u=new URL(url);assert.equal(u.hash,'');assert.equal(u.searchParams.has('section'),false);}
+ assert.equal(lines.length,['ka','tr','hy'].includes(language)?5:4);assert.equal(JSON.stringify(f.writes),before);
+ assert.equal(f.nodes.get('#routeCopyStatus').textContent.length>0,true);assert.ok(f.nodes.get('#copyRoute').textContent.length>0);
+});
+for(const mode of ['absent','reject','syncThrow'])test(`route memo manual ${mode}`,async()=>{
+ const clipboard=mode==='absent'?undefined:{writeText(){if(mode==='syncThrow')throw Error('sync');return Promise.reject(Error('denied'));}};
+ const f=run({lastLocation:'siechniceTraining',clipboard});await f.c.api.copyRoute();assert.equal(f.nodes.get('#routeText').selected,true);assert.equal(f.nodes.get('#routeText').focused,true);assert.equal(f.nodes.get('#routeShare').hidden,false);assert.equal(f.nodes.get('#copyRoute').attrs['aria-busy'],'false');
+});
+for(const first of ['copyLocation','copyRoute'])for(const outcome of ['fulfil','reject'])test(`shared clipboard generation ${first} late ${outcome}`,async()=>{
+ let settle;let calls=0;const f=run({lastLocation:'siechniceTraining',clipboard:{writeText(){if(calls++===0)return new Promise((resolve,reject)=>settle=outcome==='fulfil'?resolve:()=>reject(Error('late')));return Promise.resolve();}}});
+ const old=f.c.api[first]();await f.c.api[first==='copyLocation'?'copyRoute':'copyLocation']();
+ const state=JSON.stringify([...f.nodes].map(([k,v])=>[k,v.textContent,v.value,v.focused,v.selected,v.attrs['aria-busy']]));settle();await old;
+ assert.equal(JSON.stringify([...f.nodes].map(([k,v])=>[k,v.textContent,v.value,v.focused,v.selected,v.attrs['aria-busy']])),state);
+});
+for(const action of ['language','site','clear','pagehide'])for(const outcome of ['fulfil','reject'])test(`route memo stale ${action}/${outcome}`,async()=>{
+ let settle;const f=run({lastLocation:'siechniceTraining',clipboard:{writeText(){return new Promise((resolve,reject)=>settle=outcome==='fulfil'?resolve:()=>reject(Error('late')));}}});const old=f.c.api.copyRoute();
+ if(action==='language')f.c.api.setLang('ka');else if(action==='site')f.c.api.rememberLocation('ryczywolTraining');else if(action==='clear')f.c.api.clearLastLocation();else f.c.window.pagehide();
+ const state=JSON.stringify([...f.nodes].map(([k,v])=>[k,v.textContent,v.value,v.focused,v.selected,v.attrs['aria-busy']]));settle();await old;assert.equal(JSON.stringify([...f.nodes].map(([k,v])=>[k,v.textContent,v.value,v.focused,v.selected,v.attrs['aria-busy']])),state);
+});
+test('route memo invalid selection has no payload/action and clear hides both readonly fields',async()=>{
+ const f=run({lastLocation:'https://private.example/'});assert.equal(f.c.api.publicRouteText(),'');await f.c.api.copyRoute();assert.equal(f.nodes.get('#copyRoute').disabled,true);
+ f.c.api.rememberLocation('ryczywolTraining');await f.c.api.copyRoute();f.c.api.clearLastLocation();assert.equal(f.nodes.get('#routeText').value,'');assert.equal(f.nodes.get('#routeShare').hidden,true);
 });
