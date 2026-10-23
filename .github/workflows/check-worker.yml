@@ -15,12 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: node --check sw.js && node --check tests/browser.mjs
-      - run: node --test tests/sw.test.mjs tests/navigation.test.mjs
+      - run: node --test tests/sw.test.mjs tests/navigation.test.mjs tests/upgrade-source.test.mjs
       - name: Install pinned browser in temporary directory
         run: |
           npm install --prefix "$RUNNER_TEMP/hydra-browser" --no-audit --no-fund playwright@1.56.1

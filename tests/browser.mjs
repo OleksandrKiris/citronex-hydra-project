@@ -1,5 +1,6 @@
 // Authorized CI only; no public deployment, external requests or submissions.
 import assert from 'node:assert/strict';
+import {upgradeSource} from './upgrade-source.mjs';
 import { createServer } from 'node:http';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -22,8 +23,11 @@ for(const file of ['index.html','sw.js','manifest.webmanifest']) {
   report.files[file] = {bytes:data.length,sha256:createHash('sha256').update(data).digest('hex')};
 }
 let previous = false;
-const old = Object.fromEntries(['index.html','sw.js'].map(file=>[file,
-  execFileSync('git',['show',`${report.base}:${file}`])]));
+const runtimePaths=['index.html','sw.js'];
+const current=Object.fromEntries(runtimePaths.map(p=>[p,execFileSync('git',['show',`${report.head}:${p}`])]));
+const previousFiles=Object.fromEntries(runtimePaths.map(p=>[p,execFileSync('git',['show',`${report.base}:${p}`])]));
+const upgrade=upgradeSource(report.base,current,previousFiles,(ref,p)=>execFileSync('git',['show',`${ref}:${p}`]));
+const old=upgrade.files;report.upgradeLineage={ref:upgrade.ref,eventBase:report.base,eventBaseRuntimeEqual:upgrade.eventBaseRuntimeEqual,kind:upgrade.kind};
 const server = createServer(async(req,res)=>{
   if(!['GET','HEAD'].includes(req.method)) {res.writeHead(405).end();return;}
   const url=new URL(req.url,'http://localhost');
@@ -327,7 +331,7 @@ try {
       await page.locator('#ryczywolTraining').focus();await page.keyboard.press('Enter');await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
       await page.locator('#copyRoute').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>Boolean(document.querySelector('#routeCopyStatus').textContent));
       const payload=await page.locator('#routeText').inputValue(),urls=payload.match(/https:\/\/\S+/g);
-      assert.equal(payload.split('\n')[0],'Ryczywół');assert.equal(payload.split('\n').length,5);
+      assert.equal(payload.split('\n')[0],'RyczywР“С–Р•вЂљ');assert.equal(payload.split('\n').length,5);
       assert.equal(urls[0],await page.locator('#selectedGuideLink').getAttribute('href'));assert.equal(urls[1],await page.locator('#ryczywolTraining').getAttribute('href'));
       assert.equal(new URL(urls[0]).searchParams.get('lang'),'ka');assert.equal(new URL(urls[1]).search,'?lang=en');assert.ok(!payload.includes('must-not-copy')&&!payload.includes('#progress'));
       assert.equal(await page.locator('#routeText').getAttribute('readonly'),'');
@@ -364,6 +368,40 @@ try {
     }finally{await ctx.close();}
   }
   // Upgrade the real old shell/worker, preserving previous non-secret preferences.
+  // All declared copy-route locales on the real shell; public fixtures only.
+  report.localizedRoutes=[];
+  for(const width of [320,1280])for(const lang of ['pl','ru','ua','en','az','es','fil','id','ne','ka','tr','hy']){
+    const ctx=await context({width,height:900}),page=await ctx.newPage();
+    try{
+      await ctx.addInitScript(()=>{window.__rejectRoute=false;window.__copied=[];Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText(value){window.__copied.push(value);return window.__rejectRoute?Promise.reject(Error('denied fixture')):Promise.resolve();}}});});
+      await page.goto(base+`?lang=${lang}&person=fixture-must-not-copy#private`);await check(page,lang);
+      await page.evaluate(()=>document.addEventListener('click',e=>{if(e.target.closest('a.training-link'))e.preventDefault();}));
+      await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
+      for(const [id,name,location] of [['siechniceTraining','Siechnice','siechnice'],['zgorzelecBogatyniaTraining','Zgorzelec / Bogatynia','zgorzelec_bogatynia'],['ryczywolTraining','RyczywГіЕ‚','ryczywol']]){
+        await page.locator('#'+id).focus();await page.keyboard.press('Enter');
+        for(const outcome of ['accepted','rejected']){
+          await page.evaluate(reject=>window.__rejectRoute=reject,outcome==='rejected');
+          await page.locator('#copyRoute').click();await page.waitForFunction(()=>Boolean(document.querySelector('#routeCopyStatus').textContent));
+          const payload=await page.locator('#routeText').inputValue(),lines=payload.split('\n'),urls=payload.match(/https:\/\/\S+/g);
+          assert.equal(lines[0],name);assert.equal(lines.length,['ka','tr','hy'].includes(lang)?5:4);assert.equal(urls.length,2);
+          const guide=new URL(urls[0]),training=new URL(urls[1]);assert.equal(guide.origin,'https://oleksandrkiris.github.io');assert.equal(guide.pathname,'/citronex-dragon-guide/');assert.equal(guide.searchParams.get('lang'),lang);assert.equal(guide.searchParams.get('location'),location);assert.equal(guide.searchParams.get('welcome'),'1');
+          assert.equal(urls[0],await page.locator('#selectedGuideLink').getAttribute('href'));assert.equal(urls[1],await page.locator('#'+id).getAttribute('href'));assert.equal(training.search,'?lang='+(['ka','tr','hy'].includes(lang)?'en':lang));assert(!payload.includes('fixture-must-not-copy')&&!payload.includes('#private'));
+          assert.equal(await page.locator('#routeText').getAttribute('readonly'),'');assert.equal(await page.locator('#copyRoute').getAttribute('aria-busy'),'false');
+          assert.equal(await page.evaluate(()=>window.__copied.at(-1)),payload);
+          if(outcome==='rejected')assert(await page.locator('#routeText').evaluate(el=>document.activeElement===el&&el.selectionStart===0&&el.selectionEnd===el.value.length));
+          const button=page.locator('#copyRoute'),status=page.locator('#routeCopyStatus'),field=page.locator('#routeText');
+          const row={width,lang,location,outcome,payload,button:await button.innerText(),label:await page.locator('#routeTextLabel').innerText(),status:await status.innerText()};
+          assert(row.button.length>3&&row.label.length>3&&row.status.length>3);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+          if(id==='ryczywolTraining'){
+            for(const [part,el] of [['button',button],['status',status]]){await el.scrollIntoViewIfNeeded();await page.waitForFunction(id=>{const el=document.getElementById(id),r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight;},await el.getAttribute('id'));const geometry=await el.evaluate(el=>{const r=el.getBoundingClientRect();const range=document.createRange();range.selectNodeContents(el);return {inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,lines:[...range.getClientRects()].filter(r=>r.width>0).map(r=>({left:r.left,right:r.right,top:r.top,bottom:r.bottom,hit:el.contains(document.elementFromPoint(Math.min(innerWidth-1,(r.left+r.right)/2),(r.top+r.bottom)/2))}))};});assert(geometry.inside&&geometry.lines.length&&geometry.lines.every(l=>l.hit));row[part+'Geometry']=geometry;await el.screenshot({path:join(output,`route-locale-${lang}-${width}-${outcome}-${part}.png`)});}
+            await field.scrollIntoViewIfNeeded();for(const edge of ['top','bottom']){await field.evaluate((el,edge)=>{el.scrollTop=edge==='top'?0:el.scrollHeight;},edge);await field.screenshot({path:join(output,`route-locale-${lang}-${width}-${outcome}-${edge}.png`)});}
+          }
+          report.localizedRoutes.push(row);
+        }
+      }
+    }finally{await ctx.close();}
+  }
+  assert.equal(report.localizedRoutes.length,144);
   previous=true;
   const ctx=await context({width:320,height:900});const page=await ctx.newPage();
   await ctx.tracing.start({screenshots:true,snapshots:true});
