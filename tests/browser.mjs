@@ -331,7 +331,7 @@ try {
       await page.locator('#ryczywolTraining').focus();await page.keyboard.press('Enter');await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
       await page.locator('#copyRoute').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>Boolean(document.querySelector('#routeCopyStatus').textContent));
       const payload=await page.locator('#routeText').inputValue(),urls=payload.match(/https:\/\/\S+/g);
-      assert.equal(payload.split('\n')[0],'RyczywР вЂњРЎвЂ“Р вЂўРІР‚С™');assert.equal(payload.split('\n').length,5);
+      assert.equal(payload.split('\n')[0],'Ryczywół');assert.equal(payload.split('\n').length,5);
       assert.equal(urls[0],await page.locator('#selectedGuideLink').getAttribute('href'));assert.equal(urls[1],await page.locator('#ryczywolTraining').getAttribute('href'));
       assert.equal(new URL(urls[0]).searchParams.get('lang'),'ka');assert.equal(new URL(urls[1]).search,'?lang=en');assert.ok(!payload.includes('must-not-copy')&&!payload.includes('#progress'));
       assert.equal(await page.locator('#routeText').getAttribute('readonly'),'');
@@ -377,7 +377,7 @@ try {
       await page.goto(base+`?lang=${lang}&person=fixture-must-not-copy#private`);await check(page,lang);
       await page.evaluate(()=>document.addEventListener('click',e=>{if(e.target.closest('a.training-link'))e.preventDefault();}));
       await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
-      for(const [id,name,location] of [['siechniceTraining','Siechnice','siechnice'],['zgorzelecBogatyniaTraining','Zgorzelec / Bogatynia','zgorzelec_bogatynia'],['ryczywolTraining','RyczywР“С–Р•вЂљ','ryczywol']]){
+      for(const [id,name,location] of [['siechniceTraining','Siechnice','siechnice'],['zgorzelecBogatyniaTraining','Zgorzelec / Bogatynia','zgorzelec_bogatynia'],['ryczywolTraining','Ryczyw\u00f3\u0142','ryczywol']]){
         await page.locator('#'+id).focus();await page.keyboard.press('Enter');
         for(const outcome of ['accepted','rejected']){
           await page.evaluate(reject=>window.__rejectRoute=reject,outcome==='rejected');
