@@ -23,7 +23,7 @@ for(const file of ['index.html','sw.js','manifest.webmanifest']) {
   report.files[file] = {bytes:data.length,sha256:createHash('sha256').update(data).digest('hex')};
 }
 let previous = false;
-const runtimePaths=['index.html','sw.js'];
+const runtimePaths=["index.html", "sw.js", "manifest.webmanifest", "assets/brand/primserv-logo.svg", "assets/brand/primserv-icon-192.png", "assets/brand/primserv-icon-512.png"];
 const current=Object.fromEntries(runtimePaths.map(p=>[p,execFileSync('git',['show',`${report.head}:${p}`])]));
 const previousFiles=Object.fromEntries(runtimePaths.map(p=>[p,execFileSync('git',['show',`${report.base}:${p}`])]));
 const upgrade=upgradeSource(report.base,current,previousFiles,(ref,p)=>execFileSync('git',['show',`${ref}:${p}`]));
@@ -331,7 +331,7 @@ try {
       await page.locator('#ryczywolTraining').focus();await page.keyboard.press('Enter');await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
       await page.locator('#copyRoute').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>Boolean(document.querySelector('#routeCopyStatus').textContent));
       const payload=await page.locator('#routeText').inputValue(),urls=payload.match(/https:\/\/\S+/g);
-      assert.equal(payload.split('\n')[0],'RyczywР“С–Р•вЂљ');assert.equal(payload.split('\n').length,5);
+      assert.equal(payload.split('\n')[0],'RyczywР вЂњРЎвЂ“Р вЂўРІР‚С™');assert.equal(payload.split('\n').length,5);
       assert.equal(urls[0],await page.locator('#selectedGuideLink').getAttribute('href'));assert.equal(urls[1],await page.locator('#ryczywolTraining').getAttribute('href'));
       assert.equal(new URL(urls[0]).searchParams.get('lang'),'ka');assert.equal(new URL(urls[1]).search,'?lang=en');assert.ok(!payload.includes('must-not-copy')&&!payload.includes('#progress'));
       assert.equal(await page.locator('#routeText').getAttribute('readonly'),'');
@@ -377,7 +377,7 @@ try {
       await page.goto(base+`?lang=${lang}&person=fixture-must-not-copy#private`);await check(page,lang);
       await page.evaluate(()=>document.addEventListener('click',e=>{if(e.target.closest('a.training-link'))e.preventDefault();}));
       await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
-      for(const [id,name,location] of [['siechniceTraining','Siechnice','siechnice'],['zgorzelecBogatyniaTraining','Zgorzelec / Bogatynia','zgorzelec_bogatynia'],['ryczywolTraining','RyczywГіЕ‚','ryczywol']]){
+      for(const [id,name,location] of [['siechniceTraining','Siechnice','siechnice'],['zgorzelecBogatyniaTraining','Zgorzelec / Bogatynia','zgorzelec_bogatynia'],['ryczywolTraining','RyczywР“С–Р•вЂљ','ryczywol']]){
         await page.locator('#'+id).focus();await page.keyboard.press('Enter');
         for(const outcome of ['accepted','rejected']){
           await page.evaluate(reject=>window.__rejectRoute=reject,outcome==='rejected');
@@ -393,7 +393,7 @@ try {
           const row={width,lang,location,outcome,payload,button:await button.innerText(),label:await page.locator('#routeTextLabel').innerText(),status:await status.innerText()};
           assert(row.button.length>3&&row.label.length>3&&row.status.length>3);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
           if(id==='ryczywolTraining'){
-            for(const [part,el] of [['button',button],['status',status]]){await el.scrollIntoViewIfNeeded();await page.waitForFunction(id=>{const el=document.getElementById(id),r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight;},await el.getAttribute('id'));const geometry=await el.evaluate(el=>{const r=el.getBoundingClientRect();const range=document.createRange();range.selectNodeContents(el);return {inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,lines:[...range.getClientRects()].filter(r=>r.width>0).map(r=>({left:r.left,right:r.right,top:r.top,bottom:r.bottom,hit:el.contains(document.elementFromPoint(Math.min(innerWidth-1,(r.left+r.right)/2),(r.top+r.bottom)/2))}))};});assert(geometry.inside&&geometry.lines.length&&geometry.lines.every(l=>l.hit));row[part+'Geometry']=geometry;await el.screenshot({path:join(output,`route-locale-${lang}-${width}-${outcome}-${part}.png`)});}
+            for(const [part,el] of [['button',button],['label',page.locator('#routeTextLabel')],['status',status]]){await el.scrollIntoViewIfNeeded();await page.waitForFunction(id=>{const el=document.getElementById(id),r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight;},await el.getAttribute('id'));const geometry=await el.evaluate(el=>{const r=el.getBoundingClientRect();const range=document.createRange();range.selectNodeContents(el);return {inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,lines:[...range.getClientRects()].filter(r=>r.width>0).map(r=>({left:r.left,right:r.right,top:r.top,bottom:r.bottom,hit:el.contains(document.elementFromPoint(Math.min(innerWidth-1,(r.left+r.right)/2),(r.top+r.bottom)/2))}))};});assert(geometry.inside&&geometry.lines.length&&geometry.lines.every(l=>l.hit));row[part+'Geometry']=geometry;await el.screenshot({path:join(output,`route-locale-${lang}-${width}-${outcome}-${part}.png`)});}
             await field.scrollIntoViewIfNeeded();for(const edge of ['top','bottom']){await field.evaluate((el,edge)=>{el.scrollTop=edge==='top'?0:el.scrollHeight;},edge);await field.screenshot({path:join(output,`route-locale-${lang}-${width}-${outcome}-${edge}.png`)});}
           }
           report.localizedRoutes.push(row);

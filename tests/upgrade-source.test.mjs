@@ -6,3 +6,4 @@ test('runtime-changing source keeps exact fresh event base',()=>{const previous=
 test('identical runtime requires verified historical original bytes',()=>assert.throws(()=>upgradeSource(ref,shell('same'),shell('same'),(r,p)=>{assert.equal(r,PRE_ROUTE);return Buffer.from('altered');}),/Pinned pre-route source/));
 test('changed runtime with same worker cannot claim an upgrade',()=>assert.throws(()=>upgradeSource(ref,shell('same','changed'),shell('same'),()=>{}),/must differ/));
 test('missing original worker is rejected',()=>assert.throws(()=>upgradeSource(ref,{},shell('old'),()=>{}),/workers required/i));
+test('a changed manifest cannot be mistaken for identical runtime',()=>{const current=shell('same'),previous=shell('same');current['manifest.webmanifest']=Buffer.from('changed');previous['manifest.webmanifest']=Buffer.from('old');assert.throws(()=>upgradeSource(ref,current,previous,()=>{}),/must differ/);});
