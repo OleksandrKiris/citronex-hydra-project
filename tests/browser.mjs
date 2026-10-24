@@ -379,6 +379,7 @@ try {
       await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
       for(const [id,name,location] of [['siechniceTraining','Siechnice','siechnice'],['zgorzelecBogatyniaTraining','Zgorzelec / Bogatynia','zgorzelec_bogatynia'],['ryczywolTraining','Ryczyw\u00f3\u0142','ryczywol']]){
         await page.locator('#'+id).focus();await page.keyboard.press('Enter');
+        await page.locator('.hydra-page-loader').waitFor({state:'hidden'});
         for(const outcome of ['accepted','rejected']){
           await page.evaluate(reject=>window.__rejectRoute=reject,outcome==='rejected');
           await page.locator('#copyRoute').click();await page.waitForFunction(()=>Boolean(document.querySelector('#routeCopyStatus').textContent));
